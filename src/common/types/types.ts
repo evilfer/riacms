@@ -1,3 +1,5 @@
+import {EntityContent, EntityContentValue} from "../../server/entity/entity";
+
 export type TypeFieldTypes =
     "string" | "string[]" |
     "number" | "number[]" |
@@ -8,6 +10,8 @@ export type TypeFieldTypes =
 export interface BaseTypeField {
     name: string;
     type: TypeFieldTypes;
+    computed?: boolean;
+    impl?: (content: EntityContent) => EntityContentValue;
 }
 
 export interface LiteralTypeField extends BaseTypeField {
@@ -28,7 +32,7 @@ export interface MultipleRelatedTypeField extends BaseTypeField {
 }
 
 export interface ObjectTypeField extends BaseTypeField {
-    nestedFields: TypeDefinition;
+    nestedFields: TypeField[];
 }
 
 export interface SingleObjectTypeField extends ObjectTypeField {
@@ -46,7 +50,12 @@ export type TypeField =
     SingleObjectTypeField |
     MultipleObjectTypeField;
 
-export type TypeDefinition = TypeField[];
+export interface TypeDefinition {
+    canCreate: boolean;
+    implementedTypes: string[];
+    extendedBy: string[];
+    fields: TypeField[];
+}
 
 export interface TypeDefinitionMap {
     [name: string]: TypeDefinition;

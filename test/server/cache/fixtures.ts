@@ -1,12 +1,16 @@
-import {TypeDefinitionMap} from "../../../src/common/types/types";
 import {Entity} from "../../../src/server/entity/entity";
+import {TypeManager} from "../../../src/common/types/type-manager";
+import {TypeManagerBuilder} from "../../../src/common/types/type-manager-builder";
 
-export const typeMap: TypeDefinitionMap = {
-    extendedPage: [
+function createTypes(): TypeManager {
+    const builder = new TypeManagerBuilder();
+
+    builder.createConcreteType("extendedPage", [
         {name: "name", type: "string"},
         {name: "subtitle", type: "string"},
-    ],
-    nestedMultiplePage: [
+    ]);
+
+    builder.createConcreteType("nestedMultiplePage", [
         {name: "name", type: "string"},
         {
             name: "nested",
@@ -15,8 +19,9 @@ export const typeMap: TypeDefinitionMap = {
             ],
             type: "object[]",
         },
-    ],
-    nestedPage: [
+    ]);
+
+    builder.createConcreteType("nestedPage", [
         {name: "name", type: "string"},
         {
             name: "nested",
@@ -25,20 +30,26 @@ export const typeMap: TypeDefinitionMap = {
             ],
             type: "object",
         },
-    ],
-    page: [
+    ]);
+
+    builder.createConcreteType("page", [
         {name: "name", type: "string"},
-    ],
-    relatedMultiplePage: [
+    ]);
+
+    builder.createConcreteType("relatedMultiplePage", [
         {name: "name", type: "string"},
         {name: "relatedMultiple", type: "related[]", relatedType: "page", inverseField: null},
-    ],
-    relatedPage: [
+    ]);
+
+    builder.createConcreteType("relatedPage", [
         {name: "name", type: "string"},
         {name: "related", type: "related", relatedType: "page", inverseField: null},
-    ],
-    site: [],
-};
+    ]);
+
+    return builder.build();
+}
+
+export const types: TypeManager = createTypes();
 
 export const fixtures: Entity[] = [
     {

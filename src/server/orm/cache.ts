@@ -1,12 +1,9 @@
-import {TypeDefinition, TypeDefinitionMap} from "../../common/types/types";
+import {TypeManager} from "../../common/types/type-manager";
+import {TypeField} from "../../common/types/types";
 import {Entity, EntityContent, getEntityContent} from "../entity/entity";
 import {CacheMissingError} from "./cache-missing-error";
+import {EntityDb} from "./entity-db";
 import {createEntityProxy} from "./proxy";
-
-export interface CacheDb {
-    load: (id: number) => Promise<Entity>;
-    loadMultiple: (ids: number[]) => Promise<Entity[]>;
-}
 
 export interface CacheEntity {
     entity: Entity;
@@ -17,12 +14,12 @@ export interface CacheEntity {
 
 export class RenderingCache {
     private level: number;
-    private db: CacheDb;
+    private db: EntityDb;
     private entities: { [id: number]: CacheEntity };
     private missing: number[];
-    private types: TypeDefinitionMap;
+    private types: TypeManager;
 
-    constructor(types: TypeDefinitionMap, db: CacheDb, level = 0) {
+    constructor(types: TypeManager, db: EntityDb, level = 0) {
         this.level = level;
         this.types = types;
         this.db = db;
@@ -30,8 +27,8 @@ export class RenderingCache {
         this.missing = [];
     }
 
-    public getFields(type: string): TypeDefinition {
-        return this.types[type];
+    public getFields(type: string): TypeField[] {
+        return this.types.getFields(type);
     }
 
     public loadEntity(id: number): Promise<boolean> {

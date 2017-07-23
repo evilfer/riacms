@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {RenderingCache} from "../../../src/server/cache/cache";
+import {RenderingCache} from "../../../src/server/orm/cache";
 import {newFixtureCache} from "./fixture-db";
 
 describe("cache related data", () => {

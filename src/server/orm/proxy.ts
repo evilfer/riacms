@@ -1,4 +1,4 @@
-import {TypeDefinition} from "../../common/types/types";
+import {TypeDefinition, TypeField} from "../../common/types/types";
 import {Entity, EntityContent} from "../entity/entity";
 import {RenderingCache} from "./cache";
 
@@ -19,7 +19,7 @@ export function createEntityProxy(cache: RenderingCache, content: EntityContent,
     return proxy;
 }
 
-function createDataProxy(cache: RenderingCache, fields: TypeDefinition, content: EntityContent, proxy: any, used: any) {
+function createDataProxy(cache: RenderingCache, fields: TypeField[], content: EntityContent, proxy: any, used: any) {
     fields.forEach(field => {
         switch (field.type) {
             case "string":
@@ -79,7 +79,7 @@ function createRelatedGetter(cache: RenderingCache, proxy: any, used: any, key: 
 }
 
 function createNestedGetter(cache: RenderingCache,
-                            fields: TypeDefinition,
+                            fields: TypeField[],
                             proxy: any,
                             used: any,
                             key: string,
@@ -111,7 +111,7 @@ function createNestedGetter(cache: RenderingCache,
 }
 
 function createMultipleNestedGetter(cache: RenderingCache,
-                                    fields: TypeDefinition,
+                                    fields: TypeField[],
                                     proxy: any,
                                     used: any,
                                     key: string,
