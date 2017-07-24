@@ -1,6 +1,15 @@
 import * as extend from "extend";
 
-export type EntityContentValue = null | number | number[] | string | string[] | EntityContent | EntityContent[];
+export type EntityContentValue =
+    null
+    | boolean
+    | boolean[]
+    | number
+    | number[]
+    | string
+    | string[]
+    | EntityContent
+    | EntityContent[];
 
 export interface EntityContent {
     [name: string]: EntityContentValue;

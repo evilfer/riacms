@@ -2,6 +2,7 @@ import {TypeManager} from "../../common/types/type-manager";
 import {TypeField} from "../../common/types/types";
 import {Entity, EntityContent, getEntityContent} from "../entity/entity";
 import {CacheMissingError} from "./cache-missing-error";
+import {CacheQueryBuilder} from "./cache-query-builder";
 import {EntityDb} from "./entity-db";
 import {createEntityProxy} from "./proxy";
 
@@ -27,24 +28,43 @@ export class RenderingCache {
         this.missing = [];
     }
 
+    public getLevel(): number {
+        return this.level;
+    }
+
     public getFields(type: string): TypeField[] {
         return this.types.getFields(type);
     }
 
-    public loadEntity(id: number): Promise<boolean> {
-        return this.loadEntities([id]);
+    public loadEntity(id: number): Promise<CacheEntity> {
+        if (this.entities[id]) {
+            return Promise.resolve(this.entities[id]);
+        } else {
+            return this.db.load(id)
+                .then(entity => this.addEntity(entity));
+        }
     }
 
-    public loadEntities(ids: number[]): Promise<boolean> {
+    public loadEntities(ids: number[]): Promise<CacheEntity[]> {
         const needed: number[] = ids.filter(id => !this.entities[id]);
 
         return this.db.loadMultiple(needed)
             .then((entities: Entity[]) => {
-                entities.forEach(entity => {
-                    this.entities[entity.id] = this.createCacheEntity(entity);
-                });
-                return true;
+                this.addEntities(entities);
+                return ids.map(id => this.entities[id]);
             });
+    }
+
+    public addEntity(entity: Entity): CacheEntity {
+        if (!this.entities[entity.id]) {
+            this.entities[entity.id] = this.createCacheEntity(entity);
+        }
+
+        return this.entities[entity.id];
+    }
+
+    public addEntities(entities: Entity[]): CacheEntity[] {
+        return entities.map(entity => this.addEntity(entity));
     }
 
     public getProxy(id: number): any {
@@ -75,10 +95,14 @@ export class RenderingCache {
 
     public resume(): Promise<boolean> {
         return this.loadEntities(this.missing)
-            .then(result => {
+            .then(() => {
                 this.missing = [];
-                return result;
+                return true;
             });
+    }
+
+    public find(): CacheQueryBuilder {
+        return new CacheQueryBuilder(this, this.db, this.level);
     }
 
     private fireMissingError(ids: number[]): never {

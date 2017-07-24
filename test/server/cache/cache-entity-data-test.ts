@@ -1,11 +1,14 @@
 import {expect} from "chai";
 import {RenderingCache} from "../../../src/server/orm/cache";
-import {newFixtureCache} from "./fixture-db";
+import {cacheGenerator} from "../utils/fixture-rendering-cache";
+import {fixtures, types} from "./fixtures";
 
 describe("cache literal data", () => {
 
+    const newCache = cacheGenerator(types, fixtures);
+
     const loadTest = (level: number, ids: number[], test: (proxies: any[], used: any[]) => void) => {
-        const cache: RenderingCache = newFixtureCache(level);
+        const cache: RenderingCache = newCache(level);
         return () => cache.loadEntities(ids).then(() => {
             test(cache.getProxies(ids), cache.getUsed(ids));
         });

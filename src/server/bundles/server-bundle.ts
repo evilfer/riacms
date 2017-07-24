@@ -1,5 +1,18 @@
 import {Bundle} from "../../common/bundles/bundle";
 import {ServerContext} from "../app/server-context";
+import {RenderingCache} from "../orm/cache";
+
+export interface ServerRequestContext {
+    cache: RenderingCache;
+    level: number;
+    req: {
+        url: string
+    };
+}
+
+export interface ServerBundleStores {
+    [name: string]: (context: ServerRequestContext) => any;
+}
 
 export abstract class ServerBundle extends Bundle {
     protected serverContext: ServerContext;
@@ -12,7 +25,7 @@ export abstract class ServerBundle extends Bundle {
         return;
     }
 
-    public declareStores(): null | { [name: string]: () => any } {
+    public declareRenderingStores(): null | ServerBundleStores {
         return null;
     }
 }

@@ -1,19 +1,18 @@
 import {expect} from "chai";
 import {RenderingCache} from "../../../src/server/orm/cache";
-import {newFixtureCache} from "./fixture-db";
+import {cacheGenerator} from "../utils/fixture-rendering-cache";
+import {fixtures, types} from "./fixtures";
 
 describe("cache entity props", () => {
-    let cache: RenderingCache;
+
+    const newFixtureCache = cacheGenerator(types, fixtures);
 
     const loadTest = (ids: number[], test: (proxies: any[], used: any[]) => void) => {
+        const cache: RenderingCache = newFixtureCache(0);
         return () => cache.loadEntities(ids).then(() => {
             test(cache.getProxies(ids), cache.getUsed(ids));
         });
     };
-
-    beforeEach(() => {
-        cache = newFixtureCache();
-    });
 
     it("should create initial empty proxy", loadTest([1], ([proxy1], [used1]) => {
         expect(used1).to.deep.eq({});

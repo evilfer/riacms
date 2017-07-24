@@ -30,7 +30,7 @@ export class TypeManagerBuilder {
             throw new Error(`Parent type "${parent}" does not exist`);
         }
 
-        if (this.types[child].implementedTypes.indexOf(parent)) {
+        if (this.types[child].implementedTypes.indexOf(parent) >= 0) {
             throw new Error(`Child "${child}" already implements parent "${parent}"`);
         }
 

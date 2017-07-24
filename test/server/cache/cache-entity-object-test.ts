@@ -1,8 +1,11 @@
 import {expect} from "chai";
 import {RenderingCache} from "../../../src/server/orm/cache";
-import {newFixtureCache} from "./fixture-db";
+import {cacheGenerator} from "../utils/fixture-rendering-cache";
+import {fixtures, types} from "./fixtures";
 
 describe("cache nested data", () => {
+
+    const newFixtureCache = cacheGenerator(types, fixtures);
 
     const loadTest = (level: number, ids: number[], test: (proxies: any[], used: any[]) => void) => {
         const cache: RenderingCache = newFixtureCache(level);

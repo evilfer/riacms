@@ -13,6 +13,9 @@ export class SiteTypesBundle extends Bundle {
             relatedType: "page",
             type: "related[]",
         }, {
+            name: "name",
+            type: "string",
+        }, {
             computed: true,
             name: "hasChildren",
             type: "boolean",
