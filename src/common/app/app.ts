@@ -2,11 +2,11 @@ import {Bundle} from "../bundles/bundle";
 import {TypeManager} from "../types/type-manager";
 import {TypeManagerBuilder} from "../types/type-manager-builder";
 
-export class CmsApp<E extends Bundle> {
-    protected bundles: E[];
+export class CmsApp {
+    protected bundles: Bundle[];
     protected types: TypeManager;
 
-    public constructor(bundles: E[]) {
+    public constructor(bundles: Bundle[]) {
         this.bundles = bundles;
 
         this.prepareTypes();

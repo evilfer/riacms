@@ -21,11 +21,12 @@ describe("server page resolver bundle", () => {
 
     beforeEach(() => {
         const typesBundle: SiteTypesBundle = new SiteTypesBundle();
+        bundle = new ServerPageResolverBundle();
+
         const builder: TypeManagerBuilder = new TypeManagerBuilder();
         typesBundle.applyTypes(builder);
         const types: TypeManager = builder.build();
-        context = createFixtureServerContext(types, fixtures);
-        bundle = new ServerPageResolverBundle();
+        context = createFixtureServerContext([bundle], types, fixtures);
         bundle.setServerContext(context);
         cache = new RenderingCache(types, context.db, 0);
     });

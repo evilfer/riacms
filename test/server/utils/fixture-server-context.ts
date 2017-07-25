@@ -1,9 +1,13 @@
+import * as extend from "extend";
 import {TypeManager} from "../../../src/common/types/type-manager";
-import {ServerContext} from "../../../src/server/app/server-context";
+import {InstantiateStores, ServerContext} from "../../../src/server/app/server-context";
+import {ServerBundle, ServerBundleStores} from "../../../src/server/bundles/server-bundle";
 import {Entity, getEntityContent} from "../../../src/server/entity/entity";
 import {EntityDb, EntityQueryBuilder} from "../../../src/server/orm/entity-db";
 
-export function createFixtureServerContext(types: TypeManager, fixtures: Entity[]): ServerContext {
+export function createFixtureServerContext(bundles: ServerBundle[],
+                                           types: TypeManager,
+                                           fixtures: Entity[]): ServerContext {
     const fixtureMap = fixtures.reduce((acc, fixture) => {
         acc[fixture.id] = fixture;
         return acc;
@@ -46,5 +50,20 @@ export function createFixtureServerContext(types: TypeManager, fixtures: Entity[
         loadMultiple: ids => Promise.resolve(ids.map(id => fixtureMap[id])),
     };
 
-    return {types, db};
+    const declaredStores: ServerBundleStores = bundles.reduce((acc, bundle) => {
+        const stores = bundle.declareRenderingStores();
+        if (stores !== null) {
+            extend(acc, stores);
+        }
+        return acc;
+    }, {});
+
+    const declaredStoreNames = Object.keys(declaredStores);
+
+    const instantiateStores: InstantiateStores = context => declaredStoreNames.reduce((acc, name) => {
+        acc[name] = declaredStores[name](context);
+        return acc;
+    }, {} as { [name: string]: any });
+
+    return {types, db, instantiateStores};
 }

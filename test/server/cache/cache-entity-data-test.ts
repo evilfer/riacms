@@ -5,7 +5,7 @@ import {fixtures, types} from "./fixtures";
 
 describe("cache literal data", () => {
 
-    const newCache = cacheGenerator(types, fixtures);
+    const newCache = cacheGenerator([], types, fixtures);
 
     const loadTest = (level: number, ids: number[], test: (proxies: any[], used: any[]) => void) => {
         const cache: RenderingCache = newCache(level);

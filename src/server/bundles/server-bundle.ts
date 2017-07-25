@@ -1,17 +1,20 @@
 import {Bundle} from "../../common/bundles/bundle";
 import {ServerContext} from "../app/server-context";
 import {RenderingCache} from "../orm/cache";
+import {Router} from "express";
 
 export interface ServerRequestContext {
     cache: RenderingCache;
     level: number;
     req: {
-        url: string
+        url: string,
     };
 }
 
+export type ServerBundleStoreInit = (context: ServerRequestContext) => any;
+
 export interface ServerBundleStores {
-    [name: string]: (context: ServerRequestContext) => any;
+    [name: string]: ServerBundleStoreInit;
 }
 
 export abstract class ServerBundle extends Bundle {
@@ -21,8 +24,8 @@ export abstract class ServerBundle extends Bundle {
         this.serverContext = context;
     }
 
-    public prepareRoutes() {
-        return;
+    public prepareRoutes(): null | Router {
+        return null;
     }
 
     public declareRenderingStores(): null | ServerBundleStores {
