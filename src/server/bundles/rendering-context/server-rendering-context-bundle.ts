@@ -1,13 +1,14 @@
-import {ServerBundle} from "../server-bundle";
+import * as Promise from "bluebird";
+import {ServerBundle, ServerBundleDataInitMap} from "../server-bundle";
 
 export class ServerRenderingContextBundle extends ServerBundle {
     public getName(): string {
         return "serverRenderingContext";
     }
 
-    public declareRenderingStores(): null | { [name: string]: () => any } {
+    public declareRenderingStores(): ServerBundleDataInitMap {
         return {
-            renderingContext: () => ({context: "server"}),
+            renderingContext: () => Promise.resolve({context: "server"}),
         };
     }
 }

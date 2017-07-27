@@ -1,20 +1,26 @@
+import * as Promise from "bluebird";
+import {Router} from "express";
 import {Bundle} from "../../common/bundles/bundle";
 import {ServerContext} from "../app/server-context";
 import {RenderingCache} from "../orm/cache";
-import {Router} from "express";
+
+export interface ServerRequest {
+    url: string;
+}
 
 export interface ServerRequestContext {
     cache: RenderingCache;
     level: number;
-    req: {
-        url: string,
-    };
+    req: ServerRequest;
+    dataService: (name: string) => Promise<ServiceData>;
 }
 
-export type ServerBundleStoreInit = (context: ServerRequestContext) => any;
+export type ServiceData = any;
 
-export interface ServerBundleStores {
-    [name: string]: ServerBundleStoreInit;
+export type ServerBundleDataInit = (context: ServerRequestContext) => Promise<ServiceData>;
+
+export interface ServerBundleDataInitMap {
+    [name: string]: ServerBundleDataInit;
 }
 
 export abstract class ServerBundle extends Bundle {
@@ -28,7 +34,29 @@ export abstract class ServerBundle extends Bundle {
         return null;
     }
 
-    public declareRenderingStores(): null | ServerBundleStores {
-        return null;
+    public declareRequestDataServices(): ServerBundleDataInitMap {
+        return {};
     }
+
+    public declareRenderingStores(): ServerBundleDataInitMap {
+        return {};
+    }
+}
+
+export function genReqDataService(serverContext: ServerContext,
+                                  requestContext: ServerRequestContext): (name: string) => Promise<ServiceData> {
+
+    const initialized: { [name: string]: any } = {};
+
+    return (name: string) => {
+        if (typeof initialized[name] !== "undefined") {
+            return Promise.resolve(initialized[name]);
+        } else {
+            return serverContext.dataService(name, requestContext)
+                .then(data => {
+                    initialized[name] = data;
+                    return data;
+                });
+        }
+    };
 }

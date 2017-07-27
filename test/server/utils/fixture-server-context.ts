@@ -1,7 +1,8 @@
+import * as Promise from "bluebird";
 import * as extend from "extend";
 import {TypeManager} from "../../../src/common/types/type-manager";
 import {InstantiateStores, ServerContext} from "../../../src/server/app/server-context";
-import {ServerBundle, ServerBundleStores} from "../../../src/server/bundles/server-bundle";
+import {ServerBundle, ServerBundleDataInitMap, ServerRequestContext} from "../../../src/server/bundles/server-bundle";
 import {Entity, getEntityContent} from "../../../src/server/entity/entity";
 import {EntityDb, EntityQueryBuilder} from "../../../src/server/orm/entity-db";
 
@@ -50,7 +51,7 @@ export function createFixtureServerContext(bundles: ServerBundle[],
         loadMultiple: ids => Promise.resolve(ids.map(id => fixtureMap[id])),
     };
 
-    const declaredStores: ServerBundleStores = bundles.reduce((acc, bundle) => {
+    const declaredStores: ServerBundleDataInitMap = bundles.reduce((acc, bundle) => {
         const stores = bundle.declareRenderingStores();
         if (stores !== null) {
             extend(acc, stores);
@@ -60,10 +61,21 @@ export function createFixtureServerContext(bundles: ServerBundle[],
 
     const declaredStoreNames = Object.keys(declaredStores);
 
-    const instantiateStores: InstantiateStores = context => declaredStoreNames.reduce((acc, name) => {
-        acc[name] = declaredStores[name](context);
-        return acc;
+    const instantiateStores: InstantiateStores = context => Promise.reduce(declaredStoreNames, (acc, name: string) => {
+        return declaredStores[name](context).then((value: any) => {
+            acc[name] = value;
+            return acc;
+        });
     }, {} as { [name: string]: any });
 
-    return {types, db, instantiateStores};
+    const declaredDataServices = bundles.reduce((acc, bundle) => {
+        const services = bundle.declareRequestDataServices();
+        extend(acc, services);
+        return acc;
+    }, {} as ServerBundleDataInitMap);
+
+    const dataService = (name: string, requestContext: ServerRequestContext) =>
+        declaredDataServices[name](requestContext);
+
+    return {types, db, instantiateStores, dataService};
 }

@@ -1,3 +1,4 @@
+import * as Promise from "bluebird";
 import {CacheEntity, RenderingCache} from "./cache";
 import {EntityDb, EntityQueryBuilder, QueryBuilder} from "./entity-db";
 

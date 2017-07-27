@@ -1,3 +1,4 @@
+import * as Promise from "bluebird";
 import {CacheEntity, RenderingCache} from "../../orm/cache";
 import {ServerRequestContext} from "../server-bundle";
 import {ResolvedPageData} from "./server-page-resolver-bundle";
@@ -26,19 +27,19 @@ export function resolvePage(context: ServerRequestContext): Promise<ResolvedPage
     return findSite(context.cache, hostName, port)
         .then(site => {
             if (site) {
-                store.site = site.proxy;
+                store.site = site;
 
                 if (!path) {
                     if (site.content.home) {
                         return context.cache.loadEntity(site.content.home as number)
                             .then(page => {
-                                store.page = page.proxy;
+                                store.page = page;
                                 store.found = true;
                             });
                     } else if (site.content.notFound) {
                         return context.cache.loadEntity(site.content.notFound as number)
                             .then(page => {
-                                store.page = page.proxy;
+                                store.page = page;
                             });
                     }
                 } else {
@@ -50,7 +51,7 @@ export function resolvePage(context: ServerRequestContext): Promise<ResolvedPage
                             } else if (site.content.notFound) {
                                 return context.cache.loadEntity(site.content.notFound as number)
                                     .then(page => {
-                                        store.page = page.proxy;
+                                        store.page = page;
                                     });
                             }
                         });
@@ -103,7 +104,7 @@ function findPath(cache: RenderingCache,
         .run()
         .then(([item]) => {
             if (item) {
-                store.route.push(item.proxy);
+                store.route.push(item);
                 return findPath(cache, store, path, index + 1, item.entity.id);
             }
 

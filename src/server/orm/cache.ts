@@ -1,3 +1,4 @@
+import * as Promise from "bluebird";
 import {TypeManager} from "../../common/types/type-manager";
 import {TypeField} from "../../common/types/types";
 import {Entity, EntityContent, getEntityContent} from "../entity/entity";

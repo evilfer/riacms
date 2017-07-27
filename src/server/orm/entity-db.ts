@@ -1,3 +1,4 @@
+import * as Promise from "bluebird";
 import {Entity} from "../entity/entity";
 
 export type EntityDbFindValues = null | boolean | number | string;

@@ -1,4 +1,4 @@
-import {TypeDefinition, TypeField} from "../../common/types/types";
+import {TypeField} from "../../common/types/types";
 import {Entity, EntityContent} from "../entity/entity";
 import {RenderingCache} from "./cache";
 
@@ -7,12 +7,12 @@ const ROOT_ENTITY_PROPS: Array<keyof Entity> = ["id", "type", "data"];
 export function createEntityProxy(cache: RenderingCache, content: EntityContent, used: any, rootEntity: Entity): any {
     const proxy: any = {};
 
-    if (rootEntity) {
-        ROOT_ENTITY_PROPS.forEach(key => {
-            const proxyKey = `_${key}`;
-            createLiteralGetter(proxy, used, proxyKey, rootEntity[key]);
-        });
-    }
+    ROOT_ENTITY_PROPS.forEach(key => {
+        createLiteralGetter(proxy, used, `_${key}`, rootEntity[key]);
+        proxy[`__${key}`] = rootEntity[key];
+    });
+
+    proxy.__content = content;
 
     createDataProxy(cache, cache.getFields(rootEntity.type), content, proxy, used);
 

@@ -38,4 +38,24 @@ describe("cache entity props", () => {
         });
     }));
 
+    it("should provide __id without marking it as used", loadTest([1], ([proxy1], [used1]) => {
+        expect(proxy1.__id).to.equal(1);
+        expect(used1).to.deep.eq({});
+    }));
+
+    it("should provide __type without marking it as used", loadTest([1], ([proxy1], [used1]) => {
+        expect(proxy1.__type).to.equal("page");
+        expect(used1).to.deep.eq({});
+    }));
+
+    it("should provide __data without marking it as used", loadTest([1], ([proxy1], [used1]) => {
+        expect(proxy1.__data).to.be.an("array");
+        expect(used1).to.deep.eq({});
+    }));
+
+    it("should provide __content without marking it as used", loadTest([1], ([proxy1], [used1]) => {
+        expect(proxy1.__content).to.be.an("object");
+        expect(used1).to.deep.eq({});
+    }));
+
 });
