@@ -1,8 +1,8 @@
 import {NextFunction, Request, Response, Router} from "express";
 import {RenderingCache} from "../../orm/cache";
+import {BasicServerRequestContext} from "../basic-server-request-context";
 import {ServerBundle} from "../server-bundle";
 import {renderPage} from "./render-page";
-import {BasicServerRequestContext} from "../basic-server-request-context";
 
 export class SiteRendererServerBundle extends ServerBundle {
     public getName(): string {
@@ -21,7 +21,7 @@ export class SiteRendererServerBundle extends ServerBundle {
                 if (err) {
                     next(err);
                 } else if (stream) {
-                    res.pipe(stream);
+                    stream.pipe(res);
                 }
             });
         });

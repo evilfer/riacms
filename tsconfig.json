@@ -1,11 +1,13 @@
 {
     "compilerOptions": {
         "target": "es6",
+        "module": "commonjs",
         "declaration": true,
         "strictNullChecks": true,
         "noImplicitAny": true,
         "experimentalDecorators": true,
         "outDir": "./build",
-        "sourceMap": true
+        "sourceMap": true,
+        "jsx": "react"
     }
 }
