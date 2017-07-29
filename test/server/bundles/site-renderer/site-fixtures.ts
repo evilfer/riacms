@@ -1,16 +1,11 @@
-import {SiteTypesBundle} from "../../../../src/common/bundles/site-types/site-types-bundle";
-import {TypeManager} from "../../../../src/common/types/type-manager";
 import {TypeManagerBuilder} from "../../../../src/common/types/type-manager-builder";
 import {Entity} from "../../../../src/server/entity/entity";
 
-function createTypes(): TypeManager {
-    const typesBundle: SiteTypesBundle = new SiteTypesBundle();
-    const builder: TypeManagerBuilder = new TypeManagerBuilder();
-    typesBundle.applyTypes(builder);
-    return builder.build();
+export default function applyTestTypes(builder: TypeManagerBuilder) {
+    builder.extendType("page", [
+        {type: "related", name: "relatedPage", relatedType: "page", inverseField: null},
+    ]);
 }
-
-export const types: TypeManager = createTypes();
 
 export const fixtures: Entity[] = [
     {
@@ -34,6 +29,7 @@ export const fixtures: Entity[] = [
             name: "site2",
             notFound: 22,
             port: null,
+            renderer: "r2",
         }],
         id: 2,
         type: "site",
@@ -54,6 +50,7 @@ export const fixtures: Entity[] = [
             name: "page21",
             parents: [2],
             paths: ["home"],
+            relatedPage: null,
         }],
         id: 21,
         type: "page",
@@ -64,6 +61,7 @@ export const fixtures: Entity[] = [
             name: "page22",
             parents: [2],
             paths: ["about"],
+            relatedPage: 21,
         }],
         id: 22,
         type: "page",

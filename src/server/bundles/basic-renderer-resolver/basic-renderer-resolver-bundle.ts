@@ -1,9 +1,10 @@
+import {IWrappedComponent} from "mobx-react";
 import {Component} from "react";
 import {TypeManagerBuilder} from "../../../common/types/type-manager-builder";
 import {ResolvedPageData} from "../page-resolver/server-page-resolver-bundle";
 import {ServerBundle, ServerBundleDataInit, ServerBundleDataInitMap, ServerRequestContext} from "../server-bundle";
 
-export type TemplateRenderer = Component<{}, undefined> | (() => JSX.Element);
+export type TemplateRenderer = Component<{}, undefined> | (() => JSX.Element) | IWrappedComponent<any>;
 
 export class BasicRendererResolverBundle extends ServerBundle {
     private renderers: { [name: string]: TemplateRenderer };

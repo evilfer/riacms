@@ -7,16 +7,13 @@ import {TypeManagerBuilder} from "../../../../src/common/types/type-manager-buil
 import {ServerContext} from "../../../../src/server/app/server-context";
 import {ServerPageResolverBundle} from "../../../../src/server/bundles/page-resolver/server-page-resolver-bundle";
 import {createFixtureServerContext} from "../../utils/fixture-server-context";
-import {fixtures} from "./site-fixtures";
+import {default as applyTestTypes, fixtures} from "./site-fixtures";
 import {RenderingCache} from "../../../../src/server/orm/cache";
 import {ServerBundle, ServerRequestContext} from "../../../../src/server/bundles/server-bundle";
 import {BasicRendererResolverBundle} from "../../../../src/server/bundles/basic-renderer-resolver/basic-renderer-resolver-bundle";
 import {renderPage} from "../../../../src/server/bundles/site-renderer/render-page";
+import renderers from "./test-renderers";
 
-
-function R1() {
-    return <div>Hello world</div>;
-}
 
 describe("page renderer", () => {
     let context: ServerContext;
@@ -42,7 +39,9 @@ describe("page renderer", () => {
 
 
                         stream.on('end', function () {
-                            const html = data.replace(/\s?data-react[^\s>]*\s?/g, "");
+                            const html = data
+                                .replace(/\s?data-react[^\s>]*\s?/g, "")
+                                .replace(/<!-- \/?react-text(: [0-9]+)? -->/g, "");
                             resolve({err: null, html});
                         });
                     });
@@ -58,13 +57,12 @@ describe("page renderer", () => {
         const rendererResolverBundle = new BasicRendererResolverBundle();
         const bundles: ServerBundle[] = [pageResolverBundle, rendererResolverBundle];
 
-        rendererResolverBundle.setRenderers({
-            r1: R1
-        });
+        rendererResolverBundle.setRenderers(renderers);
 
         const builder: TypeManagerBuilder = new TypeManagerBuilder();
         typesBundle.applyTypes(builder);
         rendererResolverBundle.applyTypes(builder);
+        applyTestTypes(builder);
 
         const types: TypeManager = builder.build();
         context = createFixtureServerContext(bundles, types, fixtures);
@@ -72,11 +70,30 @@ describe("page renderer", () => {
     });
 
 
-    it('should resolve home page by host name/port', () => {
+    it('should render trivial template', () => {
         return renderUrl("http://host1:1000")
             .then(({err, html}) => {
                 expect(err).to.be.null;
                 expect(html).to.equal("<div>Hello world</div>");
+            });
+    });
+
+    it('should render page/sited data in template', () => {
+        return renderUrl("http://host2")
+            .then(({err, html}) => {
+                expect(err).to.be.null;
+                expect(html).to.contain("<h1>page21</h1>");
+                expect(html).to.contain("<p>At: site2</p>");
+            });
+    });
+
+    it('should render page/sited data in template with related assets', () => {
+        return renderUrl("http://host2/about")
+            .then(({err, html}) => {
+                expect(err).to.be.null;
+                expect(html).to.contain("<h1>page22</h1>");
+                expect(html).to.contain("<p>At: site2</p>");
+                expect(html).to.contain("<p>Related page: page21</p>");
             });
     });
 });
