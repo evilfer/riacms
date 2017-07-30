@@ -21,6 +21,9 @@ export interface Entity {
     data: EntityContent[];
 }
 
-export function getEntityContent(entity: Entity, level: number) {
-    return extend.apply(null, [{}, ...entity.data.slice(0, level + 1)]);
+export function getEntityContent(entity: Entity, level: number): EntityContent {
+    return extend.apply(null, [{
+        _id: entity.id,
+        _type: entity.type,
+    }, ...entity.data.slice(0, level + 1)]);
 }

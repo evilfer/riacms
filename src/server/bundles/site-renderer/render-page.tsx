@@ -5,8 +5,9 @@ import * as React from "react";
 import {renderToString} from "react-dom/server";
 import {Readable} from "stream";
 import {ServerContext} from "../../app/server-context";
-import {ServerRequestContext} from "../server-bundle";
 import {RenderingCache} from "../../orm/cache";
+import {ServerDataError} from "../../server-data-error";
+import {ServerRequestContext} from "../server-bundle";
 
 useStrict(true);
 
@@ -28,8 +29,12 @@ function tryToRender(cache: RenderingCache,
         const html = renderToString(element);
         return Promise.resolve({err: null, html});
     } catch (e) {
-        return cache.loadEntities(e.ids)
-            .then(() => tryToRender(cache, storeMap, Renderer));
+        if (e instanceof ServerDataError) {
+            return (e as ServerDataError).loadData(cache)
+                .then(() => tryToRender(cache, storeMap, Renderer));
+        } else {
+            return Promise.resolve({err: e, html: null});
+        }
     }
 }
 

@@ -3,7 +3,7 @@ import * as extend from "extend";
 import {TypeManager} from "../../../src/common/types/type-manager";
 import {InstantiateStores, ServerContext} from "../../../src/server/app/server-context";
 import {ServerBundle, ServerBundleDataInitMap, ServerRequestContext} from "../../../src/server/bundles/server-bundle";
-import {Entity, getEntityContent} from "../../../src/server/entity/entity";
+import {Entity, EntityContent, getEntityContent} from "../../../src/server/entity/entity";
 import {EntityDb, EntityQueryBuilder} from "../../../src/server/orm/entity-db";
 
 export function createFixtureServerContext(bundles: ServerBundle[],
@@ -20,24 +20,28 @@ export function createFixtureServerContext(bundles: ServerBundle[],
             entity,
         }));
 
+        const fieldValue: (e: { content: EntityContent, entity: Entity }, field: string) => any =
+            (e, field) => e.content[field];
+
         const builder = {
             arrayContains: (field: string, value: null | string | boolean | number) => {
-                list = list.filter(({content}) => content[field] && content[field].indexOf(value) >= 0);
+                list = list.filter(e => fieldValue(e, field) && fieldValue(e, field).indexOf(value) >= 0);
                 return builder;
             },
             arrayContainsAny: (field: string, values: Array<null | string | boolean | number>) => {
-                list = list.filter(({content}) => {
-                    return values.some(value => content[field] && content[field].indexOf(value) >= 0);
+                list = list.filter(e => {
+                    return values.some(value => fieldValue(e, field)
+                        && fieldValue(e, field).indexOf(value) >= 0);
                 });
                 return builder;
             },
             run: () => Promise.resolve(list.map(({entity}) => entity)),
             valueEquals: (field: string, value: null | string | boolean | number) => {
-                list = list.filter(({content}) => content[field] === value);
+                list = list.filter(e => fieldValue(e, field) === value);
                 return builder;
             },
             valueIn: (field: string, values: Array<null | string | boolean | number>) => {
-                list = list.filter(({content}) => values.indexOf(content[field]) >= 0);
+                list = list.filter(e => values.indexOf(fieldValue(e, field)) >= 0);
                 return builder;
             },
         };

@@ -42,7 +42,7 @@ describe("server page resolver bundle", () => {
             };
 
             return context.dataService("resolvedPage", requestContext).then((data: ResolvedPageData) => {
-                expect(data).to.have.keys(["site", "page", "route", "found"]);
+                expect(data).to.have.keys(["loading", "site", "page", "route", "found"]);
                 expect(data.found).to.equal(true);
                 expect(data.site.entity.id).to.equal(1);
                 expect(data.page.entity.id).to.equal(11);
@@ -58,7 +58,7 @@ describe("server page resolver bundle", () => {
             };
 
             return context.dataService("resolvedPage", requestContext).then((store: ResolvedPageData) => {
-                expect(store).to.have.keys(["site", "page", "route", "found"]);
+                expect(store).to.have.keys(["loading", "site", "page", "route", "found"]);
                 expect(store.found).to.equal(true);
                 expect(store.site.entity.id).to.equal(1);
                 expect(store.page.entity.id).to.equal(12);
@@ -74,7 +74,7 @@ describe("server page resolver bundle", () => {
             };
 
             return context.dataService("resolvedPage", requestContext).then((store: ResolvedPageData) => {
-                expect(store).to.have.keys(["site", "page", "route", "found"]);
+                expect(store).to.have.keys(["loading", "site", "page", "route", "found"]);
                 expect(store.found).to.equal(true);
                 expect(store.site.entity.id).to.equal(1);
                 expect(store.page.entity.id).to.equal(121);
@@ -90,7 +90,7 @@ describe("server page resolver bundle", () => {
             };
 
             return context.dataService("resolvedPage", requestContext).then((store: ResolvedPageData) => {
-                expect(store).to.have.keys(["site", "page", "route", "found"]);
+                expect(store).to.have.keys(["loading", "site", "page", "route", "found"]);
                 expect(store.found).to.equal(false);
                 expect(store.site.entity.id).to.equal(1);
                 expect(store.page.entity.id).to.equal(13);
@@ -120,7 +120,7 @@ describe("server page resolver bundle", () => {
             };
 
             return declaredStores.resolvedPage(requestContext).then((store: ResolvedPageData) => {
-                expect(store).to.have.keys(["site", "page", "route", "found"]);
+                expect(store).to.have.keys(["loading", "site", "page", "route", "found"]);
                 expect(store.found).to.equal(true);
                 expect(store.site._id).to.equal(1);
                 expect(store.page._id).to.equal(11);
@@ -138,7 +138,7 @@ describe("server page resolver bundle", () => {
             };
 
             return declaredStores.resolvedPage(requestContext).then((store: ResolvedPageData) => {
-                expect(store).to.have.keys(["site", "page", "route", "found"]);
+                expect(store).to.have.keys(["loading", "site", "page", "route", "found"]);
                 expect(store.found).to.equal(true);
                 expect(store.site._id).to.equal(1);
                 expect(store.page._id).to.equal(12);
@@ -156,7 +156,7 @@ describe("server page resolver bundle", () => {
             };
 
             return declaredStores.resolvedPage(requestContext).then((store: ResolvedPageData) => {
-                expect(store).to.have.keys(["site", "page", "route", "found"]);
+                expect(store).to.have.keys(["loading", "site", "page", "route", "found"]);
                 expect(store.found).to.equal(true);
                 expect(store.site._id).to.equal(1);
                 expect(store.page._id).to.equal(121);
@@ -174,7 +174,7 @@ describe("server page resolver bundle", () => {
             };
 
             return declaredStores.resolvedPage(requestContext).then((store: ResolvedPageData) => {
-                expect(store).to.have.keys(["site", "page", "route", "found"]);
+                expect(store).to.have.keys(["loading", "site", "page", "route", "found"]);
                 expect(store.found).to.equal(false);
                 expect(store.site._id).to.equal(1);
                 expect(store.page._id).to.equal(13);
