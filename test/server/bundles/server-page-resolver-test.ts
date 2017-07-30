@@ -5,14 +5,14 @@ import {TypeManager} from "../../../src/common/types/type-manager";
 import {TypeManagerBuilder} from "../../../src/common/types/type-manager-builder";
 import {ServerContext} from "../../../src/server/app/server-context";
 import {
-    ResolvedPageData,
     ServerPageResolverBundle,
-    ServerPageResolverBundleStores
+    ServerPageResolverBundleStores,
 } from "../../../src/server/bundles/page-resolver/server-page-resolver-bundle";
 import {createFixtureServerContext} from "../utils/fixture-server-context";
 import {fixtures} from "./site-fixtures";
 import {RenderingCache} from "../../../src/server/orm/cache";
 import {ServerRequestContext} from "../../../src/server/bundles/server-bundle";
+import {ResolvedPageData} from "../../../src/common/bundles/page-resolver/resolved-page-data";
 
 describe("server page resolver bundle", () => {
     let context: ServerContext;

@@ -1,14 +1,14 @@
 import * as Promise from "bluebird";
+import {ResolvedPageData} from "../../../common/bundles/page-resolver/resolved-page-data";
 import {CacheEntity, RenderingCache} from "../../orm/cache";
 import {ServerRequestContext} from "../server-bundle";
-import {ResolvedPageData} from "./server-page-resolver-bundle";
 
 export function resolvePage(context: ServerRequestContext): Promise<ResolvedPageData> {
 
     const match = context.req.url.match(/http(s)?:\/\/([^/:]+)(?::([0-9]+))?([^?]*)/);
 
     if (!match) {
-        return Promise.resolve({site: null, page: null, route: [], found: false});
+        return Promise.resolve({loading: false, site: null, page: null, route: [], found: false});
     }
 
     const isHttps = !!match[1];
@@ -19,6 +19,7 @@ export function resolvePage(context: ServerRequestContext): Promise<ResolvedPage
 
     const store: ResolvedPageData = {
         found: false,
+        loading: false,
         page: null,
         route: [],
         site: null,

@@ -1,13 +1,7 @@
 import * as Promise from "bluebird";
+import {ResolvedPageData} from "../../../common/bundles/page-resolver/resolved-page-data";
 import {ServerBundle, ServerBundleDataInitMap, ServerRequestContext} from "../server-bundle";
 import {resolvePage} from "./resolve-page";
-
-export interface ResolvedPageData {
-    site: null | any;
-    page: null | any;
-    route: any[];
-    found: boolean;
-}
 
 export interface ServerPageResolverBundleStores extends ServerBundleDataInitMap {
     resolvedPage: (context: ServerRequestContext) => Promise<ResolvedPageData>;
@@ -29,6 +23,7 @@ export class ServerPageResolverBundle extends ServerBundle {
             resolvedPage: (context: ServerRequestContext) => context.dataService("resolvedPage")
                 .then((data: ResolvedPageData) => Promise.resolve({
                     found: data.found,
+                    loading: false,
                     page: data.page && data.page.proxy,
                     route: data.route.map(({proxy}) => proxy),
                     site: data.site && data.site.proxy,

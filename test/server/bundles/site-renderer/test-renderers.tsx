@@ -1,7 +1,7 @@
 import {inject} from "mobx-react";
 import * as React from "react";
+import {ResolvedPageData} from "../../../../src/common/bundles/page-resolver/resolved-page-data";
 import {TemplateRenderer} from "../../../../src/server/bundles/basic-renderer-resolver/basic-renderer-resolver-bundle";
-import {ResolvedPageData} from "../../../../src/server/bundles/page-resolver/server-page-resolver-bundle";
 
 export function R1() {
     return <div>Hello world</div>;
