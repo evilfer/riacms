@@ -5,24 +5,37 @@ import {ServerRequestContext} from "../server-bundle";
 
 export function resolvePage(context: ServerRequestContext): Promise<ResolvedPageData> {
 
-    const match = context.req.url.match(/http(s)?:\/\/([^/:]+)(?::([0-9]+))?([^?]*)/);
+    const match = context.req.url.match(/http(s)?:\/\/([^/:]+)(?::([0-9]+))?([^?]*?)(?:\/_(staging|admin))?$/);
 
     if (!match) {
-        return Promise.resolve({loading: false, site: null, page: null, route: [], found: false});
+        return Promise.resolve({
+            admin: false,
+            found: false,
+            level: context.cache.getLevel(),
+            loading: false,
+            page: null,
+            route: [],
+            site: null,
+            ssl: false,
+        });
     }
 
-    const isHttps = !!match[1];
+    const ssl = !!match[1];
     const hostName = match[2];
     const port = parseInt(match[3] || "80", 10);
     const trimmedPath = match[4].replace(/(^\/)|(\/$)/g, "");
+    const suffix = match[5];
     const path = trimmedPath && trimmedPath.split("/") || null;
 
     const store: ResolvedPageData = {
+        admin: suffix === "admin",
         found: false,
+        level: context.cache.getLevel(),
         loading: false,
         page: null,
         route: [],
         site: null,
+        ssl,
     };
 
     return findSite(context.cache, hostName, port)

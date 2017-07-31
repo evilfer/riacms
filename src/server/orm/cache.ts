@@ -33,6 +33,10 @@ export class RenderingCache {
         return this.level;
     }
 
+    public setLevel(level: number) {
+        this.level = level;
+    }
+
     public getFields(type: string): TypeField[] {
         return this.types.getFields(type);
     }

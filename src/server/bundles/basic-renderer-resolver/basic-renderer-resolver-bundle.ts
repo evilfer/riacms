@@ -4,16 +4,19 @@ import {ResolvedPageData} from "../../../common/bundles/page-resolver/resolved-p
 import {TypeManagerBuilder} from "../../../common/types/type-manager-builder";
 import {ServerBundle, ServerBundleDataInit, ServerBundleDataInitMap, ServerRequestContext} from "../server-bundle";
 
-export type TemplateRenderer = Component<{}, undefined> | (() => JSX.Element) | IWrappedComponent<any>;
+export interface Template {
+    component: Component<{}, undefined> | (() => JSX.Element) | IWrappedComponent<any>;
+    options: { [name: string]: any };
+}
 
 export class BasicRendererResolverBundle extends ServerBundle {
-    private renderers: { [name: string]: TemplateRenderer };
+    private renderers: { [name: string]: Template };
 
     public getName(): string {
         return "basicRendererResolver";
     }
 
-    public setRenderers(renderers: { [name: string]: TemplateRenderer }) {
+    public setRenderers(renderers: { [name: string]: Template }) {
         this.renderers = renderers;
     }
 

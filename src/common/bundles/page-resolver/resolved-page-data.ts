@@ -4,4 +4,7 @@ export interface ResolvedPageData {
     route: any[];
     found: boolean;
     loading: boolean;
+    admin: boolean;
+    level: number;
+    ssl: boolean;
 }

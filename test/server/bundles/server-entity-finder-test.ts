@@ -74,8 +74,8 @@ describe("server entity finder bundle", () => {
                 store.find("sites", {});
             } catch (e) {
                 return (e as EntityFinderError).loadData(cache)
-                    .then(result => {
-                        expect(result).to.be.true;
+                    .then(loadError => {
+                        expect(loadError).to.be.null;
                         let sites: any = null;
                         expect(() => sites = store.find("sites", {})).not.to.throw();
                         expect(sites).not.to.be.null;

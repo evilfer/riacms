@@ -42,10 +42,30 @@ describe("server page resolver bundle", () => {
             };
 
             return context.dataService("resolvedPage", requestContext).then((data: ResolvedPageData) => {
-                expect(data).to.have.keys(["loading", "site", "page", "route", "found"]);
+                expect(data).to.have.keys(["admin", "level", "loading", "site", "page", "route", "found", "ssl"]);
                 expect(data.found).to.equal(true);
                 expect(data.site.entity.id).to.equal(1);
                 expect(data.page.entity.id).to.equal(11);
+                expect(data.admin).to.be.false;
+                expect(data.level).to.equal(0);
+            });
+        });
+
+        it('should resolve home page by host name/port in admin mode', () => {
+            const requestContext: ServerRequestContext = {
+                cache,
+                dataService: name => context.dataService(name, requestContext),
+                level: 0,
+                req: {url: "http://host1:1000/_admin"},
+            };
+
+            return context.dataService("resolvedPage", requestContext).then((data: ResolvedPageData) => {
+                expect(data).to.have.keys(["admin", "level", "loading", "site", "page", "route", "found", "ssl"]);
+                expect(data.found).to.equal(true);
+                expect(data.site.entity.id).to.equal(1);
+                expect(data.page.entity.id).to.equal(11);
+                expect(data.admin).to.be.true;
+                expect(data.level).to.equal(0);
             });
         });
 
@@ -58,7 +78,21 @@ describe("server page resolver bundle", () => {
             };
 
             return context.dataService("resolvedPage", requestContext).then((store: ResolvedPageData) => {
-                expect(store).to.have.keys(["loading", "site", "page", "route", "found"]);
+                expect(store.found).to.equal(true);
+                expect(store.site.entity.id).to.equal(1);
+                expect(store.page.entity.id).to.equal(12);
+            });
+        });
+
+        it('should ignore _staging suffix', () => {
+            const requestContext: ServerRequestContext = {
+                cache,
+                dataService: name => context.dataService(name, requestContext),
+                level: 0,
+                req: {url: "http://host1:1000/about/_staging"},
+            };
+
+            return context.dataService("resolvedPage", requestContext).then((store: ResolvedPageData) => {
                 expect(store.found).to.equal(true);
                 expect(store.site.entity.id).to.equal(1);
                 expect(store.page.entity.id).to.equal(12);
@@ -74,7 +108,6 @@ describe("server page resolver bundle", () => {
             };
 
             return context.dataService("resolvedPage", requestContext).then((store: ResolvedPageData) => {
-                expect(store).to.have.keys(["loading", "site", "page", "route", "found"]);
                 expect(store.found).to.equal(true);
                 expect(store.site.entity.id).to.equal(1);
                 expect(store.page.entity.id).to.equal(121);
@@ -90,7 +123,6 @@ describe("server page resolver bundle", () => {
             };
 
             return context.dataService("resolvedPage", requestContext).then((store: ResolvedPageData) => {
-                expect(store).to.have.keys(["loading", "site", "page", "route", "found"]);
                 expect(store.found).to.equal(false);
                 expect(store.site.entity.id).to.equal(1);
                 expect(store.page.entity.id).to.equal(13);
@@ -120,7 +152,6 @@ describe("server page resolver bundle", () => {
             };
 
             return declaredStores.resolvedPage(requestContext).then((store: ResolvedPageData) => {
-                expect(store).to.have.keys(["loading", "site", "page", "route", "found"]);
                 expect(store.found).to.equal(true);
                 expect(store.site._id).to.equal(1);
                 expect(store.page._id).to.equal(11);
@@ -138,7 +169,6 @@ describe("server page resolver bundle", () => {
             };
 
             return declaredStores.resolvedPage(requestContext).then((store: ResolvedPageData) => {
-                expect(store).to.have.keys(["loading", "site", "page", "route", "found"]);
                 expect(store.found).to.equal(true);
                 expect(store.site._id).to.equal(1);
                 expect(store.page._id).to.equal(12);
@@ -156,7 +186,6 @@ describe("server page resolver bundle", () => {
             };
 
             return declaredStores.resolvedPage(requestContext).then((store: ResolvedPageData) => {
-                expect(store).to.have.keys(["loading", "site", "page", "route", "found"]);
                 expect(store.found).to.equal(true);
                 expect(store.site._id).to.equal(1);
                 expect(store.page._id).to.equal(121);
@@ -174,7 +203,6 @@ describe("server page resolver bundle", () => {
             };
 
             return declaredStores.resolvedPage(requestContext).then((store: ResolvedPageData) => {
-                expect(store).to.have.keys(["loading", "site", "page", "route", "found"]);
                 expect(store.found).to.equal(false);
                 expect(store.site._id).to.equal(1);
                 expect(store.page._id).to.equal(13);

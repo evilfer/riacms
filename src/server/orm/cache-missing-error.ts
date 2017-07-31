@@ -10,8 +10,8 @@ export class CacheMissingError extends ServerDataError {
         this.ids = ids;
     }
 
-    public loadData(cache: RenderingCache): Promise<boolean> {
+    public loadData(cache: RenderingCache): Promise<null | Error> {
         return cache.loadEntities(this.ids)
-            .then(() => true);
+            .then(() => null);
     }
 }

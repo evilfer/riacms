@@ -1,12 +1,10 @@
 import * as Promise from "bluebird";
 import {Router} from "express";
-import {Bundle} from "../../common/bundles/bundle";
+import {Bundle, CmsRequest} from "../../common/bundles/bundle";
 import {ServerContext} from "../app/server-context";
 import {RenderingCache} from "../orm/cache";
 
-export interface ServerRequest {
-    url: string;
-}
+export type ServerRequest = CmsRequest;
 
 export interface ServerRequestContext {
     cache: RenderingCache;

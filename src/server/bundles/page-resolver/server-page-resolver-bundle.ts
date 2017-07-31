@@ -22,11 +22,14 @@ export class ServerPageResolverBundle extends ServerBundle {
         return {
             resolvedPage: (context: ServerRequestContext) => context.dataService("resolvedPage")
                 .then((data: ResolvedPageData) => Promise.resolve({
+                    admin: data.admin,
                     found: data.found,
+                    level: data.level,
                     loading: false,
                     page: data.page && data.page.proxy,
                     route: data.route.map(({proxy}) => proxy),
                     site: data.site && data.site.proxy,
+                    ssl: data.ssl,
                 })),
         };
     }

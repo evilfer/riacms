@@ -19,12 +19,12 @@ export class EntityFinderError extends ServerDataError {
         this.queryCache = queryCache;
     }
 
-    public loadData(cache: RenderingCache): Promise<boolean> {
+    public loadData(cache: RenderingCache): Promise<null | Error> {
         return Object.keys(this.query).reduce((acc: CacheQueryBuilder, field) => {
             return acc.valueEquals(field, this.query[field]);
         }, cache.find()).run().then(cacheEntities => {
             this.queryCache[this.queryStr] = cacheEntities.map(ce => ce.proxy);
-            return true;
+            return null;
         });
     }
 }

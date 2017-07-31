@@ -1,8 +1,9 @@
 import {NextFunction, Request, Response, Router} from "express";
+import {requestLevel} from "../../../common/bundles/page-resolver/request-level";
 import {RenderingCache} from "../../orm/cache";
 import {BasicServerRequestContext} from "../basic-server-request-context";
 import {ServerBundle} from "../server-bundle";
-import {renderPage} from "./render-page";
+import {resolveRendererAndRenderPage} from "./render-page";
 
 export class SiteRendererServerBundle extends ServerBundle {
     public getName(): string {
@@ -13,11 +14,11 @@ export class SiteRendererServerBundle extends ServerBundle {
         const router: Router = Router();
 
         router.get("*", (req: Request, res: Response, next: NextFunction) => {
-            const level = 0;
+            const level = requestLevel(req);
             const cache = new RenderingCache(this.serverContext.types, this.serverContext.db, level);
             const requestContext = new BasicServerRequestContext(this.serverContext, cache, level, req);
 
-            renderPage(this.serverContext, requestContext).then(({err, stream}) => {
+            resolveRendererAndRenderPage(this.serverContext, requestContext).then(({err, stream}) => {
                 if (err) {
                     next(err);
                 } else if (stream) {

@@ -11,7 +11,7 @@ import {default as applyTestTypes, fixtures} from "./site-fixtures";
 import {RenderingCache} from "../../../../src/server/orm/cache";
 import {ServerBundle, ServerRequestContext} from "../../../../src/server/bundles/server-bundle";
 import {BasicRendererResolverBundle} from "../../../../src/server/bundles/basic-renderer-resolver/basic-renderer-resolver-bundle";
-import {renderPage} from "../../../../src/server/bundles/site-renderer/render-page";
+import {resolveRendererAndRenderPage} from "../../../../src/server/bundles/site-renderer/render-page";
 import renderers from "./test-renderers";
 
 
@@ -27,7 +27,7 @@ describe("page renderer", () => {
             req: {url},
         };
 
-        return renderPage(context, requestContext)
+        return resolveRendererAndRenderPage(context, requestContext)
             .then(({err, stream}) => {
                 if (stream !== null) {
                     return new Promise((resolve) => {
@@ -74,7 +74,7 @@ describe("page renderer", () => {
         return renderUrl("http://host1:1000")
             .then(({err, html}) => {
                 expect(err).to.be.null;
-                expect(html).to.equal("<div>Hello world</div>");
+                expect(html).to.contain("<div>Hello world</div>");
             });
     });
 

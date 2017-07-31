@@ -1,64 +1,40 @@
 import * as Promise from "bluebird";
-import {useStrict} from "mobx";
-import {Provider} from "mobx-react";
 import * as React from "react";
-import {renderToString} from "react-dom/server";
 import {Readable} from "stream";
 import {ServerContext} from "../../app/server-context";
-import {RenderingCache} from "../../orm/cache";
-import {ServerDataError} from "../../server-data-error";
+import {Template} from "../basic-renderer-resolver/basic-renderer-resolver-bundle";
 import {ServerRequestContext} from "../server-bundle";
-
-useStrict(true);
+import {renderHtmlTemplate} from "./render-html";
 
 export interface RenderPageResult {
     err: null | Error;
     stream: null | Readable;
 }
 
-function tryToRender(cache: RenderingCache,
-                     storeMap: { [name: string]: any },
-                     Renderer: any): Promise<{ err: null | Error, html: null | string }> {
-    try {
-        const element = (
-            <Provider {...storeMap}>
-                <Renderer/>
-            </Provider>
-        );
+export function renderPage(serverContext: ServerContext,
+                           requestContext: ServerRequestContext,
+                           Renderer: Template): Promise<RenderPageResult> {
+    if (Renderer !== null) {
+        return serverContext.instantiateStores(requestContext)
+            .then(storeMap => renderHtmlTemplate(requestContext.cache, storeMap, Renderer))
+            .then(({err, html}) => {
+                if (html !== null) {
+                    const stream: Readable = new Readable();
+                    stream.push(html);
+                    stream.push(null);
 
-        const html = renderToString(element);
-        return Promise.resolve({err: null, html});
-    } catch (e) {
-        if (e instanceof ServerDataError) {
-            return (e as ServerDataError).loadData(cache)
-                .then(() => tryToRender(cache, storeMap, Renderer));
-        } else {
-            return Promise.resolve({err: e, html: null});
-        }
+                    return {err: null, stream};
+                } else {
+                    return {err, stream: null};
+                }
+            });
+    } else {
+        return Promise.resolve({err: new Error("No renderer"), stream: null});
     }
 }
 
-export function renderPage(serverContext: ServerContext,
-                           requestContext: ServerRequestContext): Promise<RenderPageResult> {
-
+export function resolveRendererAndRenderPage(serverContext: ServerContext,
+                                             requestContext: ServerRequestContext): Promise<RenderPageResult> {
     return requestContext.dataService("resolvedRenderer")
-        .then((Renderer: any) => {
-            if (Renderer !== null) {
-                return serverContext.instantiateStores(requestContext)
-                    .then(storeMap => tryToRender(requestContext.cache, storeMap, Renderer))
-                    .then(({err, html}) => {
-                        if (html !== null) {
-                            const stream: Readable = new Readable();
-                            stream.push(html);
-                            stream.push(null);
-
-                            return {err: null, stream} as RenderPageResult;
-                        } else {
-                            return {err, stream: null};
-                        }
-                    });
-            } else {
-                return {err: new Error("No renderer"), stream: null} as RenderPageResult;
-            }
-        });
+        .then((Renderer: Template) => renderPage(serverContext, requestContext, Renderer));
 }
