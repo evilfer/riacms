@@ -7,10 +7,22 @@ export class SiteTypesBundle extends Bundle {
     }
 
     public applyTypes(typeBuilder: TypeManagerBuilder): void {
-        typeBuilder.createAbstractType("site_tree_parent", [{
-            inverseField: "parents",
-            name: "children",
+        typeBuilder.createConcreteType("site_tree_link", [{
+            inverseField: "parentLinks",
+            name: "child",
             relatedType: "page",
+            type: "related",
+        }, {
+            inverseField: "childLinks",
+            name: "parent",
+            relatedType: "site_tree_parent",
+            type: "related",
+        }]);
+
+        typeBuilder.createAbstractType("site_tree_parent", [{
+            inverseField: "parent",
+            name: "childLinks",
+            relatedType: "site_tree_link",
             type: "related[]",
         }, {
             name: "name",
@@ -29,7 +41,7 @@ export class SiteTypesBundle extends Bundle {
         typeBuilder.typeInherits("site", "site_tree_parent");
 
         typeBuilder.createConcreteType("page", [
-            {name: "parents", type: "related[]", relatedType: "site_tree_parent", inverseField: "children"},
+            {name: "parentLinks", type: "related[]", relatedType: "site_tree_link", inverseField: "child"},
             {name: "paths", type: "string[]"},
         ]);
         typeBuilder.typeInherits("page", "site_tree_parent");

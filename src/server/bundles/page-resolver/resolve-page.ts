@@ -113,15 +113,19 @@ function findPath(cache: RenderingCache,
     }
 
     return cache.find()
-        .arrayContains("parents", parentId)
-        .arrayContains("paths", path[index])
+        .valueEquals("_type", "site_tree_link")
+        .valueEquals("parent", parentId)
         .run()
-        .then(([item]) => {
-            if (item) {
-                store.route.push(item);
-                return findPath(cache, store, path, index + 1, item.entity.id);
-            }
+        .then(links => cache.find()
+            .arrayContainsAny("parentLinks", links.map(link => link.entity.id))
+            .arrayContains("paths", path[index])
+            .run()
+            .then(([item]) => {
+                if (item) {
+                    store.route.push(item);
+                    return findPath(cache, store, path, index + 1, item.entity.id);
+                }
 
-            return false;
-        });
+                return false;
+            }));
 }

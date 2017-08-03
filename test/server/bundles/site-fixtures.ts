@@ -15,7 +15,7 @@ export const types: TypeManager = createTypes();
 export const fixtures: Entity[] = [
     {
         data: [{
-            children: [11, 12, 13],
+            childLinks: [10011, 10012, 10013],
             home: 11,
             host: "host1",
             name: "site1",
@@ -27,7 +27,7 @@ export const fixtures: Entity[] = [
     },
     {
         data: [{
-            children: [21, 22],
+            childLinks: [20021, 20022],
             home: 21,
             host: "*",
             name: "site2",
@@ -41,7 +41,7 @@ export const fixtures: Entity[] = [
         data: [{
             children: [],
             name: "page11",
-            parents: [1],
+            parentLinks: [10011],
             paths: ["home"],
         }],
         id: 11,
@@ -49,9 +49,9 @@ export const fixtures: Entity[] = [
     },
     {
         data: [{
-            children: [121],
+            childLinks: [120121],
             name: "page12",
-            parents: [1],
+            parentLinks: [10012],
             paths: ["about"],
         }],
         id: 12,
@@ -59,9 +59,9 @@ export const fixtures: Entity[] = [
     },
     {
         data: [{
-            children: [],
+            childLinks: [],
             name: "page13",
-            parents: [1],
+            parentLinks: [10013],
             paths: ["notfound"],
         }],
         id: 13,
@@ -69,9 +69,9 @@ export const fixtures: Entity[] = [
     },
     {
         data: [{
-            children: [],
+            childLinks: [],
             name: "page121",
-            parents: [12],
+            parentLinks: [120121],
             paths: ["ria"],
         }],
         id: 121,
@@ -79,9 +79,9 @@ export const fixtures: Entity[] = [
     },
     {
         data: [{
-            children: [],
+            childLinks: [],
             name: "page21",
-            parents: [2],
+            parentLinks: [20021],
             paths: ["home"],
         }],
         id: 21,
@@ -89,12 +89,60 @@ export const fixtures: Entity[] = [
     },
     {
         data: [{
-            children: [],
+            childLinks: [],
             name: "page22",
-            parents: [2],
+            parents: [20022],
             paths: ["about"],
         }],
         id: 22,
         type: "page",
+    },
+    {
+        data: [{
+            child: 11,
+            parent: 1,
+        }],
+        id: 10011,
+        type: "site_tree_link",
+    },
+    {
+        data: [{
+            child: 12,
+            parent: 1,
+        }],
+        id: 10012,
+        type: "site_tree_link",
+    },
+    {
+        data: [{
+            child: 13,
+            parent: 1,
+        }],
+        id: 10013,
+        type: "site_tree_link",
+    },
+    {
+        data: [{
+            child: 21,
+            parent: 2,
+        }],
+        id: 20021,
+        type: "site_tree_link",
+    },
+    {
+        data: [{
+            child: 22,
+            parent: 2,
+        }],
+        id: 20022,
+        type: "site_tree_link",
+    },
+    {
+        data: [{
+            child: 121,
+            parent: 12,
+        }],
+        id: 120121,
+        type: "site_tree_link",
     },
 ];

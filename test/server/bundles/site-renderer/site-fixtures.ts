@@ -10,7 +10,7 @@ export default function applyTestTypes(builder: TypeManagerBuilder) {
 export const fixtures: Entity[] = [
     {
         data: [{
-            children: [11],
+            childLinks: [10011],
             home: 11,
             host: "host1",
             name: "site1",
@@ -23,7 +23,7 @@ export const fixtures: Entity[] = [
     },
     {
         data: [{
-            children: [21, 22],
+            childLinks: [20021, 20022],
             home: 21,
             host: "*",
             name: "site2",
@@ -36,9 +36,9 @@ export const fixtures: Entity[] = [
     },
     {
         data: [{
-            children: [],
+            childLinks: [],
             name: "page11",
-            parents: [1],
+            parentLinks: [10011],
             paths: ["home"],
         }],
         id: 11,
@@ -46,9 +46,9 @@ export const fixtures: Entity[] = [
     },
     {
         data: [{
-            children: [],
+            childLinks: [],
             name: "page21",
-            parents: [2],
+            parentLinks: [20021],
             paths: ["home"],
             relatedPage: null,
         }],
@@ -57,13 +57,37 @@ export const fixtures: Entity[] = [
     },
     {
         data: [{
-            children: [],
+            childLinks: [],
             name: "page22",
-            parents: [2],
+            parentLinks: [20022],
             paths: ["about"],
             relatedPage: 21,
         }],
         id: 22,
         type: "page",
+    },
+    {
+        data: [{
+            child: 11,
+            parent: 1,
+        }],
+        id: 10011,
+        type: "site_tree_link",
+    },
+    {
+        data: [{
+            child: 21,
+            parent: 2,
+        }],
+        id: 20021,
+        type: "site_tree_link",
+    },
+    {
+        data: [{
+            child: 22,
+            parent: 2,
+        }],
+        id: 20022,
+        type: "site_tree_link",
     },
 ];
