@@ -63,24 +63,12 @@ export class PgJsonQueryBuilder implements EntityQueryBuilder {
                 condition += `(version.data -> ${pgFieldPath.join(" -> ")} ${relValueStr}`;
 
                 if (i > 0) {
-                    const hasNot: string[] = [];
-                    for (let j = 0; j < pgFieldPath.length; j++) {
-                        hasNot.push("version.data" + pgFieldPath.slice(0, j + 1).map((item, k) => k < j ?
-                            ` -> ${item}` :
-                            ` ? ${item.match(/^'/) ? item : `'${item}'`}`).join(""));
-                    }
-
-                    const pgHasFieldPath = hasNot.join(" AND ");
-
-                    condition += ` OR (NOT(${pgHasFieldPath}) AND `;
+                    const hasKey = `version.data ? '${i}' AND version.data -> ${i} ? ${pgFieldPath[1]}`;
+                    condition += ` OR (NOT(${hasKey}) AND `;
                 }
             }
 
-            // 0 -> 1
-            // 1 -> 3
-            for (let i = this.level * 2; i >= 0; i--) {
-                condition += ")";
-            }
+            condition += ")".repeat(this.level * 2 + 1);
 
             this.conditions.push(condition);
         }
