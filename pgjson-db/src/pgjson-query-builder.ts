@@ -25,7 +25,6 @@ export class PgJsonQueryBuilder implements EntityQueryBuilder {
 
     public run(): Promise<Entity[]> {
         const query: string = FIND_QUERY_BASE + this.conditions.join(" AND ");
-        console.log(query, this.values);
         return entityQueryAsPromise(this.client, query, this.values);
     }
 
@@ -54,7 +53,36 @@ export class PgJsonQueryBuilder implements EntityQueryBuilder {
         if (mdMatch) {
             this.conditions.push(`entity.${mdMatch[1]} ${relValueStr}`);
         } else {
-            this.conditions.push(`version.data[0]->${field} ${relValueStr}`);
+            let condition = "";
+
+            for (let i = this.level; i >= 0; i--) {
+                const pgFieldPath = `${i}.${field}`
+                    .split(".")
+                    .map(part => part.match(/^[0-9]+$/) ? part : `'${part}'`);
+
+                condition += `(version.data -> ${pgFieldPath.join(" -> ")} ${relValueStr}`;
+
+                if (i > 0) {
+                    const hasNot: string[] = [];
+                    for (let j = 0; j < pgFieldPath.length; j++) {
+                        hasNot.push("version.data" + pgFieldPath.slice(0, j + 1).map((item, k) => k < j ?
+                            ` -> ${item}` :
+                            ` ? ${item.match(/^'/) ? item : `'${item}'`}`).join(""));
+                    }
+
+                    const pgHasFieldPath = hasNot.join(" AND ");
+
+                    condition += ` OR (NOT(${pgHasFieldPath}) AND `;
+                }
+            }
+
+            // 0 -> 1
+            // 1 -> 3
+            for (let i = this.level * 2; i >= 0; i--) {
+                condition += ")";
+            }
+
+            this.conditions.push(condition);
         }
     }
 }

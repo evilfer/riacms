@@ -69,5 +69,43 @@ describe("db", () => {
                     expect(entities.map(entity => entity.id)).to.deep.eq(t1fixtureIds);
                 });
         });
+
+        it("should find entity by content value", () => {
+            const matchingfixtureIds = ids.filter((id, i) => fixtures[i].data[0].a === 1);
+
+            return db.find(0)
+                .valueEquals("a", 1)
+                .run()
+                .then(entities => {
+                    expect(entities.map(entity => entity.id)).to.deep.eq(matchingfixtureIds);
+                });
+        });
+
+        it("should ignore level 1 fields when requesting level 0", () => {
+            return db.find(0)
+                .valueEquals("a", 10)
+                .run()
+                .then(entities => {
+                    expect(entities).to.have.length(0);
+                });
+        });
+
+        it("should use level 1 fields when requested", () => {
+            return db.find(1)
+                .valueEquals("a", 10)
+                .run()
+                .then(entities => {
+                    expect(entities).to.have.length(1);
+                });
+        });
+
+        it("should use level 0 fields when higher level requested but not present", () => {
+            return db.find(1)
+                .valueEquals("a", 3)
+                .run()
+                .then(entities => {
+                    expect(entities).to.have.length(3);
+                });
+        });
     });
 });
