@@ -4,7 +4,7 @@ import {TypeField} from "../../common/types/types";
 import {Entity, EntityContent, getEntityContent} from "../entity/entity";
 import {CacheMissingError} from "./cache-missing-error";
 import {CacheQueryBuilder} from "./cache-query-builder";
-import {EntityDb} from "./entity-db";
+import {EntityReadDb} from "./entity-db";
 import {createEntityProxy} from "./proxy";
 
 export interface CacheEntity {
@@ -16,12 +16,12 @@ export interface CacheEntity {
 
 export class RenderingCache {
     private level: number;
-    private db: EntityDb;
+    private db: EntityReadDb;
     private entities: { [id: number]: CacheEntity };
     private missing: number[];
     private types: TypeManager;
 
-    constructor(types: TypeManager, db: EntityDb, level = 0) {
+    constructor(types: TypeManager, db: EntityReadDb, level = 0) {
         this.level = level;
         this.types = types;
         this.db = db;

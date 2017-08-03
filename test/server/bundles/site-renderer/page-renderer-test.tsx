@@ -87,7 +87,7 @@ describe("page renderer", () => {
             });
     });
 
-    it('should render page/sited data in template with related assets', () => {
+    it('should render page/sited data in template with related entities', () => {
         return renderUrl("http://host2/about")
             .then(({err, html}) => {
                 expect(err).to.be.null;

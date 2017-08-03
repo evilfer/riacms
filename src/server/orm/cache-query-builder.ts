@@ -1,13 +1,13 @@
 import * as Promise from "bluebird";
 import {CacheEntity, RenderingCache} from "./cache";
-import {EntityDb, EntityQueryBuilder, QueryBuilder} from "./entity-db";
+import {EntityQueryBuilder, EntityReadDb, QueryBuilder} from "./entity-db";
 
-export class CacheQueryBuilder implements QueryBuilder {
-    private db: EntityDb;
+export class CacheQueryBuilder implements QueryBuilder<CacheQueryBuilder> {
+    private db: EntityReadDb;
     private query: EntityQueryBuilder;
     private cache: RenderingCache;
 
-    constructor(cache: RenderingCache, db: EntityDb, level: number) {
+    constructor(cache: RenderingCache, db: EntityReadDb, level: number) {
         this.cache = cache;
         this.db = db;
         this.query = db.find(level);

@@ -4,7 +4,7 @@ import {TypeManager} from "../../../src/common/types/type-manager";
 import {InstantiateStores, ServerContext} from "../../../src/server/app/server-context";
 import {ServerBundle, ServerBundleDataInitMap, ServerRequestContext} from "../../../src/server/bundles/server-bundle";
 import {Entity, EntityContent, getEntityContent} from "../../../src/server/entity/entity";
-import {EntityDb, EntityQueryBuilder} from "../../../src/server/orm/entity-db";
+import {EntityReadDb, EntityQueryBuilder} from "../../../src/server/orm/entity-db";
 
 export function createFixtureServerContext(bundles: ServerBundle[],
                                            types: TypeManager,
@@ -49,7 +49,7 @@ export function createFixtureServerContext(bundles: ServerBundle[],
         return builder;
     };
 
-    const db: EntityDb = {
+    const db: EntityReadDb = {
         find,
         load: id => Promise.resolve(fixtureMap[id]),
         loadMultiple: ids => Promise.resolve(ids.map(id => fixtureMap[id])),

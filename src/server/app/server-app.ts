@@ -9,19 +9,19 @@ import {
     ServerBundleDataInitMap,
     ServerRequestContext,
 } from "../bundles/server-bundle";
-import {EntityDb} from "../orm/entity-db";
+import {EntityReadDb} from "../orm/entity-db";
 import {createExpressApp} from "./express-app";
 import {ServerContext} from "./server-context";
 
 export class CmsServerApp extends CmsApp {
     private serverBundles: ServerBundle[];
     private app: Express;
-    private db: EntityDb;
+    private db: EntityReadDb;
     private context: ServerContext;
     private declaredDataServices: ServerBundleDataInitMap;
     private declaredStores: Array<{ name: string, init: ServerBundleDataInit }>;
 
-    public constructor(bundles: Bundle[], db: EntityDb) {
+    public constructor(bundles: Bundle[], db: EntityReadDb) {
         super(bundles);
 
         this.db = db;
