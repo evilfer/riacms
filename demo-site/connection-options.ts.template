@@ -1,0 +1,10 @@
+import {ConnectionConfig} from "pg";
+
+const CONNECTION_OPTIONS: ConnectionConfig = {
+    database: "",
+    host: "",
+    password: "",
+    user: "",
+};
+
+export default CONNECTION_OPTIONS;

@@ -11,6 +11,7 @@ import {
 } from "../bundles/server-bundle";
 import {EntityReadDb} from "../orm/entity-db";
 import {createExpressApp} from "./express-app";
+import {listen} from "./listen";
 import {ServerContext} from "./server-context";
 
 export class CmsServerApp extends CmsApp {
@@ -36,9 +37,13 @@ export class CmsServerApp extends CmsApp {
         this.prepareApp();
     }
 
+    public launch(port: number) {
+        listen(this.app, port);
+    }
+
     private prepareDataServices(): void {
         this.declaredDataServices = this.serverBundles.reduce((acc, bundle) => {
-            const services = bundle.declareRenderingStores();
+            const services = bundle.declareRequestDataServices();
             extend(acc, services);
             return acc;
         }, {} as ServerBundleDataInitMap);
