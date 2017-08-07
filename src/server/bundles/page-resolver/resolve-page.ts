@@ -1,79 +1,80 @@
 import * as Promise from "bluebird";
+import {LocationData} from "../../../common/bundles/location/location-data";
 import {ResolvedPageData} from "../../../common/bundles/page-resolver/resolved-page-data";
 import {CacheEntity, RenderingCache} from "../../orm/cache";
 import {ServerRequestContext} from "../server-bundle";
 
 export function resolvePage(context: ServerRequestContext): Promise<ResolvedPageData> {
+    return context.dataService("location")
+        .then((location: LocationData) => {
+            const match = location.path.match(/^([^?]*?)(?:\/_(staging|admin))?$/);
 
-    const match = context.req.url.match(/http(s)?:\/\/([^/:]+)(?::([0-9]+))?([^?]*?)(?:\/_(staging|admin))?$/);
+            if (!location.hostname || match === null) {
+                return Promise.resolve({
+                    admin: false,
+                    found: false,
+                    level: context.cache.getLevel(),
+                    loading: false,
+                    page: null,
+                    route: [],
+                    site: null,
+                    ssl: false,
+                });
+            }
 
-    if (!match) {
-        return Promise.resolve({
-            admin: false,
-            found: false,
-            level: context.cache.getLevel(),
-            loading: false,
-            page: null,
-            route: [],
-            site: null,
-            ssl: false,
-        });
-    }
+            const path: null | string[] = match[1].length > 0 ?
+                match[1].replace(/(^\/)|(\/$)/g, "").split("/") :
+                null;
 
-    const ssl = !!match[1];
-    const hostName = match[2];
-    const port = parseInt(match[3] || "80", 10);
-    const trimmedPath = match[4].replace(/(^\/)|(\/$)/g, "");
-    const suffix = match[5];
-    const path = trimmedPath && trimmedPath.split("/") || null;
+            const suffix: string = match[2];
 
-    const store: ResolvedPageData = {
-        admin: suffix === "admin",
-        found: false,
-        level: context.cache.getLevel(),
-        loading: false,
-        page: null,
-        route: [],
-        site: null,
-        ssl,
-    };
+            const store: ResolvedPageData = {
+                admin: suffix === "admin",
+                found: false,
+                level: context.cache.getLevel(),
+                loading: false,
+                page: null,
+                route: [],
+                site: null,
+                ssl: location.protocol === "https",
+            };
 
-    return findSite(context.cache, hostName, port)
-        .then(site => {
-            if (site) {
-                store.site = site;
+            return findSite(context.cache, location.hostname, location.port)
+                .then(site => {
+                    if (site) {
+                        store.site = site;
 
-                if (!path) {
-                    if (site.content.home) {
-                        return context.cache.loadEntity(site.content.home as number)
-                            .then(page => {
-                                store.page = page;
-                                store.found = true;
-                            });
-                    } else if (site.content.notFound) {
-                        return context.cache.loadEntity(site.content.notFound as number)
-                            .then(page => {
-                                store.page = page;
-                            });
-                    }
-                } else {
-                    return findPath(context.cache, store, path, 0, site.entity.id)
-                        .then(found => {
-                            store.found = found;
-                            if (found) {
-                                store.page = store.route[store.route.length - 1];
+                        if (!path) {
+                            if (site.content.home) {
+                                return context.cache.loadEntity(site.content.home as number)
+                                    .then(page => {
+                                        store.page = page;
+                                        store.found = true;
+                                    });
                             } else if (site.content.notFound) {
                                 return context.cache.loadEntity(site.content.notFound as number)
                                     .then(page => {
                                         store.page = page;
                                     });
                             }
-                        });
-                }
-            }
-        })
-        .then(() => store);
-
+                        } else {
+                            return findPath(context.cache, store, path, 0, site.entity.id)
+                                .then(found => {
+                                    store.found = found;
+                                    if (found) {
+                                        store.page = store.route[store.route.length - 1];
+                                    } else if (site.content.notFound) {
+                                        return context.cache.loadEntity(site.content.notFound as number)
+                                            .then(page => {
+                                                store.page = page;
+                                            });
+                                    }
+                                });
+                        }
+                    }
+                })
+                .then(() => store);
+        });
 }
 
 function findSite(cache: RenderingCache, hostName: string, port: number): Promise<null | CacheEntity> {

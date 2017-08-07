@@ -13,6 +13,7 @@ import {ServerBundle, ServerRequestContext} from "../../../../src/server/bundles
 import {BasicRendererResolverBundle} from "../../../../src/server/bundles/basic-renderer-resolver/basic-renderer-resolver-bundle";
 import {resolveRendererAndRenderPage} from "../../../../src/server/bundles/site-renderer/render-page";
 import renderers from "./test-renderers";
+import {RequestLocationBundle} from "../../../../src/server/bundles/request-location/request-location-bundle";
 
 
 describe("page renderer", () => {
@@ -53,9 +54,10 @@ describe("page renderer", () => {
 
     beforeEach(() => {
         const typesBundle: SiteTypesBundle = new SiteTypesBundle();
+        const locationBundle = new RequestLocationBundle();
         const pageResolverBundle = new ServerPageResolverBundle();
         const rendererResolverBundle = new BasicRendererResolverBundle();
-        const bundles: ServerBundle[] = [pageResolverBundle, rendererResolverBundle];
+        const bundles: ServerBundle[] = [locationBundle, pageResolverBundle, rendererResolverBundle];
 
         rendererResolverBundle.setRenderers(renderers);
 

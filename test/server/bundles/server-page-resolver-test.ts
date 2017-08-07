@@ -13,6 +13,7 @@ import {fixtures} from "./site-fixtures";
 import {RenderingCache} from "../../../src/server/orm/cache";
 import {ServerRequestContext} from "../../../src/server/bundles/server-bundle";
 import {ResolvedPageData} from "../../../src/common/bundles/page-resolver/resolved-page-data";
+import {RequestLocationBundle} from "../../../src/server/bundles/request-location/request-location-bundle";
 
 describe("server page resolver bundle", () => {
     let context: ServerContext;
@@ -21,12 +22,13 @@ describe("server page resolver bundle", () => {
 
     beforeEach(() => {
         const typesBundle: SiteTypesBundle = new SiteTypesBundle();
+        const locationBundle = new RequestLocationBundle();
         bundle = new ServerPageResolverBundle();
 
         const builder: TypeManagerBuilder = new TypeManagerBuilder();
         typesBundle.applyTypes(builder);
         const types: TypeManager = builder.build();
-        context = createFixtureServerContext([bundle], types, fixtures);
+        context = createFixtureServerContext([locationBundle, bundle], types, fixtures);
         bundle.setServerContext(context);
         cache = new RenderingCache(types, context.db, 0);
     });
