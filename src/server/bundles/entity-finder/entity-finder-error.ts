@@ -1,7 +1,6 @@
 import * as Promise from "bluebird";
-import {ServerDataError} from "../../server-data-error";
 import {RenderingCache} from "../../orm/cache";
-import {CacheQueryBuilder} from "../../orm/cache-query-builder";
+import {ServerDataError} from "../../server-data-error";
 
 export class EntityFinderError extends ServerDataError {
     private query: { [field: string]: string | boolean | number };
@@ -20,11 +19,21 @@ export class EntityFinderError extends ServerDataError {
     }
 
     public loadData(cache: RenderingCache): Promise<null | Error> {
-        return Object.keys(this.query).reduce((acc: CacheQueryBuilder, field) => {
-            return acc.valueEquals(field, this.query[field]);
-        }, cache.find()).run().then(cacheEntities => {
-            this.queryCache[this.queryStr] = cacheEntities.map(ce => ce.proxy);
-            return null;
-        });
+        const entityType: string = this.query._type as string;
+
+        if (!entityType) {
+            return Promise.reject(new Error("no entity type"));
+        }
+
+        Object.keys(this.query);
+        const query = cache.find().implementsType(entityType);
+
+        return Object.keys(this.query)
+            .filter(key => key !== "_type")
+            .reduce((acc, key) => acc.valueEquals(entityType, key, this.query[key]), query)
+            .run().then(cacheEntities => {
+                this.queryCache[this.queryStr] = cacheEntities.map(ce => ce.proxy);
+                return null;
+            });
     }
 }

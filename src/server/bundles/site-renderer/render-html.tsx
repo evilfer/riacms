@@ -5,15 +5,16 @@ import * as React from "react";
 import {renderToString} from "react-dom/server";
 import {Helmet} from "react-helmet";
 import {ServerStyleSheet} from "styled-components";
+import {Template} from "../../../common/bundles/site-renderer/template";
 import {RenderingCache} from "../../orm/cache";
 import {ServerDataError} from "../../server-data-error";
-import {Template} from "../basic-renderer-resolver/basic-renderer-resolver-bundle";
 
 useStrict(true);
 
 export function renderHtmlTemplate(cache: RenderingCache,
                                    storeMap: { [name: string]: any },
                                    template: Template): Promise<{ err: null | Error, html: null | string }> {
+    console.log("  trying...");
     try {
         const Component: any = template.component;
         const element = (
@@ -50,6 +51,7 @@ export function renderHtmlTemplate(cache: RenderingCache,
 
         return Promise.resolve({err: null, html});
     } catch (e) {
+        console.log("  failed:", e.message);
         if (e instanceof ServerDataError) {
             return (e as ServerDataError).loadData(cache)
                 .then(err => err ? {err, html: null} : renderHtmlTemplate(cache, storeMap, template));

@@ -66,18 +66,18 @@ describe("server entity finder bundle", () => {
         });
 
         it('should throw error on missing data', () => {
-            return expect(() => store.find("sites", {type: "site"})).to.throw("Missing finder error: [sites] [{\"type\":\"site\"}]");
+            return expect(() => store.find("sites", {_type: "site"})).to.throw("Missing finder error: [sites] [{\"_type\":\"site\"}]");
         });
 
         it('should recover from errors', () => {
             try {
-                store.find("sites", {});
+                store.find("sites", {_type: "site"});
             } catch (e) {
                 return (e as EntityFinderError).loadData(cache)
                     .then(loadError => {
                         expect(loadError).to.be.null;
                         let sites: any = null;
-                        expect(() => sites = store.find("sites", {})).not.to.throw();
+                        expect(() => sites = store.find("sites", {_type: "site"})).not.to.throw();
                         expect(sites).not.to.be.null;
                         if (sites !== null) {
                             expect(sites.loading).to.equal(false);
@@ -100,7 +100,7 @@ describe("server entity finder bundle", () => {
                 };
 
             it('should filter by type (page)', () => {
-                return find({name: "site1"})
+                return find({_type: "site", name: "site1"})
                     .then(entities => {
                         expect(entities).to.have.length(1);
                         if (entities !== null) {

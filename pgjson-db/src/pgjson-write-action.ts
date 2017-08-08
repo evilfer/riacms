@@ -4,6 +4,7 @@ import {Entity, EntityContent} from "../../src/server/entity/entity";
 import {EntityDbWriteAction} from "../../src/server/orm/entity-db";
 import {PgjsonQueryManager} from "./pgjson-query-manager";
 import {queryAsPromise} from "./query-as-promise";
+import {TypeManager} from "../../src/common/types/type-manager";
 
 const INSERT_ACTION_ROW = "INSERT INTO action (eid, vid, uid, type) VALUES (0, 0, $1, $2) RETURNING aid";
 const SET_ACTION_DATA = "UPDATE action SET eid=$1, vid=$2 WHERE aid=$3";
@@ -18,8 +19,8 @@ export class PgJsonWriteAction extends PgjsonQueryManager<Client> implements Ent
     private aid: number;
     private actionSet: boolean;
 
-    constructor(client: Client, type: string, uid: number, done: () => void) {
-        super(client);
+    constructor(types: TypeManager, client: Client, type: string, uid: number, done: () => void) {
+        super(types, client);
         this.done = done;
         this.type = type;
         this.uid = uid;

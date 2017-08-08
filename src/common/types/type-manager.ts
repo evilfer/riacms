@@ -1,4 +1,4 @@
-import {TypeDefinitionMap, TypeField} from "./types";
+import {TypeDefinitionMap, TypeField, TypeFieldTypes} from "./types";
 
 export class TypeManager {
     private types: TypeDefinitionMap;
@@ -9,5 +9,15 @@ export class TypeManager {
 
     public getFields(name: string): TypeField[] {
         return this.types[name].fields;
+    }
+
+    public getFieldType(name: string, field: string): null | TypeFieldTypes {
+        return (this.types[name] &&
+            this.types[name].fieldMap[field] &&
+            this.types[name].fieldMap[field].type) || null;
+    }
+
+    public getImplementedBy(name: string): string[] {
+        return this.types[name].implementedBy;
     }
 }

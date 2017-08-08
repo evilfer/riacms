@@ -1,16 +1,15 @@
-import {IWrappedComponent} from "mobx-react";
-import {Component} from "react";
 import {ResolvedPageData} from "../../../common/bundles/page-resolver/resolved-page-data";
+import {Template} from "../../../common/bundles/site-renderer/template";
 import {TypeManagerBuilder} from "../../../common/types/type-manager-builder";
 import {ServerBundle, ServerBundleDataInit, ServerBundleDataInitMap, ServerRequestContext} from "../server-bundle";
 
-export interface Template {
-    component: Component<{}, undefined> | (() => JSX.Element) | IWrappedComponent<any>;
-    options: { [name: string]: any };
-}
-
 export class BasicRendererResolverBundle extends ServerBundle {
     private renderers: { [name: string]: Template };
+
+    public constructor(renderers: { [name: string]: Template } = {}) {
+        super();
+        this.renderers = renderers;
+    }
 
     public getName(): string {
         return "basicRendererResolver";

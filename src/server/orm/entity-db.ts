@@ -4,10 +4,12 @@ import {Entity, EntityContent} from "../entity/entity";
 export type EntityDbFindValues = null | boolean | number | string;
 
 export interface QueryBuilder<E extends QueryBuilder<any>> {
-    valueEquals: (field: string, value: EntityDbFindValues) => E;
-    valueIn: (field: string, values: EntityDbFindValues[]) => E;
-    arrayContains: (field: string, value: EntityDbFindValues) => E;
-    arrayContainsAny: (field: string, values: EntityDbFindValues[]) => E;
+    idIn: (ids: number[]) => E;
+    implementsType: (type: string) => E;
+    valueEquals: (type: string, field: string, value: EntityDbFindValues) => E;
+    valueIn: (type: string, field: string, values: EntityDbFindValues[]) => E;
+    arrayContains: (type: string, field: string, value: EntityDbFindValues) => E;
+    arrayContainsAny: (type: string, field: string, values: EntityDbFindValues[]) => E;
 }
 
 export interface EntityQueryBuilder extends QueryBuilder<EntityQueryBuilder> {

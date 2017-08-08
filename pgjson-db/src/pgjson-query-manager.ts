@@ -4,6 +4,7 @@ import {Entity} from "../../src/server/entity/entity";
 import {EntityQueryBuilder, EntityReadDb} from "../../src/server/orm/entity-db";
 import {PgJsonQueryBuilder} from "./pgjson-query-builder";
 import {entityQueryAsPromise} from "./query-as-promise";
+import {TypeManager} from "../../src/common/types/type-manager";
 
 const FIND_ENTITY = `
 SELECT entity.eid, entity.type, entity.vid, version.data FROM entity LEFT JOIN version
@@ -13,13 +14,15 @@ WHERE entity.eid = $1`;
 const FIND_ENTITIES = `
 SELECT entity.eid, entity.type, entity.vid, version.data FROM entity LEFT JOIN version
 ON entity.eid = version.eid AND entity.vid = version.vid
-WHERE entity.eid = ANY($1:int[])`;
+WHERE entity.eid = ANY( $1 )`;
 
 export class PgjsonQueryManager<E extends Client | Pool> implements EntityReadDb {
 
+    protected types: TypeManager;
     protected client: E;
 
-    constructor(client: E) {
+    constructor(types: TypeManager, client: E) {
+        this.types = types;
         this.client = client;
     }
 
@@ -39,6 +42,6 @@ export class PgjsonQueryManager<E extends Client | Pool> implements EntityReadDb
     }
 
     public find(level: number): EntityQueryBuilder {
-        return new PgJsonQueryBuilder(this.client, level);
+        return new PgJsonQueryBuilder(this.types, this.client, level);
     }
 }

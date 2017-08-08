@@ -18,7 +18,6 @@ export class RenderingCache {
     private level: number;
     private db: EntityReadDb;
     private entities: { [id: number]: CacheEntity };
-    private missing: number[];
     private types: TypeManager;
 
     constructor(types: TypeManager, db: EntityReadDb, level = 0) {
@@ -26,7 +25,6 @@ export class RenderingCache {
         this.types = types;
         this.db = db;
         this.entities = {};
-        this.missing = [];
     }
 
     public getLevel(): number {
@@ -92,18 +90,10 @@ export class RenderingCache {
     public getUsed(ids: number[]): any[] {
         const missing = ids.filter(id => !this.entities[id]);
         if (missing.length > 0) {
-            this.fireMissingError(this.missing);
+            this.fireMissingError(missing);
         }
 
         return ids.map(id => this.entities[id].used);
-    }
-
-    public resume(): Promise<boolean> {
-        return this.loadEntities(this.missing)
-            .then(() => {
-                this.missing = [];
-                return true;
-            });
     }
 
     public find(): CacheQueryBuilder {
@@ -111,13 +101,7 @@ export class RenderingCache {
     }
 
     private fireMissingError(ids: number[]): never {
-        ids.forEach(id => {
-            if (this.missing.indexOf(id) < 0) {
-                this.missing.push(id);
-            }
-        });
-
-        throw new CacheMissingError(this.missing);
+        throw new CacheMissingError(ids);
     }
 
     private createCacheEntity(entity: Entity): CacheEntity {

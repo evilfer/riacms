@@ -7,7 +7,10 @@
         "test": "test"
     },
     "scripts": {
-        "demo-site": "ts-node $NODE_DEBUG_OPTION ./demo-site/index.ts",
+        "demo-site": "ts-node ./demo-site/index.ts",
+        "demo-site:debug": "ts-node $NODE_DEBUG_OPTION ./demo-site/index.ts",
+        "demo-site:watch": "nodemon -e ts,tsx -x npm run demo-site",
+        "demo-site:watch:debug": "nodemon -e ts,tsx -x npm run demo-site:debug",
         "test": "mocha --require ts-node/register test/**/*-test.ts*"
     },
     "author": "Eloy Villasclaras",
@@ -30,14 +33,14 @@
         "chai": "4.1.1",
         "mocha": "3.5.0",
         "ts-node": "3.3.0",
-        "tslint": "5.5.0",
+        "tslint": "5.6.0",
         "typescript": "2.4.2"
     },
     "dependencies": {
         "bluebird": "3.5.0",
         "body-parser": "1.17.2",
         "cookie-parser": "1.4.3",
-        "debug": "2.6.8",
+        "debug": "3.0.0",
         "express": "4.15.4",
         "extend": "3.0.1",
         "helmet": "3.8.1",

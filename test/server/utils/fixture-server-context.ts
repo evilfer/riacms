@@ -4,7 +4,7 @@ import {TypeManager} from "../../../src/common/types/type-manager";
 import {InstantiateStores, ServerContext} from "../../../src/server/app/server-context";
 import {ServerBundle, ServerBundleDataInitMap, ServerRequestContext} from "../../../src/server/bundles/server-bundle";
 import {Entity, EntityContent, getEntityContent} from "../../../src/server/entity/entity";
-import {EntityReadDb, EntityQueryBuilder} from "../../../src/server/orm/entity-db";
+import {EntityQueryBuilder, EntityReadDb} from "../../../src/server/orm/entity-db";
 
 export function createFixtureServerContext(bundles: ServerBundle[],
                                            types: TypeManager,
@@ -24,23 +24,31 @@ export function createFixtureServerContext(bundles: ServerBundle[],
             (e, field) => e.content[field];
 
         const builder = {
-            arrayContains: (field: string, value: null | string | boolean | number) => {
+            arrayContains: (type: string, field: string, value: null | string | boolean | number) => {
                 list = list.filter(e => fieldValue(e, field) && fieldValue(e, field).indexOf(value) >= 0);
                 return builder;
             },
-            arrayContainsAny: (field: string, values: Array<null | string | boolean | number>) => {
+            arrayContainsAny: (type: string, field: string, values: Array<null | string | boolean | number>) => {
                 list = list.filter(e => {
                     return values.some(value => fieldValue(e, field)
                         && fieldValue(e, field).indexOf(value) >= 0);
                 });
                 return builder;
             },
+            idIn: (ids: number[]) => {
+                list = list.filter(e => ids.indexOf(e.entity.id) >= 0);
+                return builder;
+            },
+            implementsType: (type: string) => {
+                list = list.filter(e => types.getImplementedBy(type).indexOf(e.entity.type) >= 0);
+                return builder;
+            },
             run: () => Promise.resolve(list.map(({entity}) => entity)),
-            valueEquals: (field: string, value: null | string | boolean | number) => {
+            valueEquals: (type: string, field: string, value: null | string | boolean | number) => {
                 list = list.filter(e => fieldValue(e, field) === value);
                 return builder;
             },
-            valueIn: (field: string, values: Array<null | string | boolean | number>) => {
+            valueIn: (type: string, field: string, values: Array<null | string | boolean | number>) => {
                 list = list.filter(e => values.indexOf(fieldValue(e, field)) >= 0);
                 return builder;
             },

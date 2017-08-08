@@ -1,6 +1,6 @@
-import {Entity} from "../../../src/server/entity/entity";
 import {TypeManager} from "../../../src/common/types/type-manager";
 import {TypeManagerBuilder} from "../../../src/common/types/type-manager-builder";
+import {Entity} from "../../../src/server/entity/entity";
 
 function createTypes(): TypeManager {
     const builder = new TypeManagerBuilder();

@@ -10,7 +10,7 @@ import {createFixtureServerContext} from "../../utils/fixture-server-context";
 import {default as applyTestTypes, fixtures} from "./site-fixtures";
 import {RenderingCache} from "../../../../src/server/orm/cache";
 import {ServerBundle, ServerRequestContext} from "../../../../src/server/bundles/server-bundle";
-import {BasicRendererResolverBundle} from "../../../../src/server/bundles/basic-renderer-resolver/basic-renderer-resolver-bundle";
+import {BasicRendererResolverBundle} from "../../../../src/server/bundles/basic-renderer-resolver/basic-renderer-resolver";
 import {resolveRendererAndRenderPage} from "../../../../src/server/bundles/site-renderer/render-page";
 import renderers from "./test-renderers";
 import {RequestLocationBundle} from "../../../../src/server/bundles/request-location/request-location-bundle";

@@ -1,12 +1,13 @@
 import * as Promise from "bluebird";
 import {Client, Pool, PoolConfig} from "pg";
+import {TypeManager} from "../../src/common/types/type-manager";
 import {EntityDb, EntityDbWriteAction} from "../../src/server/orm/entity-db";
 import {PgjsonQueryManager} from "./pgjson-query-manager";
 import {PgJsonWriteAction} from "./pgjson-write-action";
 
 export class PgJsonDb extends PgjsonQueryManager<Pool> implements EntityDb {
-    public constructor(settings: PoolConfig) {
-        super(new Pool(settings));
+    public constructor(settings: PoolConfig, types: TypeManager) {
+        super(types, new Pool(settings));
     }
 
     public getPool(): Pool {
@@ -20,7 +21,7 @@ export class PgJsonDb extends PgjsonQueryManager<Pool> implements EntityDb {
                     return reject(err);
                 }
 
-                resolve(new PgJsonWriteAction(client, type, uid, done));
+                resolve(new PgJsonWriteAction(this.types, client, type, uid, done));
             });
         }).then((action: PgJsonWriteAction) => action.init());
     }

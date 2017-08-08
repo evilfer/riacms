@@ -22,9 +22,8 @@ export function resolvePage(context: ServerRequestContext): Promise<ResolvedPage
                 });
             }
 
-            const path: null | string[] = match[1].length > 0 ?
-                match[1].replace(/(^\/)|(\/$)/g, "").split("/") :
-                null;
+            const trimmedPath = match[1].replace(/(^\/)|(\/$)/g, "");
+            const path: null | string[] = trimmedPath.length > 0 ? trimmedPath.split("/") : null;
 
             const suffix: string = match[2];
 
@@ -79,20 +78,29 @@ export function resolvePage(context: ServerRequestContext): Promise<ResolvedPage
 
 function findSite(cache: RenderingCache, hostName: string, port: number): Promise<null | CacheEntity> {
     return cache.find()
-        .valueIn("host", [hostName, "*"])
-        .valueIn("port", [port, null])
+        .implementsType("site")
+        .valueIn("site", "host", [hostName, "*"])
+        //.arrayContainsAny("site", "port", [port, 0])
         .run()
         .then(entities => {
             entities
-                .filter(({content}) => content.port === null || content.port === port)
+                .filter(({content}) => {
+                    const ports: number[] = content.port as number[];
+                    return ports.indexOf(0) >= 0 || ports.indexOf(port) >= 0;
+                })
                 .sort((a, b) => {
                     if (a.content.host !== "*" && b.content.host === "*") {
                         return -1;
                     } else if (a.content.host === "*" && b.content.host !== "*") {
                         return 1;
-                    } else if (a.content.port !== null && b.content.port === null) {
+                    }
+
+                    const matchPortA = (a.content.port as number[]).indexOf(port) >= 0;
+                    const matchPortB = (a.content.port as number[]).indexOf(port) >= 0;
+
+                    if (matchPortA && !matchPortB) {
                         return -1;
-                    } else if (a.content.port === null && b.content.port !== null) {
+                    } else if (!matchPortA && matchPortB) {
                         return 1;
                     } else {
                         return 0;
@@ -114,12 +122,13 @@ function findPath(cache: RenderingCache,
     }
 
     return cache.find()
-        .valueEquals("_type", "site_tree_link")
-        .valueEquals("parent", parentId)
+        .implementsType("site_tree_link")
+        .valueEquals("site_tree_link", "parent", parentId)
         .run()
         .then(links => cache.find()
-            .arrayContainsAny("parentLinks", links.map(link => link.entity.id))
-            .arrayContains("paths", path[index])
+            .implementsType("page")
+            .idIn(links.map(link => link.content.child) as number[])
+            .arrayContains("page", "paths", path[index])
             .run()
             .then(([item]) => {
                 if (item) {

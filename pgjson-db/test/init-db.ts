@@ -2,6 +2,7 @@ import * as Promise from "bluebird";
 import {PgJsonDb} from "../src/pgjson-db";
 import {queryAsPromise} from "../src/query-as-promise";
 import connectionOptions from "./connection-options";
+import {types} from "./fixtures";
 import extend = require("extend");
 
 export function initDb(): Promise<PgJsonDb> {
@@ -9,7 +10,7 @@ export function initDb(): Promise<PgJsonDb> {
         Promise,
         max: 10,
         min: 0,
-    }));
+    }), types);
 
     const pool = db.getPool();
 

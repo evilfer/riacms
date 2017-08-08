@@ -35,6 +35,7 @@ export class SiteTypesBundle extends Bundle {
 
         typeBuilder.createConcreteType("site", [
             {name: "host", type: "string"},
+            {name: "port", type: "number[]"},
             {name: "home", type: "related", relatedType: "page", inverseField: null},
             {name: "notFound", type: "related", relatedType: "page", inverseField: null},
         ]);

@@ -65,6 +65,7 @@ export class TypeManagerBuilder {
                 const parentType = this.types[parentName];
                 if (parentType.extendedBy.indexOf(name) < 0) {
                     parentType.extendedBy.push(name);
+                    parentType.implementedBy.push(name);
                 }
             });
         });
@@ -109,7 +110,9 @@ export class TypeManagerBuilder {
         this.types[name] = {
             canCreate,
             extendedBy: [],
+            fieldMap: {},
             fields: [],
+            implementedBy: [name],
             implementedTypes: [],
         };
 
@@ -121,10 +124,11 @@ export class TypeManagerBuilder {
             throw new Error(`Type "${name}" does not exist`);
         }
 
-        if (this.types[typeName].fields.some(({name}) => name === field.name)) {
+        if (this.types[typeName].fieldMap[field.name]) {
             throw new Error(`Type "${typeName}" already has field "${field.name}"`);
         }
 
+        this.types[typeName].fieldMap[field.name] = field;
         this.types[typeName].fields.push(field);
     }
 }

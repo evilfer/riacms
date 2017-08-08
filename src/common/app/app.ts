@@ -12,6 +12,10 @@ export class CmsApp {
         this.prepareTypes();
     }
 
+    public getTypes(): TypeManager {
+        return this.types;
+    }
+
     private prepareTypes() {
         const builder = new TypeManagerBuilder();
         this.bundles.forEach(bundle => bundle.applyTypes(builder));

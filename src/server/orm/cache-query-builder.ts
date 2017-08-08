@@ -17,23 +17,33 @@ export class CacheQueryBuilder implements QueryBuilder<CacheQueryBuilder> {
         return this.query.run().then(entities => this.cache.addEntities(entities));
     }
 
-    public valueEquals(field: string, value: (any | string | boolean | number)): CacheQueryBuilder {
-        this.query.valueEquals(field, value);
+    public idIn(ids: number[]): CacheQueryBuilder {
+        this.query.idIn(ids);
         return this;
     }
 
-    public valueIn(field: string, values: Array<any | string | boolean | number>): CacheQueryBuilder {
-        this.query.valueIn(field, values);
+    public implementsType(type: string): CacheQueryBuilder {
+        this.query.implementsType(type);
         return this;
     }
 
-    public arrayContains(field: string, value: (any | string | boolean | number)): CacheQueryBuilder {
-        this.query.arrayContains(field, value);
+    public valueEquals(type: string, field: string, value: (any | string | boolean | number)): CacheQueryBuilder {
+        this.query.valueEquals(type, field, value);
         return this;
     }
 
-    public arrayContainsAny(field: string, values: Array<any | string | boolean | number>): CacheQueryBuilder {
-        this.query.arrayContainsAny(field, values);
+    public valueIn(type: string, field: string, values: Array<any | string | boolean | number>): CacheQueryBuilder {
+        this.query.valueIn(type, field, values);
+        return this;
+    }
+
+    public arrayContains(type: string, field: string, value: (any | string | boolean | number)): CacheQueryBuilder {
+        this.query.arrayContains(type, field, value);
+        return this;
+    }
+
+    public arrayContainsAny(type: string, field: string, values: Array<any | string | boolean | number>): CacheQueryBuilder {
+        this.query.arrayContainsAny(type, field, values);
         return this;
     }
 }

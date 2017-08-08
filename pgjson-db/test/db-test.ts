@@ -4,7 +4,7 @@ import {PgJsonDb} from "../src/pgjson-db";
 import {fixtures} from "./fixtures";
 import {initDb} from "./init-db";
 
-describe("db", () => {
+describe("pg json db", () => {
     let db: PgJsonDb;
 
     beforeEach(() => {
@@ -63,7 +63,7 @@ describe("db", () => {
             const t1fixtureIds = ids.filter((id, i) => fixtures[i].type === "t1");
 
             return db.find(0)
-                .valueEquals("_type", "t1")
+                .implementsType("t1")
                 .run()
                 .then(entities => {
                     expect(entities.map(entity => entity.id)).to.deep.eq(t1fixtureIds);
@@ -71,19 +71,19 @@ describe("db", () => {
         });
 
         it("should find entity by content value", () => {
-            const matchingfixtureIds = ids.filter((id, i) => fixtures[i].data[0].a === 1);
+            const matchingFixtureIds = ids.filter((id, i) => fixtures[i].data[0].a === 1);
 
             return db.find(0)
-                .valueEquals("a", 1)
+                .valueEquals("t1", "a", 1)
                 .run()
                 .then(entities => {
-                    expect(entities.map(entity => entity.id)).to.deep.eq(matchingfixtureIds);
+                    expect(entities.map(entity => entity.id)).to.deep.eq(matchingFixtureIds);
                 });
         });
 
         it("should ignore level 1 fields when requesting level 0", () => {
             return db.find(0)
-                .valueEquals("a", 10)
+                .valueEquals("t1", "a", 10)
                 .run()
                 .then(entities => {
                     expect(entities).to.have.length(0);
@@ -92,7 +92,7 @@ describe("db", () => {
 
         it("should use level 1 fields when requested", () => {
             return db.find(1)
-                .valueEquals("a", 10)
+                .valueEquals("t1", "a", 10)
                 .run()
                 .then(entities => {
                     expect(entities).to.have.length(1);
@@ -101,10 +101,100 @@ describe("db", () => {
 
         it("should use level 0 fields when higher level requested but not present", () => {
             return db.find(1)
-                .valueEquals("a", 3)
+                .valueEquals("t1", "a", 3)
                 .run()
                 .then(entities => {
                     expect(entities).to.have.length(3);
+                });
+        });
+
+        it("should filter numbers by array", () => {
+            return db.find(1)
+                .valueIn("t1", "a", [1, 2])
+                .run()
+                .then(entities => {
+                    expect(entities).to.have.length(4);
+                });
+        });
+
+        it("should filter strings", () => {
+            return db.find(1)
+                .valueEquals("t1", "b", "a")
+                .run()
+                .then(entities => {
+                    expect(entities).to.have.length(2);
+                });
+        });
+
+        it("should filter strings by array", () => {
+            return db.find(1)
+                .valueIn("t1", "b", ["a", "b"])
+                .run()
+                .then(entities => {
+                    expect(entities).to.have.length(4);
+                });
+        });
+
+        it("should filter number[] (1)", () => {
+            return db.find(1)
+                .arrayContains("t1", "as", 1)
+                .run()
+                .then(entities => {
+                    expect(entities).to.have.length(3);
+                });
+        });
+
+        it("should filter number[] (2)", () => {
+            return db.find(1)
+                .arrayContains("t1", "as", 4)
+                .run()
+                .then(entities => {
+                    expect(entities).to.have.length(1);
+                });
+        });
+
+        it("should filter number[] by array", () => {
+            return db.find(1)
+                .arrayContainsAny("t1", "as", [0, 4])
+                .run()
+                .then(entities => {
+                    expect(entities).to.have.length(3);
+                });
+        });
+
+        it("should filter string[], level 0 (1)", () => {
+            return db.find(0)
+                .arrayContains("t1", "bs", "b")
+                .run()
+                .then(entities => {
+                    expect(entities).to.have.length(2);
+                });
+        });
+
+        it("should filter string[], level 1 (1)", () => {
+            return db.find(1)
+                .arrayContains("t1", "bs", "b")
+                .run()
+                .then(entities => {
+                    expect(entities).to.have.length(2);
+                });
+        });
+
+        it("should filter string[] (2)", () => {
+            return db.find(1)
+                .arrayContains("t1", "bs", "c")
+                .run()
+                .then(entities => {
+                    expect(entities).to.have.length(1);
+                });
+        });
+
+        it("should filter string[] by array", () => {
+            return db.find(1)
+                .arrayContainsAny("t1", "bs", ["c", "d"])
+                .run()
+                .then(entities => {
+                    expect(entities).to.have.length(2);
                 });
         });
     });

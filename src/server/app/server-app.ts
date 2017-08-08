@@ -22,12 +22,14 @@ export class CmsServerApp extends CmsApp {
     private declaredDataServices: ServerBundleDataInitMap;
     private declaredStores: Array<{ name: string, init: ServerBundleDataInit }>;
 
-    public constructor(bundles: Bundle[], db: EntityReadDb) {
+    public constructor(bundles: Bundle[]) {
         super(bundles);
+    }
 
+    public initServerApp(db: EntityReadDb) {
         this.db = db;
 
-        this.serverBundles = bundles
+        this.serverBundles = this.bundles
             .filter(bundle => bundle instanceof ServerBundle)
             .map(bundle => bundle as ServerBundle);
 

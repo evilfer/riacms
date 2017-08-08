@@ -54,7 +54,9 @@ export interface TypeDefinition {
     canCreate: boolean;
     implementedTypes: string[];
     extendedBy: string[];
+    implementedBy: string[];
     fields: TypeField[];
+    fieldMap: { [field: string]: TypeField };
 }
 
 export interface TypeDefinitionMap {
