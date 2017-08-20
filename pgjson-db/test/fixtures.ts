@@ -21,7 +21,7 @@ export const fixtures: Array<{ type: string, data: any[] }> = [
     {type: "t1", data: [{a: 5, b: "d", as: [2, 3, 4]}, {}]},
     {type: "t2", data: [{a: 1, b: "a", as: []}, {}]},
     {type: "t2", data: [{a: 2, b: "b", as: []}, {}]},
-    {type: "t2", data: [{a: 3, b: null}]},
-    {type: "t2", data: [{a: 4, b: "c", as: []}, {}]},
+    {type: "t2", data: [{a: 3, b: "9"}]},
+    {type: "t2", data: [{a: 4, b: "10", as: []}, {}]},
     {type: "t2", data: [{a: 5, b: "d", as: []}, {}]},
 ];

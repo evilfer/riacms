@@ -30,4 +30,11 @@ describe("cache literal data", () => {
         expect(used2).to.deep.eq({name: "page2_updated", subtitle: "st2"});
     }));
 
+    it("should provide map of used assets", () => {
+        const cache: RenderingCache = newCache(0);
+        return cache.loadEntities([1, 2]).then(() => {
+            expect(cache.getClientAssets()).to.deep.eq({1: {}, 2: {}});
+        });
+    });
+
 });

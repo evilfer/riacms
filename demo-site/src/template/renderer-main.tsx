@@ -1,6 +1,6 @@
 import {inject} from "mobx-react";
 import * as React from "react";
-import {ResolvedPageData} from "../../src/common/bundles/page-resolver/resolved-page-data";
+import {ResolvedPageData} from "../../../src/common/bundles/page-resolver/resolved-page-data";
 import {TemplateHead} from "./renderer-head";
 
 export interface RendererMainProps {

@@ -11,13 +11,13 @@ export interface CacheEntity {
     entity: Entity;
     content: EntityContent;
     proxy: any;
-    used: any;
 }
 
 export class RenderingCache {
     private level: number;
     private db: EntityReadDb;
     private entities: { [id: number]: CacheEntity };
+    private usedMap: { [id: number]: any };
     private types: TypeManager;
 
     constructor(types: TypeManager, db: EntityReadDb, level = 0) {
@@ -25,14 +25,11 @@ export class RenderingCache {
         this.types = types;
         this.db = db;
         this.entities = {};
+        this.usedMap = {};
     }
 
     public getLevel(): number {
         return this.level;
-    }
-
-    public setLevel(level: number) {
-        this.level = level;
     }
 
     public getFields(type: string): TypeField[] {
@@ -60,7 +57,12 @@ export class RenderingCache {
 
     public addEntity(entity: Entity): CacheEntity {
         if (!this.entities[entity.id]) {
-            this.entities[entity.id] = this.createCacheEntity(entity);
+            const content = getEntityContent(entity, this.level);
+            const used = {};
+            const proxy = createEntityProxy(this, content, used, entity);
+
+            this.entities[entity.id] = {entity, content, proxy};
+            this.usedMap[entity.id] = used;
         }
 
         return this.entities[entity.id];
@@ -93,22 +95,18 @@ export class RenderingCache {
             this.fireMissingError(missing);
         }
 
-        return ids.map(id => this.entities[id].used);
+        return ids.map(id => this.usedMap[id]);
     }
 
     public find(): CacheQueryBuilder {
         return new CacheQueryBuilder(this, this.db, this.level);
     }
 
-    private fireMissingError(ids: number[]): never {
-        throw new CacheMissingError(ids);
+    public getClientAssets(): { [id: number]: any } {
+        return this.usedMap;
     }
 
-    private createCacheEntity(entity: Entity): CacheEntity {
-        const content = getEntityContent(entity, this.level);
-        const used = {};
-        const proxy = createEntityProxy(this, content, used, entity);
-
-        return {entity, content, proxy, used};
+    private fireMissingError(ids: number[]): never {
+        throw new CacheMissingError(ids);
     }
 }

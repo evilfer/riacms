@@ -1,10 +1,10 @@
-import {SiteTypesBundle} from "../../../src/common/bundles/site-types/site-types-bundle";
 import {TypeManager} from "../../../src/common/types/type-manager";
 import {TypeManagerBuilder} from "../../../src/common/types/type-manager-builder";
+import {ServerSiteTypesBundle} from "../../../src/server/bundles/site-types/server-site-types-bundle";
 import {Entity} from "../../../src/server/entity/entity";
 
 function createTypes(): TypeManager {
-    const typesBundle: SiteTypesBundle = new SiteTypesBundle();
+    const typesBundle: ServerSiteTypesBundle = new ServerSiteTypesBundle();
     const builder: TypeManagerBuilder = new TypeManagerBuilder();
     typesBundle.applyTypes(builder);
     return builder.build();

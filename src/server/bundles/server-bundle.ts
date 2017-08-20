@@ -39,22 +39,8 @@ export abstract class ServerBundle extends Bundle {
     public declareRenderingStores(): ServerBundleDataInitMap {
         return {};
     }
-}
 
-export function genReqDataService(serverContext: ServerContext,
-                                  requestContext: ServerRequestContext): (name: string) => Promise<ServiceData> {
-
-    const initialized: { [name: string]: any } = {};
-
-    return (name: string) => {
-        if (typeof initialized[name] !== "undefined") {
-            return Promise.resolve(initialized[name]);
-        } else {
-            return serverContext.dataService(name, requestContext)
-                .then(data => {
-                    initialized[name] = data;
-                    return data;
-                });
-        }
-    };
+    public storeData2client(name: string, data: any): any {
+        return null;
+    }
 }

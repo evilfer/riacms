@@ -1,5 +1,6 @@
 import * as Promise from "bluebird";
 import {expect} from "chai";
+import {Entity} from "../../src/server/entity/entity";
 import {PgJsonDb} from "../src/pgjson-db";
 import {fixtures} from "./fixtures";
 import {initDb} from "./init-db";
@@ -41,6 +42,10 @@ describe("pg json db", () => {
 
     describe("read functions", () => {
         let ids: number[];
+        const check: (entities: Entity[], expected: number[]) => void = (entities, expected) => {
+            expect(entities.map(({id}) => id)).to.deep.eq(expected.map(i => ids[i]));
+        };
+
         beforeEach(() => {
             ids = [];
             return Promise.each(fixtures, fixture => db.action("create", 0)
@@ -60,13 +65,11 @@ describe("pg json db", () => {
         });
 
         it("should find entity by type", () => {
-            const t1fixtureIds = ids.filter((id, i) => fixtures[i].type === "t1");
-
             return db.find(0)
                 .implementsType("t1")
                 .run()
                 .then(entities => {
-                    expect(entities.map(entity => entity.id)).to.deep.eq(t1fixtureIds);
+                    check(entities, [0, 1, 2, 3, 4]);
                 });
         });
 
@@ -77,7 +80,7 @@ describe("pg json db", () => {
                 .valueEquals("t1", "a", 1)
                 .run()
                 .then(entities => {
-                    expect(entities.map(entity => entity.id)).to.deep.eq(matchingFixtureIds);
+                    check(entities, [0, 5]);
                 });
         });
 
@@ -86,7 +89,7 @@ describe("pg json db", () => {
                 .valueEquals("t1", "a", 10)
                 .run()
                 .then(entities => {
-                    expect(entities).to.have.length(0);
+                    check(entities, []);
                 });
         });
 
@@ -95,7 +98,7 @@ describe("pg json db", () => {
                 .valueEquals("t1", "a", 10)
                 .run()
                 .then(entities => {
-                    expect(entities).to.have.length(1);
+                    check(entities, [0]);
                 });
         });
 
@@ -104,7 +107,7 @@ describe("pg json db", () => {
                 .valueEquals("t1", "a", 3)
                 .run()
                 .then(entities => {
-                    expect(entities).to.have.length(3);
+                    check(entities, [1, 2, 7]);
                 });
         });
 
@@ -113,7 +116,7 @@ describe("pg json db", () => {
                 .valueIn("t1", "a", [1, 2])
                 .run()
                 .then(entities => {
-                    expect(entities).to.have.length(4);
+                    check(entities, [0, 1, 5, 6]);
                 });
         });
 
@@ -122,7 +125,16 @@ describe("pg json db", () => {
                 .valueEquals("t1", "b", "a")
                 .run()
                 .then(entities => {
-                    expect(entities).to.have.length(2);
+                    check(entities, [0, 5]);
+                });
+        });
+
+        it("should filter string when numeric value", () => {
+            return db.find(1)
+                .valueEquals("t1", "b", "9")
+                .run()
+                .then(entities => {
+                    check(entities, [7]);
                 });
         });
 
@@ -131,25 +143,25 @@ describe("pg json db", () => {
                 .valueIn("t1", "b", ["a", "b"])
                 .run()
                 .then(entities => {
-                    expect(entities).to.have.length(4);
+                    check(entities, [0, 1, 5, 6]);
                 });
         });
 
-        it("should filter number[] (1)", () => {
+        it("should filter string by array when numeric value", () => {
+            return db.find(1)
+                .valueIn("t1", "b", ["9", "10"])
+                .run()
+                .then(entities => {
+                    check(entities, [7, 8]);
+                });
+        });
+
+        it("should filter number[]", () => {
             return db.find(1)
                 .arrayContains("t1", "as", 1)
                 .run()
                 .then(entities => {
-                    expect(entities).to.have.length(3);
-                });
-        });
-
-        it("should filter number[] (2)", () => {
-            return db.find(1)
-                .arrayContains("t1", "as", 4)
-                .run()
-                .then(entities => {
-                    expect(entities).to.have.length(1);
+                    check(entities, [1, 2, 3]);
                 });
         });
 
@@ -158,7 +170,7 @@ describe("pg json db", () => {
                 .arrayContainsAny("t1", "as", [0, 4])
                 .run()
                 .then(entities => {
-                    expect(entities).to.have.length(3);
+                    check(entities, [0, 1, 4]);
                 });
         });
 
@@ -167,25 +179,7 @@ describe("pg json db", () => {
                 .arrayContains("t1", "bs", "b")
                 .run()
                 .then(entities => {
-                    expect(entities).to.have.length(2);
-                });
-        });
-
-        it("should filter string[], level 1 (1)", () => {
-            return db.find(1)
-                .arrayContains("t1", "bs", "b")
-                .run()
-                .then(entities => {
-                    expect(entities).to.have.length(2);
-                });
-        });
-
-        it("should filter string[] (2)", () => {
-            return db.find(1)
-                .arrayContains("t1", "bs", "c")
-                .run()
-                .then(entities => {
-                    expect(entities).to.have.length(1);
+                    check(entities, [0, 2]);
                 });
         });
 
@@ -194,7 +188,7 @@ describe("pg json db", () => {
                 .arrayContainsAny("t1", "bs", ["c", "d"])
                 .run()
                 .then(entities => {
-                    expect(entities).to.have.length(2);
+                    check(entities, [0, 2]);
                 });
         });
     });

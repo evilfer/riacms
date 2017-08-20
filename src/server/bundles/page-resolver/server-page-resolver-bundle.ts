@@ -33,4 +33,18 @@ export class ServerPageResolverBundle extends ServerBundle {
                 })),
         };
     }
+
+    public storeData2client(name: string, data: any): any {
+        switch (name) {
+            case "resolvedPage":
+                return {
+                    found: data.found,
+                    page: data.page.__id,
+                    route: data.route.map((page: any) => page.__id),
+                    site: data.site.__id,
+                };
+        }
+        return null;
+    }
+
 }

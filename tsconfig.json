@@ -1,13 +1,14 @@
 {
     "compilerOptions": {
-        "target": "es6",
-        "module": "commonjs",
         "declaration": true,
-        "strictNullChecks": true,
-        "noImplicitAny": true,
         "experimentalDecorators": true,
+        "jsx": "react",
+        "module": "commonjs",
+        "noImplicitAny": true,
         "outDir": "./build",
         "sourceMap": true,
-        "jsx": "react"
+        "strictNullChecks": true,
+        "target": "es6",
+        "allowSyntheticDefaultImports": true
     }
 }

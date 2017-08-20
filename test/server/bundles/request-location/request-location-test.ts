@@ -1,3 +1,4 @@
+/* tslint:disable */
 import {expect} from "chai";
 import {TypeManager} from "../../../../src/common/types/type-manager";
 import {ServerContext} from "../../../../src/server/app/server-context";
@@ -100,6 +101,12 @@ describe("request location server bundle", () => {
                     b: "ABCD",
                 },
             });
+        });
+    });
+
+    it("should produce no client data", () => {
+        return stores.location(createRequestContext("https://h1:1234/a/b/c/?a=1234&b=ABCD")).then(location => {
+            expect(bundle.storeData2client("location", location)).to.be.null;
         });
     });
 });

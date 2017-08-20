@@ -1,40 +1,21 @@
-import * as Promise from "bluebird";
 import {Express, Router} from "express";
-import * as extend from "extend";
 import {CmsApp} from "../../common/app/app";
-import {Bundle} from "../../common/bundles/bundle";
-import {
-    ServerBundle,
-    ServerBundleDataInit,
-    ServerBundleDataInitMap,
-    ServerRequestContext,
-} from "../bundles/server-bundle";
+import {ServerBundle} from "../bundles/server-bundle";
+import {ServerBundleGroup} from "../bundles/server-bundle-group";
 import {EntityReadDb} from "../orm/entity-db";
 import {createExpressApp} from "./express-app";
 import {listen} from "./listen";
 import {ServerContext} from "./server-context";
 
-export class CmsServerApp extends CmsApp {
-    private serverBundles: ServerBundle[];
+export class CmsServerApp extends CmsApp<ServerBundle> {
     private app: Express;
     private db: EntityReadDb;
+    private bundleGroup: ServerBundleGroup;
     private context: ServerContext;
-    private declaredDataServices: ServerBundleDataInitMap;
-    private declaredStores: Array<{ name: string, init: ServerBundleDataInit }>;
-
-    public constructor(bundles: Bundle[]) {
-        super(bundles);
-    }
 
     public initServerApp(db: EntityReadDb) {
         this.db = db;
 
-        this.serverBundles = this.bundles
-            .filter(bundle => bundle instanceof ServerBundle)
-            .map(bundle => bundle as ServerBundle);
-
-        this.prepareDataServices();
-        this.prepareStores();
         this.prepareContext();
         this.prepareApp();
     }
@@ -43,44 +24,19 @@ export class CmsServerApp extends CmsApp {
         listen(this.app, port);
     }
 
-    private prepareDataServices(): void {
-        this.declaredDataServices = this.serverBundles.reduce((acc, bundle) => {
-            const services = bundle.declareRequestDataServices();
-            extend(acc, services);
-            return acc;
-        }, {} as ServerBundleDataInitMap);
-    }
-
-    private prepareStores(): void {
-        this.declaredStores = this.serverBundles.reduce((acc, bundle) => {
-            const stores = bundle.declareRenderingStores();
-            if (stores !== null) {
-                Object.keys(stores).forEach(name => acc.push({name, init: stores[name]}));
-            }
-            return acc;
-        }, [] as Array<{ name: string, init: ServerBundleDataInit }>);
-    }
-
     private prepareContext(): void {
+        this.bundleGroup = new ServerBundleGroup(this.bundles);
         this.context = {
-            dataService: (name: string, context: ServerRequestContext) => this.declaredDataServices[name](context),
+            bundles: this.bundleGroup,
             db: this.db,
-            instantiateStores: context => {
-                return Promise.reduce(this.declaredStores, (acc, {name, init}) => {
-                    return init(context).then(value => {
-                        acc[name] = value;
-                        return acc;
-                    });
-                }, {} as { [name: string]: any });
-            },
             types: this.types,
         };
 
-        this.serverBundles.forEach(bundle => bundle.setServerContext(this.context));
+        this.bundles.forEach(bundle => bundle.setServerContext(this.context));
     }
 
     private prepareApp(): void {
-        const routers: Router[] = this.serverBundles
+        const routers: Router[] = this.bundles
             .map(bundle => bundle.prepareRoutes())
             .filter(router => router !== null) as Router[];
 

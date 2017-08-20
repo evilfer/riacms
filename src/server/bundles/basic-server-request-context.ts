@@ -22,7 +22,7 @@ export class BasicServerRequestContext implements ServerRequestContext {
         if (typeof this.initializedData[name] !== "undefined") {
             return Promise.resolve(this.initializedData[name]);
         } else {
-            return this.serverContext.dataService(name, this)
+            return this.serverContext.bundles.dataService(name, this)
                 .then(data => {
                     this.initializedData[name] = data;
                     return data;

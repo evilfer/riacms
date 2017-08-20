@@ -8,7 +8,7 @@ export function AdminHead() {
         <Helmet>
             <title>admin</title>
             <link rel="icon" href={`${ASSET_PATH}/img/favicon.ico`} type="image/x-icon"/>
-            <link rel="stylesheet" type="text/css" href={`${ASSET_PATH}/css/theme.css`}/>
+            <link rel="stylesheet" type="text/css" href={`${ASSET_PATH}/index.css`}/>
         </Helmet>
     );
 }

@@ -1,6 +1,5 @@
 /* tslint:disable */
 import {expect} from "chai";
-import {SiteTypesBundle} from "../../../src/common/bundles/site-types/site-types-bundle";
 import {TypeManager} from "../../../src/common/types/type-manager";
 import {TypeManagerBuilder} from "../../../src/common/types/type-manager-builder";
 import {ServerContext} from "../../../src/server/app/server-context";
@@ -14,6 +13,7 @@ import {RenderingCache} from "../../../src/server/orm/cache";
 import {ServerRequestContext} from "../../../src/server/bundles/server-bundle";
 import {ResolvedPageData} from "../../../src/common/bundles/page-resolver/resolved-page-data";
 import {RequestLocationBundle} from "../../../src/server/bundles/request-location/request-location-bundle";
+import {ServerSiteTypesBundle} from "../../../src/server/bundles/site-types/server-site-types-bundle";
 
 describe("server page resolver bundle", () => {
     let context: ServerContext;
@@ -21,7 +21,7 @@ describe("server page resolver bundle", () => {
     let cache: RenderingCache;
 
     beforeEach(() => {
-        const typesBundle: SiteTypesBundle = new SiteTypesBundle();
+        const typesBundle: ServerSiteTypesBundle = new ServerSiteTypesBundle();
         const locationBundle = new RequestLocationBundle();
         bundle = new ServerPageResolverBundle();
 
@@ -38,12 +38,12 @@ describe("server page resolver bundle", () => {
         it('should resolve home page by host name/port', () => {
             const requestContext: ServerRequestContext = {
                 cache,
-                dataService: name => context.dataService(name, requestContext),
+                dataService: name => context.bundles.dataService(name, requestContext),
                 level: 0,
                 req: {url: "http://host1:1000"},
             };
 
-            return context.dataService("resolvedPage", requestContext).then((data: ResolvedPageData) => {
+            return context.bundles.dataService("resolvedPage", requestContext).then((data: ResolvedPageData) => {
                 expect(data).to.have.keys(["admin", "level", "loading", "site", "page", "route", "found", "ssl"]);
                 expect(data.found).to.equal(true);
                 expect(data.site.entity.id).to.equal(1);
@@ -56,12 +56,12 @@ describe("server page resolver bundle", () => {
         it('should resolve home page by host name/port in admin mode', () => {
             const requestContext: ServerRequestContext = {
                 cache,
-                dataService: name => context.dataService(name, requestContext),
+                dataService: name => context.bundles.dataService(name, requestContext),
                 level: 0,
                 req: {url: "http://host1:1000/_admin"},
             };
 
-            return context.dataService("resolvedPage", requestContext).then((data: ResolvedPageData) => {
+            return context.bundles.dataService("resolvedPage", requestContext).then((data: ResolvedPageData) => {
                 expect(data).to.have.keys(["admin", "level", "loading", "site", "page", "route", "found", "ssl"]);
                 expect(data.found).to.equal(true);
                 expect(data.site.entity.id).to.equal(1);
@@ -74,12 +74,12 @@ describe("server page resolver bundle", () => {
         it('should resolve level 1 page', () => {
             const requestContext: ServerRequestContext = {
                 cache,
-                dataService: name => context.dataService(name, requestContext),
+                dataService: name => context.bundles.dataService(name, requestContext),
                 level: 0,
                 req: {url: "http://host1:1000/about"},
             };
 
-            return context.dataService("resolvedPage", requestContext).then((store: ResolvedPageData) => {
+            return context.bundles.dataService("resolvedPage", requestContext).then((store: ResolvedPageData) => {
                 expect(store.found).to.equal(true);
                 expect(store.site.entity.id).to.equal(1);
                 expect(store.page.entity.id).to.equal(12);
@@ -89,12 +89,12 @@ describe("server page resolver bundle", () => {
         it('should ignore _staging suffix', () => {
             const requestContext: ServerRequestContext = {
                 cache,
-                dataService: name => context.dataService(name, requestContext),
+                dataService: name => context.bundles.dataService(name, requestContext),
                 level: 0,
                 req: {url: "http://host1:1000/about/_staging"},
             };
 
-            return context.dataService("resolvedPage", requestContext).then((store: ResolvedPageData) => {
+            return context.bundles.dataService("resolvedPage", requestContext).then((store: ResolvedPageData) => {
                 expect(store.found).to.equal(true);
                 expect(store.site.entity.id).to.equal(1);
                 expect(store.page.entity.id).to.equal(12);
@@ -104,12 +104,12 @@ describe("server page resolver bundle", () => {
         it('should resolve level 2 page', () => {
             const requestContext: ServerRequestContext = {
                 cache,
-                dataService: name => context.dataService(name, requestContext),
+                dataService: name => context.bundles.dataService(name, requestContext),
                 level: 0,
                 req: {url: "http://host1:1000/about/ria"},
             };
 
-            return context.dataService("resolvedPage", requestContext).then((store: ResolvedPageData) => {
+            return context.bundles.dataService("resolvedPage", requestContext).then((store: ResolvedPageData) => {
                 expect(store.found).to.equal(true);
                 expect(store.site.entity.id).to.equal(1);
                 expect(store.page.entity.id).to.equal(121);
@@ -119,12 +119,12 @@ describe("server page resolver bundle", () => {
         it('should return not found page for bad route', () => {
             const requestContext: ServerRequestContext = {
                 cache,
-                dataService: name => context.dataService(name, requestContext),
+                dataService: name => context.bundles.dataService(name, requestContext),
                 level: 0,
                 req: {url: "http://host1:1000/about/ria_"},
             };
 
-            return context.dataService("resolvedPage", requestContext).then((store: ResolvedPageData) => {
+            return context.bundles.dataService("resolvedPage", requestContext).then((store: ResolvedPageData) => {
                 expect(store.found).to.equal(false);
                 expect(store.site.entity.id).to.equal(1);
                 expect(store.page.entity.id).to.equal(13);
@@ -148,7 +148,7 @@ describe("server page resolver bundle", () => {
 
             const requestContext: ServerRequestContext = {
                 cache,
-                dataService: name => context.dataService(name, requestContext),
+                dataService: name => context.bundles.dataService(name, requestContext),
                 level: 0,
                 req: {url: "http://host1:1000"},
             };
@@ -165,7 +165,7 @@ describe("server page resolver bundle", () => {
 
             const requestContext: ServerRequestContext = {
                 cache,
-                dataService: name => context.dataService(name, requestContext),
+                dataService: name => context.bundles.dataService(name, requestContext),
                 level: 0,
                 req: {url: "http://host1:1000/about"},
             };
@@ -182,7 +182,7 @@ describe("server page resolver bundle", () => {
 
             const requestContext: ServerRequestContext = {
                 cache,
-                dataService: name => context.dataService(name, requestContext),
+                dataService: name => context.bundles.dataService(name, requestContext),
                 level: 0,
                 req: {url: "http://host1:1000/about/ria"},
             };
@@ -199,7 +199,7 @@ describe("server page resolver bundle", () => {
 
             const requestContext: ServerRequestContext = {
                 cache,
-                dataService: name => context.dataService(name, requestContext),
+                dataService: name => context.bundles.dataService(name, requestContext),
                 level: 0,
                 req: {url: "http://host1:1000/about/ria_"},
             };
@@ -209,6 +209,27 @@ describe("server page resolver bundle", () => {
                 expect(store.site._id).to.equal(1);
                 expect(store.page._id).to.equal(13);
                 expect(store.route.map(({_id}) => _id)).to.deep.eq([12]);
+            });
+        });
+
+
+        it('should produce client data', () => {
+            const declaredStores = bundle.declareRenderingStores() as ServerPageResolverBundleStores;
+
+            const requestContext: ServerRequestContext = {
+                cache,
+                dataService: name => context.bundles.dataService(name, requestContext),
+                level: 0,
+                req: {url: "http://host1:1000"},
+            };
+
+            return declaredStores.resolvedPage(requestContext).then((store: ResolvedPageData) => {
+                expect(bundle.storeData2client("resolvedPage", store)).to.deep.eq({
+                    found: true,
+                    site: 1,
+                    page: 11,
+                    route: []
+                });
             });
         });
     });

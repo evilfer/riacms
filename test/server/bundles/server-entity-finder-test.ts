@@ -1,7 +1,6 @@
 /* tslint:disable */
 import * as Promise from "bluebird";
 import {expect} from "chai";
-import {SiteTypesBundle} from "../../../src/common/bundles/site-types/site-types-bundle";
 import {TypeManager} from "../../../src/common/types/type-manager";
 import {TypeManagerBuilder} from "../../../src/common/types/type-manager-builder";
 import {ServerContext} from "../../../src/server/app/server-context";
@@ -15,6 +14,7 @@ import {
 } from "../../../src/server/bundles/entity-finder/server-entity-finder-bundle";
 import {EntityFinderStore} from "../../../src/common/bundles/entity-finder/entity-finder-data";
 import {EntityFinderError} from "../../../src/server/bundles/entity-finder/entity-finder-error";
+import {ServerSiteTypesBundle} from "../../../src/server/bundles/site-types/server-site-types-bundle";
 
 describe("server entity finder bundle", () => {
     let context: ServerContext;
@@ -26,7 +26,7 @@ describe("server entity finder bundle", () => {
     let declaredStores: ServerEntityFinderBundleStores;
 
     beforeEach(() => {
-        const typesBundle: SiteTypesBundle = new SiteTypesBundle();
+        const typesBundle: ServerSiteTypesBundle = new ServerSiteTypesBundle();
         bundle = new ServerEntityFinderBundle();
 
         const builder: TypeManagerBuilder = new TypeManagerBuilder();
@@ -39,7 +39,7 @@ describe("server entity finder bundle", () => {
 
         requestContext = {
             cache,
-            dataService: name => context.dataService(name, requestContext),
+            dataService: name => context.bundles.dataService(name, requestContext),
             level: 0,
             req: {url: "http://host1:1000"},
         };

@@ -1,4 +1,5 @@
 import * as Promise from "bluebird";
+import * as he from "he";
 import {useStrict} from "mobx";
 import {Provider} from "mobx-react";
 import * as React from "react";
@@ -8,10 +9,12 @@ import {ServerStyleSheet} from "styled-components";
 import {Template} from "../../../common/bundles/site-renderer/template";
 import {RenderingCache} from "../../orm/cache";
 import {ServerDataError} from "../../server-data-error";
+import {ServerContext} from "../../app/server-context";
 
 useStrict(true);
 
-export function renderHtmlTemplate(cache: RenderingCache,
+export function renderHtmlTemplate(serverContext: ServerContext,
+                                   cache: RenderingCache,
                                    storeMap: { [name: string]: any },
                                    template: Template): Promise<{ err: null | Error, html: null | string }> {
     console.log("  trying...");
@@ -29,6 +32,11 @@ export function renderHtmlTemplate(cache: RenderingCache,
         const body = renderToString(elementToRender);
         const helmet = Helmet.renderStatic();
         const styledComponentsCss = sheet ? sheet.getStyleTags() : "";
+        const storeData = serverContext.bundles.storeData2client(storeMap);
+        const clientData = he.encode(JSON.stringify({
+            a: cache.getClientAssets(),
+            s: storeData,
+        }));
 
         const html = `
             <!doctype html>
@@ -44,6 +52,7 @@ export function renderHtmlTemplate(cache: RenderingCache,
                     <div id="root">
                         ${body}
                     </div>
+                    <script type="text/plain" id="ria-data">${clientData}</script>
                     ${helmet.link.toString()}
                 </body>
             </html>
@@ -54,7 +63,7 @@ export function renderHtmlTemplate(cache: RenderingCache,
         console.log("  failed:", e.message);
         if (e instanceof ServerDataError) {
             return (e as ServerDataError).loadData(cache)
-                .then(err => err ? {err, html: null} : renderHtmlTemplate(cache, storeMap, template));
+                .then(err => err ? {err, html: null} : renderHtmlTemplate(serverContext, cache, storeMap, template));
         } else {
             return Promise.resolve({err: e, html: null});
         }

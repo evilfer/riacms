@@ -1,12 +1,12 @@
 import * as Promise from "bluebird";
 import * as React from "react";
 import {Readable} from "stream";
+import {adminTemplate} from "../../../common/admin/template/admin-template";
+import {ResolvedPageData} from "../../../common/bundles/page-resolver/resolved-page-data";
 import {Template} from "../../../common/bundles/site-renderer/template";
 import {ServerContext} from "../../app/server-context";
 import {ServerRequestContext} from "../server-bundle";
 import {renderHtmlTemplate} from "./render-html";
-import {ResolvedPageData} from "../../../common/bundles/page-resolver/resolved-page-data";
-import {adminTemplate} from "../../../common/admin/template/admin-template";
 
 export interface RenderPageResult {
     err: null | Error;
@@ -18,8 +18,8 @@ export function renderPage(serverContext: ServerContext,
                            Renderer: Template): Promise<RenderPageResult> {
     if (Renderer !== null) {
         console.log("render");
-        return serverContext.instantiateStores(requestContext)
-            .then(storeMap => renderHtmlTemplate(requestContext.cache, storeMap, Renderer))
+        return serverContext.bundles.instantiateStores(requestContext)
+            .then(storeMap => renderHtmlTemplate(serverContext, requestContext.cache, storeMap, Renderer))
             .then(({err, html}) => {
                 if (html !== null) {
                     const stream: Readable = new Readable();

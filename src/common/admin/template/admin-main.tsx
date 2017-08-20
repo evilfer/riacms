@@ -1,3 +1,5 @@
+import {DatePicker} from "antd";
+
 import {inject} from "mobx-react";
 import * as React from "react";
 import {ResolvedPageData} from "../../bundles/page-resolver/resolved-page-data";
@@ -9,11 +11,10 @@ export class AdminMain extends React.Component<{ resolvedPage: ResolvedPageData 
             <div>
                 <AdminHead/>
                 hello world!!
+                <DatePicker/>
             </div>
         );
     }
 }
 
-const WrappedAdminMain = inject<{ resolvedPage: ResolvedPageData }>("resolvedPage")(AdminMain);
-
-export {WrappedAdminMain};
+export const WrappedAdminMain = inject<{ resolvedPage: ResolvedPageData }>("resolvedPage")(AdminMain);
