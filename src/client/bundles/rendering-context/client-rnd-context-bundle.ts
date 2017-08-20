@@ -5,9 +5,9 @@ export class ClientRenderingContextBundle extends ClientBundle {
         return "clientRenderingContext";
     }
 
-    public declareRenderingStores(): null | { [name: string]: () => any } {
+    public createStores(): null | { [name: string]: any } {
         return {
-            renderingContext: () => ({context: "client"}),
+            renderingContext: {context: "client"},
         };
     }
 }

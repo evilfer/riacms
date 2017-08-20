@@ -1,13 +1,15 @@
 import {expect} from "chai";
-import {applySiteTypes} from "../../../src/common/bundles/site-types/site-types";
 import {TypeManager} from "../../../src/common/types/type-manager";
 import {TypeManagerBuilder} from "../../../src/common/types/type-manager-builder";
+import {ServerSiteTypesBundle} from "../../../src/server/bundles/site-types/server-site-types-bundle";
 
-describe("site types", () => {
+describe("server site types bundle", () => {
 
     it("should create site related types", () => {
         const builder: TypeManagerBuilder = new TypeManagerBuilder();
-        applySiteTypes(builder);
+        const bundle: ServerSiteTypesBundle = new ServerSiteTypesBundle();
+
+        bundle.applyTypes(builder);
 
         const types: TypeManager = builder.build();
 
