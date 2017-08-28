@@ -1,8 +1,9 @@
 import * as Promise from "bluebird";
 import {LocationData} from "../../../common/bundles/location/location-data";
 import {ResolvedPageData} from "../../../common/bundles/page-resolver/resolved-page-data";
-import {CacheEntity, RenderingCache} from "../../orm/cache";
+import {CacheEntity, RenderingCache} from "../../orm/server-cache";
 import {ServerRequestContext} from "../server-bundle";
+import formatPath from "../../../common/bundles/page-resolver/format-path";
 
 export function resolvePage(context: ServerRequestContext): Promise<ResolvedPageData> {
     return context.dataService("location")
@@ -16,13 +17,14 @@ export function resolvePage(context: ServerRequestContext): Promise<ResolvedPage
                     level: context.cache.getLevel(),
                     loading: false,
                     page: null,
+                    path: location.path,
                     route: [],
                     site: null,
                     ssl: false,
                 });
             }
 
-            const trimmedPath = match[1].replace(/(^\/)|(\/$)/g, "");
+            const trimmedPath = formatPath(match[1]);
             const path: null | string[] = trimmedPath.length > 0 ? trimmedPath.split("/") : null;
 
             const suffix: string = match[2];
@@ -33,6 +35,7 @@ export function resolvePage(context: ServerRequestContext): Promise<ResolvedPage
                 level: context.cache.getLevel(),
                 loading: false,
                 page: null,
+                path: location.path,
                 route: [],
                 site: null,
                 ssl: location.protocol === "https",

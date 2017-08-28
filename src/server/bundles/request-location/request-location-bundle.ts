@@ -1,20 +1,25 @@
 import * as Promise from "bluebird";
-import {LocationData} from "../../../common/bundles/location/location-data";
+import * as extend from "extend";
+import {LocationData, LocationStore} from "../../../common/bundles/location/location-data";
 import {ServerBundle, ServerBundleDataInitMap, ServerRequestContext} from "../server-bundle";
 
-export interface RequestLocationBundleStores extends ServerBundleDataInitMap {
+export interface RequestLocationBundleServices extends ServerBundleDataInitMap {
     location: (context: ServerRequestContext) => Promise<LocationData>;
 }
 
-function parseQueryString(query: string): { [key: string]: string } {
+export interface RequestLocationBundleStores extends ServerBundleDataInitMap {
+    location: (context: ServerRequestContext) => Promise<LocationStore>;
+}
+
+function parseQueryString(query: string): Map<string, string> {
     return query.split("&")
         .reduce((acc, part) => {
             const [key, value] = part.split("=");
             if (key && value) {
-                acc[decodeURIComponent(key)] = decodeURIComponent(value);
+                acc.set(decodeURIComponent(key), decodeURIComponent(value));
             }
             return acc;
-        }, {} as  { [key: string]: string });
+        }, new Map<string, string>());
 }
 
 export class RequestLocationBundle extends ServerBundle {
@@ -22,7 +27,7 @@ export class RequestLocationBundle extends ServerBundle {
         return "location";
     }
 
-    public declareRequestDataServices(): RequestLocationBundleStores {
+    public declareRequestDataServices(): RequestLocationBundleServices {
         return {
             location: (context: ServerRequestContext) => {
                 const location: LocationData = {
@@ -30,7 +35,7 @@ export class RequestLocationBundle extends ServerBundle {
                     path: "",
                     port: 0,
                     protocol: "",
-                    query: {},
+                    query: new Map(),
                 };
 
                 const match = context.req.url.match(/(https?):\/\/([^/:]+)(?::([0-9]+))?([^?]*)(?:\?(.*))?$/);
@@ -50,7 +55,12 @@ export class RequestLocationBundle extends ServerBundle {
 
     public declareRenderingStores(): RequestLocationBundleStores {
         return {
-            location: context => context.dataService("location"),
+            location: context => context.dataService("location")
+                .then((location: LocationData) => extend({
+                    goto: () => {
+                        return;
+                    },
+                }, location)),
         };
     }
 }

@@ -1,9 +1,22 @@
+import path from "path";
 import fs from "fs";
 import gulp from "gulp";
 import webpack from "webpack";
 import gutil from "gulp-util";
 
-const libraries = ['react', 'react-dom', 'antd'];
+const libraries = [
+    'extend',
+    'bluebird',
+    'axios',
+    'he',
+    'react',
+    'react-dom',
+    'react-helmet',
+    'mobx',
+    'mobx-react',
+    'mobx-react-devtools',
+    'semantic-ui-react'
+];
 
 function initWebpackLib(name, outputPath) {
     const cfg = {
@@ -31,8 +44,9 @@ function initWebpackLib(name, outputPath) {
     });
 }
 
-export function initWebpackTasks(options, entries) {
+const tsConfigFile = path.join(__dirname, '../tsconfig.webpack.json');
 
+export function initWebpackTasks(options, entries) {
 
     Object.keys(entries).forEach(name => {
         const entry = entries[name];
@@ -48,6 +62,12 @@ export function initWebpackTasks(options, entries) {
 
                 if (!isProd) {
                     initWebpackLib(name, output);
+                    try {
+                        fs.statSync(`${output}/libs-manifest.json`);
+                    } catch (e) {
+                        return;
+                    }
+
                     const manifestContent = fs.readFileSync(`${output}/libs-manifest.json`);
                     manifest = JSON.parse(manifestContent)
                 }
@@ -91,17 +111,10 @@ export function initWebpackTasks(options, entries) {
                                             plugins: ["transform-decorators-legacy"]
                                         }
                                     }, {
-                                        loader: "ts-loader?configFileName=./tsconfig.webpack.json"
+                                        loader: `ts-loader?configFile=${tsConfigFile}`
                                     }
                                 ]
                             },
-                            // {
-                            //     test: /\.s?css$/,
-                            //     loader: ExtractTextPlugin.extract({
-                            //         fallback: "style-loader",
-                            //         use: ["css-loader", "sass-loader"]
-                            //     })
-                            // }
                         ]
                     }
                 };
@@ -109,7 +122,11 @@ export function initWebpackTasks(options, entries) {
                 gulp.task(`webpack-${name}-${mode}`, () => {
                     return webpack(cfg, (err, stats) => {
                         if (err) throw new gutil.PluginError("webpack", err);
-                        gutil.log("[webpack]", stats.toString({modules: false}));
+                        gutil.log("[webpack]", stats.toString({
+                            modulesSort: "!size",
+                            excludeModules: /!!!none!!!/,
+                            maxModules: 1000
+                        }));
                     });
                 });
             });

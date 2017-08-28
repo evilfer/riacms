@@ -1,6 +1,6 @@
 import * as Promise from "bluebird";
-import {RenderingCache} from "../../orm/cache";
-import {ServerDataError} from "../../server-data-error";
+import {RenderingCache} from "../../orm/server-cache";
+import {ServerDataError} from "../../app/server-data-error";
 
 export class EntityFinderError extends ServerDataError {
     private query: { [field: string]: string | boolean | number };

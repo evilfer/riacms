@@ -1,22 +1,23 @@
+import {EntityContent} from "../../common/cache/entity-content";
 import {TypeField} from "../../common/types/types";
-import {Entity, EntityContent} from "../entity/entity";
-import {RenderingCache} from "./cache";
-
-const ROOT_ENTITY_PROPS: Array<keyof Entity> = ["id", "type", "data"];
+import {Entity} from "../entity/entity";
+import {RenderingCache} from "./server-cache";
 
 export function createEntityProxy(cache: RenderingCache, content: EntityContent, used: any, rootEntity: Entity): any {
     const proxy: any = {};
 
-    ROOT_ENTITY_PROPS.forEach(key => {
-        createLiteralGetter(proxy, used, `_${key}`, rootEntity[key]);
-        proxy[`__${key}`] = rootEntity[key];
-    });
-
-    proxy.__content = content;
-
+    prepareRootEntityProps(rootEntity, content, proxy, used);
     createDataProxy(cache, cache.getFields(rootEntity.type), content, proxy, used);
 
     return proxy;
+}
+
+function prepareRootEntityProps(rootEntity: Entity, content: EntityContent, proxy: any, used: any) {
+    proxy._id = proxy.__id = rootEntity.id;
+    proxy._type = proxy.__type = used._type = rootEntity.type;
+    proxy.__content = content;
+    proxy.__data = rootEntity.data;
+    createLiteralGetter(proxy, used, "_data", rootEntity.data);
 }
 
 function createDataProxy(cache: RenderingCache, fields: TypeField[], content: EntityContent, proxy: any, used: any) {

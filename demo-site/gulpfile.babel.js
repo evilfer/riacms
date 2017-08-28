@@ -4,12 +4,13 @@ import {initStyleTasks} from "../build-scripts/build-style";
 import {initServerTask} from "../build-scripts/build-server";
 import tsConfig from "../tsconfig.json";
 import {initWebpackTasks} from "../build-scripts/build-webpack";
+import {initAdminTasks} from "../build-scripts/build-admin";
 
+const outputPath = path.join(__dirname, './build');
 
 initStyleTasks({
-    devPath: './build/dev/_assets/',
-    prodPath: './build/prod/_assets/'
-}, {style: './src/template/style.scss'});
+    outputPath
+}, {style: path.join(__dirname, './src/template/style.scss')});
 
 initServerTask({
     src: [
@@ -18,8 +19,7 @@ initServerTask({
         `!${path.join(__dirname, "../node_modules/**/*")}`,
         `!${path.join(__dirname, "../test/**/*")}`
     ],
-    devPath: path.join(__dirname, './build/dev/'),
-    prodPath: path.join(__dirname, './build/prod/'),
+    outputPath,
     tsConfig: extend({}, tsConfig, {
         compilerOptions: extend({}, tsConfig.compilerOptions, {
             rootDir: path.join(__dirname, "../"),
@@ -30,5 +30,10 @@ initServerTask({
 
 
 initWebpackTasks({
+    outputPath
+}, {
     admin: "../src/client/admin/index"
 });
+
+
+initAdminTasks({outputPath});

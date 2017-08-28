@@ -2,7 +2,8 @@ import * as Promise from "bluebird";
 import {Router} from "express";
 import {Bundle, CmsRequest} from "../../common/bundles/bundle";
 import {ServerContext} from "../app/server-context";
-import {RenderingCache} from "../orm/cache";
+import {RenderingCache} from "../orm/server-cache";
+import {ExchangeStoreData} from "../../common/app/exchange-data";
 
 export type ServerRequest = CmsRequest;
 
@@ -40,7 +41,7 @@ export abstract class ServerBundle extends Bundle {
         return {};
     }
 
-    public storeData2client(name: string, data: any): any {
+    public storeData2client(name: string, data: any): null | ExchangeStoreData {
         return null;
     }
 }

@@ -13,7 +13,7 @@ import {ServerBundle} from "../../src/server/bundles/server-bundle";
 import {SiteRendererServerBundle} from "../../src/server/bundles/site-renderer/site-renderer-server-bundle";
 import {ServerSiteTypesBundle} from "../../src/server/bundles/site-types/server-site-types-bundle";
 import {StaticFilesBundle} from "../../src/server/bundles/static-files/static-files-bundle";
-import connectionOptions from "./connection-options";
+import connectionOptions from "../settings/connection-options";
 import {rendererTemplate} from "./template/renderer-template";
 
 function launch() {

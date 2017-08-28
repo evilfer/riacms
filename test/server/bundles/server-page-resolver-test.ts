@@ -9,7 +9,7 @@ import {
 } from "../../../src/server/bundles/page-resolver/server-page-resolver-bundle";
 import {createFixtureServerContext} from "../utils/fixture-server-context";
 import {fixtures} from "./site-fixtures";
-import {RenderingCache} from "../../../src/server/orm/cache";
+import {RenderingCache} from "../../../src/server/orm/server-cache";
 import {ServerRequestContext} from "../../../src/server/bundles/server-bundle";
 import {ResolvedPageData} from "../../../src/common/bundles/page-resolver/resolved-page-data";
 import {RequestLocationBundle} from "../../../src/server/bundles/request-location/request-location-bundle";
@@ -44,7 +44,7 @@ describe("server page resolver bundle", () => {
             };
 
             return context.bundles.dataService("resolvedPage", requestContext).then((data: ResolvedPageData) => {
-                expect(data).to.have.keys(["admin", "level", "loading", "site", "page", "route", "found", "ssl"]);
+                expect(data).to.have.keys(["admin", "level", "loading", "site", "page", "path", "route", "found", "ssl"]);
                 expect(data.found).to.equal(true);
                 expect(data.site.entity.id).to.equal(1);
                 expect(data.page.entity.id).to.equal(11);
@@ -62,7 +62,7 @@ describe("server page resolver bundle", () => {
             };
 
             return context.bundles.dataService("resolvedPage", requestContext).then((data: ResolvedPageData) => {
-                expect(data).to.have.keys(["admin", "level", "loading", "site", "page", "route", "found", "ssl"]);
+                expect(data).to.have.keys(["admin", "level", "loading", "site", "page", "path", "route", "found", "ssl"]);
                 expect(data.found).to.equal(true);
                 expect(data.site.entity.id).to.equal(1);
                 expect(data.page.entity.id).to.equal(11);
@@ -220,15 +220,16 @@ describe("server page resolver bundle", () => {
                 cache,
                 dataService: name => context.bundles.dataService(name, requestContext),
                 level: 0,
-                req: {url: "http://host1:1000"},
+                req: {url: "http://host1:1000/about/ria"},
             };
 
             return declaredStores.resolvedPage(requestContext).then((store: ResolvedPageData) => {
                 expect(bundle.storeData2client("resolvedPage", store)).to.deep.eq({
+                    path: "/about/ria",
                     found: true,
                     site: 1,
-                    page: 11,
-                    route: []
+                    page: 121,
+                    route: [12, 121]
                 });
             });
         });

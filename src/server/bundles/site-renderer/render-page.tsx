@@ -15,11 +15,12 @@ export interface RenderPageResult {
 
 export function renderPage(serverContext: ServerContext,
                            requestContext: ServerRequestContext,
-                           Renderer: Template): Promise<RenderPageResult> {
+                           Renderer: Template,
+                           onlyJs: boolean): Promise<RenderPageResult> {
     if (Renderer !== null) {
         console.log("render");
         return serverContext.bundles.instantiateStores(requestContext)
-            .then(storeMap => renderHtmlTemplate(serverContext, requestContext.cache, storeMap, Renderer))
+            .then(storeMap => renderHtmlTemplate(serverContext, requestContext.cache, storeMap, Renderer, onlyJs))
             .then(({err, html}) => {
                 if (html !== null) {
                     const stream: Readable = new Readable();
@@ -37,15 +38,17 @@ export function renderPage(serverContext: ServerContext,
 }
 
 export function resolveRendererAndRenderPage(serverContext: ServerContext,
-                                             requestContext: ServerRequestContext): Promise<RenderPageResult> {
+                                             requestContext: ServerRequestContext,
+                                             onlyJs: boolean): Promise<RenderPageResult> {
     return requestContext.dataService("resolvedRenderer")
-        .then((Renderer: Template) => renderPage(serverContext, requestContext, Renderer));
+        .then((Renderer: Template) => renderPage(serverContext, requestContext, Renderer, onlyJs));
 }
 
 export function renderPageOrAdmin(serverContext: ServerContext,
-                                  requestContext: ServerRequestContext): Promise<RenderPageResult> {
+                                  requestContext: ServerRequestContext,
+                                  onlyJs: boolean): Promise<RenderPageResult> {
     return requestContext.dataService("resolvedPage")
         .then((resolvedPage: ResolvedPageData) => resolvedPage.admin ?
-            renderPage(serverContext, requestContext, adminTemplate) :
-            resolveRendererAndRenderPage(serverContext, requestContext));
+            renderPage(serverContext, requestContext, adminTemplate, onlyJs) :
+            resolveRendererAndRenderPage(serverContext, requestContext, onlyJs));
 }

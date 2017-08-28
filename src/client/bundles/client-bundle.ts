@@ -12,7 +12,7 @@ export abstract class ClientBundle extends Bundle {
         return null;
     }
 
-    public loadStoreData(name: string, store: any): void {
+    public loadStoreData(name: string, store: any, data: any): void {
         return;
     }
 

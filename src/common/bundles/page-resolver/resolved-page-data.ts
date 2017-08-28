@@ -1,4 +1,5 @@
 export interface ResolvedPageData {
+    path: string;
     site: null | any;
     page: null | any;
     route: any[];

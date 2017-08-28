@@ -1,24 +1,12 @@
 import * as he from "he";
+import {ExchangeData} from "../../common/app/exchange-data";
 
-export interface ClientAssetData {
-    [id: number]: { [field: string]: any };
-}
-
-export interface ClientStoreData {
-    [name: string]: any;
-}
-
-export interface ClientData {
-    a: ClientAssetData;
-    s: ClientStoreData;
-}
-
-const DEFAULT_DATA = {
-    a: {},
+const DEFAULT_DATA: ExchangeData = {
+    e: {},
     s: {},
 };
 
-export function parseInitialData(): ClientData {
+export function parseExchangeData(): ExchangeData {
     const script = document.getElementById("ria-data");
     if (!script) {
         return DEFAULT_DATA;

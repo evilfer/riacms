@@ -1,5 +1,7 @@
 import * as Promise from "bluebird";
+import {ExchangeStoreData} from "../../../common/app/exchange-data";
 import {ResolvedPageData} from "../../../common/bundles/page-resolver/resolved-page-data";
+import {RenderEntity} from "../../../common/cache/entity-content";
 import {ServerBundle, ServerBundleDataInitMap, ServerRequestContext} from "../server-bundle";
 import {resolvePage} from "./resolve-page";
 
@@ -27,6 +29,7 @@ export class ServerPageResolverBundle extends ServerBundle {
                     level: data.level,
                     loading: false,
                     page: data.page && data.page.proxy,
+                    path: data.path,
                     route: data.route.map(({proxy}) => proxy),
                     site: data.site && data.site.proxy,
                     ssl: data.ssl,
@@ -34,14 +37,15 @@ export class ServerPageResolverBundle extends ServerBundle {
         };
     }
 
-    public storeData2client(name: string, data: any): any {
+    public storeData2client(name: string, data: any): null | ExchangeStoreData {
         switch (name) {
             case "resolvedPage":
                 return {
                     found: data.found,
-                    page: data.page.__id,
-                    route: data.route.map((page: any) => page.__id),
-                    site: data.site.__id,
+                    page: data.page ? data.page.__id : null,
+                    path: data.path,
+                    route: data.route.map((page: RenderEntity) => page.__id),
+                    site: data.site ? data.site.__id : null,
                 };
         }
         return null;

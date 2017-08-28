@@ -1,7 +1,12 @@
 import {Template} from "../../bundles/site-renderer/template";
-import {WrappedAdminMain} from "./admin-main";
+import {AdminMain} from "./admin-main";
 
 export const adminTemplate: Template = {
-    component: WrappedAdminMain,
-    options: {},
+    component: AdminMain,
+    options: {
+        jsScripts: [
+            "/admin/libs.js",
+            "/admin/admin-index.js",
+        ],
+    },
 };

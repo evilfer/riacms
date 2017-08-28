@@ -1,6 +1,6 @@
 import * as Promise from "bluebird";
 import {ServerContext} from "../app/server-context";
-import {RenderingCache} from "../orm/cache";
+import {RenderingCache} from "../orm/server-cache";
 import {ServerRequest, ServerRequestContext, ServiceData} from "./server-bundle";
 
 export class BasicServerRequestContext implements ServerRequestContext {

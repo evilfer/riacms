@@ -1,12 +1,16 @@
-import {runInAction} from "mobx";
+import {useStrict} from "mobx";
 import {CmsApp} from "../../common/app/app";
+import {ExchangeData} from "../../common/app/exchange-data";
 import {ClientBundle} from "../bundles/client-bundle";
 import {ClientBundleGroup} from "../bundles/client-bundle-group";
 import {ClientCache} from "../cache/client-cache";
 import {ClientContext} from "./client-context";
-import {ClientData, parseInitialData} from "./initial-data";
+import {ClientErrorManager} from "./client-error-manager";
+import {parseExchangeData} from "./initial-data";
 
-export class ClientApp extends CmsApp<ClientBundle> {
+useStrict(true);
+
+export class CmsClientApp extends CmsApp<ClientBundle> {
     private context: ClientContext;
 
     public launch(): void {
@@ -16,24 +20,23 @@ export class ClientApp extends CmsApp<ClientBundle> {
 
     private prepareContext(): void {
         const bundles = new ClientBundleGroup(this.bundles);
-        const cache = new ClientCache();
+        const cache = new ClientCache(this.types);
+        const errors = new ClientErrorManager();
 
-        const loadData: (data: ClientData) => void = (data: ClientData) => {
-            runInAction(() => {
-                cache.loadAssets(data.a);
-                bundles.loadStoreData(data.s);
-            });
-        };
-
-        loadData(parseInitialData());
+        errors.registerErrorReporter(() => cache.getDataError());
 
         this.context = {
             bundles,
             cache,
-            loadData,
+            errors,
             types: this.types,
         };
 
         this.bundles.forEach(bundle => bundle.setClientContext(this.context));
+
+        const clientData: ExchangeData = parseExchangeData();
+
+        cache.loadEntities(clientData.e);
+        bundles.loadStoreData(clientData.s);
     }
 }

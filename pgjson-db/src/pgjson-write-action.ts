@@ -1,10 +1,11 @@
 import * as Promise from "bluebird";
 import {Client, QueryResult} from "pg";
-import {Entity, EntityContent} from "../../src/server/entity/entity";
+import {EntityContent} from "../../src/common/cache/entity-content";
+import {TypeManager} from "../../src/common/types/type-manager";
+import {Entity} from "../../src/server/entity/entity";
 import {EntityDbWriteAction} from "../../src/server/orm/entity-db";
 import {PgjsonQueryManager} from "./pgjson-query-manager";
 import {queryAsPromise} from "./query-as-promise";
-import {TypeManager} from "../../src/common/types/type-manager";
 
 const INSERT_ACTION_ROW = "INSERT INTO action (eid, vid, uid, type) VALUES (0, 0, $1, $2) RETURNING aid";
 const SET_ACTION_DATA = "UPDATE action SET eid=$1, vid=$2 WHERE aid=$3";

@@ -1,4 +1,4 @@
-import {EntityContent, EntityContentValue} from "../../server/entity/entity";
+import {EntityContent, EntityContentValue} from "../cache/entity-content";
 import {TypeManager} from "./type-manager";
 import {TypeDefinitionMap, TypeField} from "./types";
 

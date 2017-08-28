@@ -1,5 +1,6 @@
 import * as Promise from "bluebird";
-import {Entity, EntityContent} from "../entity/entity";
+import {EntityContent} from "../../common/cache/entity-content";
+import {Entity} from "../entity/entity";
 
 export type EntityDbFindValues = null | boolean | number | string;
 

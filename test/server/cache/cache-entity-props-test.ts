@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {RenderingCache} from "../../../src/server/orm/cache";
+import {RenderingCache} from "../../../src/server/orm/server-cache";
 import {cacheGenerator} from "../utils/fixture-rendering-cache";
 import {fixtures, types} from "./fixtures";
 
@@ -15,12 +15,7 @@ describe("cache entity props", () => {
     };
 
     it("should create initial empty proxy", loadTest([1], ([proxy1], [used1]) => {
-        expect(used1).to.deep.eq({});
-    }));
-
-    it("should add entity prop _id", loadTest([1], ([proxy1], [used1]) => {
-        expect(proxy1._id).to.equal(1);
-        expect(used1).to.deep.eq({_id: 1});
+        expect(used1).to.deep.eq({_type: "page"});
     }));
 
     it("should add entity prop _type", loadTest([1], ([proxy1], [used1]) => {
@@ -35,27 +30,27 @@ describe("cache entity props", () => {
                 {name: "page1"},
                 {name: "page1_updated"},
             ],
+            _type: "page",
         });
     }));
 
     it("should provide __id without marking it as used", loadTest([1], ([proxy1], [used1]) => {
         expect(proxy1.__id).to.equal(1);
-        expect(used1).to.deep.eq({});
+        expect(used1).to.deep.eq({_type: "page"});
     }));
 
     it("should provide __type without marking it as used", loadTest([1], ([proxy1], [used1]) => {
         expect(proxy1.__type).to.equal("page");
-        expect(used1).to.deep.eq({});
+        expect(used1).to.deep.eq({_type: "page"});
     }));
 
     it("should provide __data without marking it as used", loadTest([1], ([proxy1], [used1]) => {
         expect(proxy1.__data).to.be.an("array");
-        expect(used1).to.deep.eq({});
+        expect(used1).to.deep.eq({_type: "page"});
     }));
 
     it("should provide __content without marking it as used", loadTest([1], ([proxy1], [used1]) => {
         expect(proxy1.__content).to.be.an("object");
-        expect(used1).to.deep.eq({});
+        expect(used1).to.deep.eq({_type: "page"});
     }));
-
 });

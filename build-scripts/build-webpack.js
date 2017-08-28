@@ -1,7 +1,6 @@
 import gulp from "gulp";
 import webpack from "webpack";
 import gutil from "gulp-util";
-import ExtractTextPlugin from "extract-text-webpack-plugin";
 
 export function initWebpackTasks(options, entries) {
     Object.keys(entries).forEach(name => {
@@ -16,8 +15,7 @@ export function initWebpackTasks(options, entries) {
                 const output = `${options.outputPath}/${isProd ? 'prod' : 'dev'}/_assets/${name}`;
                 const commonPlugins = [
                     new webpack.DefinePlugin({'process.env.NODE_ENV': isProd ? '"production"' : '"development"'}),
-                    new webpack.ProvidePlugin({Promise: 'bluebird'}),
-                    new ExtractTextPlugin(`${filename}.css`)
+                    new webpack.ProvidePlugin({Promise: 'bluebird'})
                 ];
                 const plugins = isProd ? [...commonPlugins, new webpack.optimize.UglifyJsPlugin({
                     output: {comments: false},
@@ -48,17 +46,10 @@ export function initWebpackTasks(options, entries) {
                                             plugins: ["transform-decorators-legacy"]
                                         }
                                     }, {
-                                        loader: "ts-loader?configFileName=./tsconfig.webpack.json"
+                                        loader: "ts-loader?configFile=./tsconfig.webpack.json"
                                     }
                                 ]
                             },
-                            // {
-                            //     test: /\.s?css$/,
-                            //     loader: ExtractTextPlugin.extract({
-                            //         fallback: "style-loader",
-                            //         use: ["css-loader", "sass-loader"]
-                            //     })
-                            // }
                         ]
                     }
                 };

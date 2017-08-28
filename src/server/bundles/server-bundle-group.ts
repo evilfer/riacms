@@ -1,6 +1,7 @@
 import * as Promise from "bluebird";
 import * as extend from "extend";
 import {ServerBundle, ServerBundleDataInit, ServerBundleDataInitMap, ServerRequestContext} from "./server-bundle";
+import {ExchangeStoreDataMap} from "../../common/app/exchange-data";
 
 export class ServerBundleGroup {
     private bundles: ServerBundle[];
@@ -28,7 +29,7 @@ export class ServerBundleGroup {
         return this.declaredDataServices[name](context);
     }
 
-    public storeData2client(storeMap: { [name: string]: any }): { [name: string]: any } {
+    public storeData2client(storeMap: { [name: string]: any }): ExchangeStoreDataMap {
         return Object.keys(storeMap).reduce((acc, storeName) => {
             const clientData = this.storeOwner[storeName].storeData2client(storeName, storeMap[storeName]);
             if (clientData !== null) {

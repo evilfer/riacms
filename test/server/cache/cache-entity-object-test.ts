@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {RenderingCache} from "../../../src/server/orm/cache";
+import {RenderingCache} from "../../../src/server/orm/server-cache";
 import {cacheGenerator} from "../utils/fixture-rendering-cache";
 import {fixtures, types} from "./fixtures";
 
@@ -22,12 +22,12 @@ describe("cache nested data", () => {
 
         it("should return proxy for a nested object", loadTest(0, [6], ([proxy6], [used6]) => {
             expect(proxy6.nested).to.be.an("object");
-            expect(used6).to.deep.eq({nested: {}});
+            expect(used6).to.deep.eq({_type: "nestedPage", nested: {}});
         }));
 
         it("should return functional proxy for a nested object", loadTest(0, [6], ([proxy6], [used6]) => {
             expect(proxy6.nested.value).to.equal(4);
-            expect(used6).to.deep.eq({nested: {value: 4}});
+            expect(used6).to.deep.eq({_type: "nestedPage", nested: {value: 4}});
         }));
     });
 

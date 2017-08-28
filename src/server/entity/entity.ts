@@ -1,19 +1,5 @@
 import * as extend from "extend";
-
-export type EntityContentValue =
-    null
-    | boolean
-    | boolean[]
-    | number
-    | number[]
-    | string
-    | string[]
-    | EntityContent
-    | EntityContent[];
-
-export interface EntityContent {
-    [name: string]: EntityContentValue;
-}
+import {EntityContent} from "../../common/cache/entity-content";
 
 export interface Entity {
     id: number;

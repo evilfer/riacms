@@ -1,5 +1,5 @@
 import * as Promise from "bluebird";
-import {CacheEntity, RenderingCache} from "./cache";
+import {CacheEntity, RenderingCache} from "./server-cache";
 import {EntityQueryBuilder, EntityReadDb, QueryBuilder} from "./entity-db";
 
 export class CacheQueryBuilder implements QueryBuilder<CacheQueryBuilder> {

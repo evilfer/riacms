@@ -1,11 +1,12 @@
 import * as Promise from "bluebird";
+import {RiaCache} from "../../common/cache/cache";
+import {EntityContent} from "../../common/cache/entity-content";
 import {TypeManager} from "../../common/types/type-manager";
-import {TypeField} from "../../common/types/types";
-import {Entity, EntityContent, getEntityContent} from "../entity/entity";
+import {Entity, getEntityContent} from "../entity/entity";
 import {CacheMissingError} from "./cache-missing-error";
 import {CacheQueryBuilder} from "./cache-query-builder";
 import {EntityReadDb} from "./entity-db";
-import {createEntityProxy} from "./proxy";
+import {createEntityProxy} from "./server-proxy";
 
 export interface CacheEntity {
     entity: Entity;
@@ -13,16 +14,16 @@ export interface CacheEntity {
     proxy: any;
 }
 
-export class RenderingCache {
+export class RenderingCache extends RiaCache {
     private level: number;
     private db: EntityReadDb;
     private entities: { [id: number]: CacheEntity };
     private usedMap: { [id: number]: any };
-    private types: TypeManager;
 
     constructor(types: TypeManager, db: EntityReadDb, level = 0) {
+        super(types);
+
         this.level = level;
-        this.types = types;
         this.db = db;
         this.entities = {};
         this.usedMap = {};
@@ -30,10 +31,6 @@ export class RenderingCache {
 
     public getLevel(): number {
         return this.level;
-    }
-
-    public getFields(type: string): TypeField[] {
-        return this.types.getFields(type);
     }
 
     public loadEntity(id: number): Promise<CacheEntity> {
@@ -102,7 +99,7 @@ export class RenderingCache {
         return new CacheQueryBuilder(this, this.db, this.level);
     }
 
-    public getClientAssets(): { [id: number]: any } {
+    public getClientEntities(): { [id: number]: any } {
         return this.usedMap;
     }
 

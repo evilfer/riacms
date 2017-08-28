@@ -6,7 +6,7 @@ import {TypeManagerBuilder} from "../../../src/common/types/type-manager-builder
 import {ServerContext} from "../../../src/server/app/server-context";
 import {createFixtureServerContext} from "../utils/fixture-server-context";
 import {fixtures} from "./site-fixtures";
-import {RenderingCache} from "../../../src/server/orm/cache";
+import {RenderingCache} from "../../../src/server/orm/server-cache";
 import {ServerRequestContext} from "../../../src/server/bundles/server-bundle";
 import {
     ServerEntityFinderBundle,
@@ -54,6 +54,17 @@ describe("server entity finder bundle", () => {
 
 
     describe('store', () => {
+        const find: (query: { [field: string]: number | boolean | string }) => Promise<null | any[]> =
+            query => {
+                try {
+                    store.find("name", query);
+                    return Promise.resolve(null);
+                } catch (e) {
+                    return (e as EntityFinderError).loadData(cache)
+                        .then(() => store.find("name", query).data);
+                }
+            };
+
         it("should define entityFinder store", () => {
             expect(declaredStores).not.to.be.null;
             if (declaredStores !== null) {
@@ -88,16 +99,7 @@ describe("server entity finder bundle", () => {
         });
 
         describe("filtering", () => {
-            const find: (query: { [field: string]: number | boolean | string }) => Promise<null | any[]> =
-                query => {
-                    try {
-                        store.find("name", query);
-                        return Promise.resolve(null);
-                    } catch (e) {
-                        return (e as EntityFinderError).loadData(cache)
-                            .then(() => store.find("name", query).data);
-                    }
-                };
+
 
             it('should filter by type (page)', () => {
                 return find({_type: "site", name: "site1"})
@@ -116,6 +118,23 @@ describe("server entity finder bundle", () => {
                         if (entities !== null) {
                             expect(entities.map(p => p._id)).to.deep.eq([11, 12, 13, 121, 21, 22]);
                         }
+                    });
+            });
+        });
+
+        describe("to client data", () => {
+
+            it("should convert data to client", () => {
+                return find({_type: "site", name: "site1"})
+                    .then(() => {
+                        expect(bundle.storeData2client("entityFinder", store)).to.deep.eq({
+                            q: {
+                                '{"_type":"site","name":"site1"}': [1],
+                            },
+                            n: {
+                                "name": '{"_type":"site","name":"site1"}',
+                            },
+                        });
                     });
             });
         });

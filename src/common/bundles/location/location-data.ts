@@ -1,7 +1,11 @@
 export interface LocationData {
-    query: { [key: string]: string };
+    query: Map<string, string>;
     protocol: string;
     port: number;
     hostname: string;
     path: string;
+}
+
+export interface LocationStore extends LocationData {
+    goto: (path: string) => void;
 }

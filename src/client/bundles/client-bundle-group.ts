@@ -1,5 +1,5 @@
+import {ExchangeStoreDataMap} from "../../common/app/exchange-data";
 import {ClientBundle} from "./client-bundle";
-import {ClientStoreData} from "../app/initial-data";
 
 export class ClientBundleGroup {
     private bundles: ClientBundle[];
@@ -8,17 +8,28 @@ export class ClientBundleGroup {
 
     constructor(bundles: ClientBundle[]) {
         this.bundles = bundles;
-
-        this.prepareStores();
     }
 
     public getStores(): { [name: string]: any } {
+        if (!this.stores) {
+            this.prepareStores();
+        }
         return this.stores;
     }
 
-    public loadStoreData(storeData: ClientStoreData): void {
+    public getStore(name: string) {
+        if (!this.stores) {
+            this.prepareStores();
+        }
+        return this.stores[name];
+    }
+
+    public loadStoreData(storeData: ExchangeStoreDataMap): void {
+        this.getStores();
         Object.keys(storeData)
-            .forEach(name => this.storeOwner[name].loadStoreData(name, storeData[name]));
+            .forEach(name => this.storeOwner[name].loadStoreData(name,
+                this.stores[name],
+                storeData[name]));
     }
 
     private prepareStores(): void {

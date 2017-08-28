@@ -7,7 +7,6 @@ export interface ClientLocation {
     search: string;
 }
 
-
 export interface ClientHistory {
     current: () => ClientLocation;
     onChange: (callback: (location: ClientLocation) => void) => void;

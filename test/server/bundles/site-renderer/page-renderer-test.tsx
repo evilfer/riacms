@@ -9,7 +9,7 @@ import {ServerContext} from "../../../../src/server/app/server-context";
 import {ServerPageResolverBundle} from "../../../../src/server/bundles/page-resolver/server-page-resolver-bundle";
 import {createFixtureServerContext} from "../../utils/fixture-server-context";
 import {default as applyTestTypes, fixtures} from "./site-fixtures";
-import {RenderingCache} from "../../../../src/server/orm/cache";
+import {RenderingCache} from "../../../../src/server/orm/server-cache";
 import {ServerBundle, ServerRequestContext} from "../../../../src/server/bundles/server-bundle";
 import {BasicRendererResolverBundle} from "../../../../src/server/bundles/basic-renderer-resolver/basic-renderer-resolver";
 import {resolveRendererAndRenderPage} from "../../../../src/server/bundles/site-renderer/render-page";
@@ -30,7 +30,7 @@ describe("page renderer", () => {
             req: {url},
         };
 
-        return resolveRendererAndRenderPage(context, requestContext)
+        return resolveRendererAndRenderPage(context, requestContext, false)
             .then(({err, stream}) => {
                 if (stream !== null) {
                     return new Promise((resolve) => {
@@ -39,7 +39,6 @@ describe("page renderer", () => {
                         stream.on('data', function (chunk: string) {
                             data += chunk;
                         });
-
 
                         stream.on('end', function () {
                             const html = data
@@ -109,19 +108,18 @@ describe("page renderer", () => {
             });
     });
 
-    it('should have store data assets', () => {
+    it("should provide cache data to client", () => {
         return renderUrl("http://host2/about")
             .then(({err, storeData}) => {
                 expect(err).to.be.null;
                 expect(storeData).not.to.be.null;
-                expect(storeData).to.have.keys("a", "s");
-                expect(storeData.a).to.be.an("object");
-                expect(storeData.s).to.be.an("object");
-                expect(storeData.a).to.have.keys([2, 20021, 20022, 22, 21]);
+                expect(storeData).to.have.keys("e", "s");
+                expect(storeData.e).to.be.an("object");
+                expect(storeData.e).to.have.keys([2, 20021, 20022, 22, 21]);
             });
     });
 
-    it('should have store data assets', () => {
+    it("should provide store data to client", () => {
         return renderUrl("http://host2/about")
             .then(({storeData}) => {
                 expect(storeData).not.to.be.null;
@@ -130,6 +128,7 @@ describe("page renderer", () => {
                 expect(storeData.s.resolvedPage).to.deep.eq({
                     found: true,
                     page: 22,
+                    path: "/about",
                     route: [22],
                     site: 2,
                 });

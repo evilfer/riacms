@@ -1,9 +1,10 @@
 import * as Promise from "bluebird";
+import {EntityContent} from "../../../src/common/cache/entity-content";
 import {TypeManager} from "../../../src/common/types/type-manager";
 import {ServerContext} from "../../../src/server/app/server-context";
 import {ServerBundle} from "../../../src/server/bundles/server-bundle";
 import {ServerBundleGroup} from "../../../src/server/bundles/server-bundle-group";
-import {Entity, EntityContent, getEntityContent} from "../../../src/server/entity/entity";
+import {Entity, getEntityContent} from "../../../src/server/entity/entity";
 import {EntityQueryBuilder, EntityReadDb} from "../../../src/server/orm/entity-db";
 
 export function createFixtureServerContext(bundleList: ServerBundle[],

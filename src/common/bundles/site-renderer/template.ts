@@ -1,7 +1,13 @@
 import {IWrappedComponent} from "mobx-react";
 import {Component} from "react";
 
+export type TemplateComponent = any | Component<{}, undefined> | (() => JSX.Element) | IWrappedComponent<any>;
+
 export interface Template {
-    component: Component<{}, undefined> | (() => JSX.Element) | IWrappedComponent<any>;
-    options: { [name: string]: any };
+    component: TemplateComponent;
+    options: {
+        styledComponents?: boolean,
+        jsScripts?: string[],
+        simpleHtml?: boolean,
+    };
 }

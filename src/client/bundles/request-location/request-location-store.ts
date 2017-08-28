@@ -1,7 +1,8 @@
 import {action, observable, runInAction} from "mobx";
+import {LocationStore} from "../../../common/bundles/location/location-data";
 import {ClientHistory, ClientLocation} from "./client-history";
 
-export class RequestLocationStore {
+export class ClientRequestLocationStore implements LocationStore {
 
     @observable public protocol: string = "";
     @observable public hostname: string = "";
@@ -21,6 +22,11 @@ export class RequestLocationStore {
         });
 
         this.updateUrlData(history.current());
+    }
+
+    @action
+    public goto(path: string) {
+        this.history.goto(path);
     }
 
     @action

@@ -1,6 +1,6 @@
 import * as Promise from "bluebird";
-import {ServerDataError} from "../server-data-error";
-import {RenderingCache} from "./cache";
+import {ServerDataError} from "../app/server-data-error";
+import {RenderingCache} from "./server-cache";
 
 export class CacheMissingError extends ServerDataError {
     public ids: number[];
