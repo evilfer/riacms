@@ -9,13 +9,15 @@ function createTypes(): TypeManager {
         {name: "subtitle", type: "string"},
     ]);
 
+    builder.createConcreteType("nestedNumber", [
+        {name: "value", type: "number"},
+    ]);
+
     builder.createConcreteType("nestedMultiplePage", [
         {name: "name", type: "string"},
         {
             name: "nested",
-            nestedFields: [
-                {name: "value", type: "number"},
-            ],
+            nestedType: "nestedNumber",
             type: "object[]",
         },
     ]);
@@ -24,9 +26,7 @@ function createTypes(): TypeManager {
         {name: "name", type: "string"},
         {
             name: "nested",
-            nestedFields: [
-                {name: "value", type: "number"},
-            ],
+            nestedType: "nestedNumber",
             type: "object",
         },
     ]);

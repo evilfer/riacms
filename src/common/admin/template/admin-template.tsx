@@ -9,4 +9,5 @@ export const adminTemplate: Template = {
             "/admin/admin-index.js",
         ],
     },
+    stores: [],
 };

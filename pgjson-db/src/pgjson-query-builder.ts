@@ -71,8 +71,6 @@ export class PgJsonQueryBuilder implements EntityQueryBuilder {
 
     public run(): Promise<Entity[]> {
         const query: string = FIND_QUERY_BASE + this.conditions.join(" AND ");
-        console.log(query);
-        console.log(this.values);
         return entityQueryAsPromise(this.client, query, this.values);
     }
 

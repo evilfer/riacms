@@ -4,14 +4,14 @@ export interface CmsRequest {
     url: string;
 }
 
-export abstract class Bundle {
+export abstract class Bundle<T extends TypeManagerBuilder> {
     public abstract getName(): string;
 
     public getDependencies(): string[] {
         return [];
     }
 
-    public applyTypes(typeBuilder: TypeManagerBuilder): void {
+    public applyTypes(typeBuilder: T): void {
         return;
     }
 }

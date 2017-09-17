@@ -5,6 +5,7 @@ export interface TreeDataItem {
     key: string | number;
     label: string;
     children: null | TreeDataItem[];
+    menu?: () => JSX.Element;
 }
 
 export interface TreeItemProps {
@@ -20,9 +21,7 @@ export interface TreeProps {
 function TreeItem({item, onChange}: TreeItemProps): JSX.Element {
     const isOpen = !!item.children;
     const iconName = isOpen ? "minus" : "plus";
-    const icon = <Icon name={iconName}
-                       circular={true}
-                       onClick={onChange.bind(null, item.key, !isOpen)}/>;
+    const icon = <Icon name={iconName} onClick={onChange.bind(null, item.key, !isOpen)}/>;
 
     const children = isOpen && (
         <div className="tree__item__children">
@@ -30,19 +29,16 @@ function TreeItem({item, onChange}: TreeItemProps): JSX.Element {
         </div>
     );
 
+    const dropdown = item.menu && <Dropdown icon="bars">{item.menu()}</Dropdown>;
+
     return (
-        <div className="tree_item">
-            {icon}
-            <div className="tree__item__label">{item.label}</div>
-            <div className="tree__item__menu">
-                <Dropdown icon="bars">
-                    <Dropdown.Menu>
-                        <Dropdown.Header icon="tags" content="Tag Label"/>
-                        <Dropdown.Menu scrolling>
-                            <Dropdown.Item value="1" content="Option 1"/>
-                        </Dropdown.Menu>
-                    </Dropdown.Menu>
-                </Dropdown>
+        <div className="tree__item">
+            <div className="tree__item__row">
+                {icon}
+                <div className="tree__item__label">{item.label}</div>
+                <div className="tree__item__menu">
+                    {dropdown}
+                </div>
             </div>
             {children}
         </div>

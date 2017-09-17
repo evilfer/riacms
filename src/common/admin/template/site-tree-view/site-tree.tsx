@@ -1,10 +1,11 @@
 import {inject, observer} from "mobx-react";
 import * as React from "react";
-import {EntityFinderStore} from "../../bundles/entity-finder/entity-finder-data";
-import {LocationStore} from "../../bundles/location/location-data";
-import {gotoQuery} from "../../bundles/location/location-utils";
-import {ResolvedPageData} from "../../bundles/page-resolver/resolved-page-data";
-import {Tree, TreeDataItem} from "./widgets/tree/tree";
+import {Dropdown} from "semantic-ui-react";
+import {EntityFinderStore} from "../../../bundles/entity-finder/entity-finder-data";
+import {LocationStore} from "../../../bundles/location/location-data";
+import {gotoQuery} from "../../../bundles/location/location-utils";
+import {ResolvedPageData} from "../../../bundles/page-resolver/resolved-page-data";
+import {Tree, TreeDataItem} from "../widgets/tree/tree";
 
 export interface SiteTreeProps {
     location?: LocationStore;
@@ -21,6 +22,12 @@ function buildSiteTreeData(nodes: any[], openIds: number[]): TreeDataItem[] {
             children,
             key: node._id,
             label: node.name,
+            menu: () => (
+                <Dropdown.Menu>
+                    <Dropdown.Item content="New page"/>
+                    <Dropdown.Item content="Delete"/>
+                </Dropdown.Menu>
+            )
         };
     });
 }

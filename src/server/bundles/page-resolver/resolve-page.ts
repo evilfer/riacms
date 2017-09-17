@@ -86,7 +86,7 @@ function findSite(cache: RenderingCache, hostName: string, port: number): Promis
         //.arrayContainsAny("site", "port", [port, 0])
         .run()
         .then(entities => {
-            entities
+            const sorted = entities
                 .filter(({content}) => {
                     const ports: number[] = content.port as number[];
                     return ports.indexOf(0) >= 0 || ports.indexOf(port) >= 0;
@@ -110,7 +110,7 @@ function findSite(cache: RenderingCache, hostName: string, port: number): Promis
                     }
                 });
 
-            return entities[0] ? entities[0] : null;
+            return sorted[0] ? sorted[0] : null;
         });
 }
 

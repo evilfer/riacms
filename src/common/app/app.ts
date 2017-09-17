@@ -2,23 +2,25 @@ import {Bundle} from "../bundles/bundle";
 import {TypeManager} from "../types/type-manager";
 import {TypeManagerBuilder} from "../types/type-manager-builder";
 
-export class CmsApp<E extends Bundle> {
-    protected bundles: E[];
+export abstract class CmsApp<E extends TypeManagerBuilder, T extends Bundle<E>> {
+    protected bundles: T[];
     protected types: TypeManager;
 
-    public constructor(bundles: E[]) {
+    public constructor(bundles: T[]) {
         this.bundles = bundles;
-
-        this.prepareTypes();
+        this.initTypes();
     }
 
     public getTypes(): TypeManager {
         return this.types;
     }
 
-    private prepareTypes() {
-        const builder = new TypeManagerBuilder();
+    protected abstract prepareTypeBuilder(): E;
+
+    private initTypes() {
+        const builder = this.prepareTypeBuilder();
         this.bundles.forEach(bundle => bundle.applyTypes(builder));
         this.types = builder.build();
     }
+
 }

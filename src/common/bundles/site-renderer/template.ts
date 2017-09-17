@@ -10,4 +10,5 @@ export interface Template {
         jsScripts?: string[],
         simpleHtml?: boolean,
     };
+    stores: string[];
 }

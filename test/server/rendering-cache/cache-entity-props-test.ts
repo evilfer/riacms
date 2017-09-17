@@ -5,7 +5,7 @@ import {fixtures, types} from "./fixtures";
 
 describe("cache entity props", () => {
 
-    const newFixtureCache = cacheGenerator([], types, fixtures);
+    const newFixtureCache = cacheGenerator(types, fixtures);
 
     const loadTest = (ids: number[], test: (proxies: any[], used: any[]) => void) => {
         const cache: RenderingCache = newFixtureCache(0);

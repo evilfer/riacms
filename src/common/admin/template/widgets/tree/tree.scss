@@ -5,5 +5,17 @@
 
 .tree__item__label {
     display: inline-block;
-    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.tree__item__menu {
+    display: inline-block;
+
+    .dropdown:not(.visible) {
+        display: none;
+    }
+}
+
+.tree__item__row:hover > .tree__item__menu > .dropdown {
+    display: inline-block;
 }

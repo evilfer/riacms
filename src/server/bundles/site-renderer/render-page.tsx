@@ -15,12 +15,12 @@ export interface RenderPageResult {
 
 export function renderPage(serverContext: ServerContext,
                            requestContext: ServerRequestContext,
-                           Renderer: Template,
+                           template: Template,
                            onlyJs: boolean): Promise<RenderPageResult> {
-    if (Renderer !== null) {
+    if (template !== null) {
         console.log("render");
-        return serverContext.bundles.instantiateStores(requestContext)
-            .then(storeMap => renderHtmlTemplate(serverContext, requestContext.cache, storeMap, Renderer, onlyJs))
+        return serverContext.bundles.instantiateStores(requestContext, template.stores)
+            .then(storeMap => renderHtmlTemplate(serverContext, requestContext.cache, storeMap, template, onlyJs))
             .then(({err, html}) => {
                 if (html !== null) {
                     const stream: Readable = new Readable();

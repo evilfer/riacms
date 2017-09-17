@@ -4,4 +4,5 @@ import {WrappedRendererMain} from "./renderer-main";
 export const rendererTemplate: Template = {
     component: WrappedRendererMain,
     options: {},
+    stores: [],
 };

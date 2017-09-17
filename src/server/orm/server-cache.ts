@@ -1,12 +1,15 @@
 import * as Promise from "bluebird";
 import {RiaCache} from "../../common/cache/cache";
-import {EntityContent} from "../../common/cache/entity-content";
+import {EntityContent, EntityContentValue} from "../../common/cache/entity-content";
 import {TypeManager} from "../../common/types/type-manager";
 import {Entity, getEntityContent} from "../entity/entity";
 import {CacheMissingError} from "./cache-missing-error";
 import {CacheQueryBuilder} from "./cache-query-builder";
 import {EntityReadDb} from "./entity-db";
 import {createEntityProxy} from "./server-proxy";
+import {ServerContext} from "../app/server-context";
+import {ServerRequestContext} from "../bundles/server-bundle";
+import {ServerComputedEntityMetadata, ServerComputedFieldFunc} from "../entity/server-types";
 
 export interface CacheEntity {
     entity: Entity;
@@ -15,6 +18,8 @@ export interface CacheEntity {
 }
 
 export class RenderingCache extends RiaCache {
+    private context: ServerContext;
+    private request: ServerRequestContext;
     private level: number;
     private db: EntityReadDb;
     private entities: { [id: number]: CacheEntity };
@@ -27,6 +32,11 @@ export class RenderingCache extends RiaCache {
         this.db = db;
         this.entities = {};
         this.usedMap = {};
+    }
+
+    public setContext(context: ServerContext, request: ServerRequestContext) {
+        this.context = context;
+        this.request = request;
     }
 
     public getLevel(): number {
@@ -101,6 +111,12 @@ export class RenderingCache extends RiaCache {
 
     public getClientEntities(): { [id: number]: any } {
         return this.usedMap;
+    }
+
+    public invokeComputedValue(content: EntityContent,
+                               metadata: ServerComputedEntityMetadata,
+                               impl: ServerComputedFieldFunc): EntityContentValue | Promise<EntityContentValue> {
+        return impl(content, metadata, this.context, this.request);
     }
 
     private fireMissingError(ids: number[]): never {

@@ -16,12 +16,14 @@ import {resolveRendererAndRenderPage} from "../../../../src/server/bundles/site-
 import renderers from "./test-renderers";
 import {RequestLocationBundle} from "../../../../src/server/bundles/request-location/request-location-bundle";
 import {ServerSiteTypesBundle} from "../../../../src/server/bundles/site-types/server-site-types-bundle";
+import {SiteRendererServerBundle} from "../../../../src/server/bundles/site-renderer/site-renderer-server-bundle";
+import {ServerRenderingContextBundle} from "../../../../src/server/bundles/rendering-context/server-rendering-context-bundle";
 
 
 describe("page renderer", () => {
     let context: ServerContext;
 
-    const renderUrl = (url: string) => {
+    const createRequestContext = (url: string) => {
         const cache = new RenderingCache(context.types, context.db, 0);
         const requestContext: ServerRequestContext = {
             cache,
@@ -29,6 +31,12 @@ describe("page renderer", () => {
             level: 0,
             req: {url},
         };
+
+        return requestContext;
+    };
+
+    const renderUrl = (url: string) => {
+        const requestContext: ServerRequestContext = createRequestContext(url);
 
         return resolveRendererAndRenderPage(context, requestContext, false)
             .then(({err, stream}) => {
@@ -62,11 +70,13 @@ describe("page renderer", () => {
     };
 
     beforeEach(() => {
+        const renderingContextBundle: ServerRenderingContextBundle = new ServerRenderingContextBundle();
         const typesBundle: ServerSiteTypesBundle = new ServerSiteTypesBundle();
         const locationBundle = new RequestLocationBundle();
         const pageResolverBundle = new ServerPageResolverBundle();
         const rendererResolverBundle = new BasicRendererResolverBundle();
-        const bundles: ServerBundle[] = [locationBundle, pageResolverBundle, rendererResolverBundle];
+        const siteRendererBundle = new SiteRendererServerBundle();
+        const bundles: ServerBundle[] = [renderingContextBundle, locationBundle, pageResolverBundle, rendererResolverBundle, siteRendererBundle];
 
         rendererResolverBundle.setRenderers(renderers);
 
@@ -133,5 +143,25 @@ describe("page renderer", () => {
                     site: 2,
                 });
             });
+    });
+
+    describe("using render mode", () => {
+        it('should provide renderMode store', () => {
+            return context.bundles.instantiateStores(createRequestContext("http://host1:1000"), ["dynamicData"])
+                .then(stores => {
+                    expect(stores).to.be.an("object");
+                    expect(stores.dynamicData).to.be.an("object");
+                });
+        });
+
+        it('should ignore components marked as browser only for rendering', () => {
+            return renderUrl("http://host3:1000/")
+                .then(({err, html}) => {
+                    expect(err).to.be.null;
+                    expect(html).to.contain("<div>all contexts</div>");
+                    expect(html).not.to.contain("<div>browser only</div>");
+                });
+        });
+
     });
 });

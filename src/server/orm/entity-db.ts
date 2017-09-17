@@ -23,12 +23,12 @@ export interface EntityReadDb {
     find: (level: number) => EntityQueryBuilder;
 }
 
-export interface EntityDbWriteAction extends EntityReadDb {
+export interface EntityDbWriteTransaction extends EntityReadDb {
     createEntity: (type: string, data: EntityContent[]) => Promise<Entity>;
     updateEntity: (eid: number, data: EntityContent[]) => Promise<Entity>;
     commit: () => Promise<boolean>;
 }
 
 export interface EntityDb extends EntityReadDb {
-    action: (type: string, uid: number) => Promise<EntityDbWriteAction>;
+    transaction: (type: string, uid: number) => Promise<EntityDbWriteTransaction>;
 }

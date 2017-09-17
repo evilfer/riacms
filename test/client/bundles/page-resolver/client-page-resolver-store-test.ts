@@ -105,7 +105,7 @@ describe("client page resolver store", () => {
             }
         });
 
-        it("should update entities after loading required data", () => {
+        it("should updatePromise entities after loading required data", () => {
             store.loadStoreData({
                 found: true,
                 path: "c",

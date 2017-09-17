@@ -15,11 +15,11 @@ describe("pg json db", () => {
 
     describe("write functions", () => {
         it("should create entity", () => {
-            return db.action("create", 0)
-                .then(action => {
-                    return action.createEntity("t1", [{a: 1}])
+            return db.transaction("create", 0)
+                .then(transaction => {
+                    return transaction.createEntity("t1", [{a: 1}])
                         .then(entity => {
-                            return action.commit().then(() => {
+                            return transaction.commit().then(() => {
                                 expect(entity.id).to.be.a("number");
                                 expect(entity.data).to.deep.eq([{a: 1}]);
                             });
@@ -27,12 +27,12 @@ describe("pg json db", () => {
                 });
         });
 
-        it("should update entity", () => {
-            return db.action("create", 0)
-                .then(action => {
-                    return action.createEntity("t1", [{a: 1}])
-                        .then(entity1 => action.updateEntity(entity1.id, [{a: 2}])
-                            .then(entity2 => action.commit().then(() => {
+        it("should updatePromise entity", () => {
+            return db.transaction("create", 0)
+                .then(transaction => {
+                    return transaction.createEntity("t1", [{a: 1}])
+                        .then(entity1 => transaction.updateEntity(entity1.id, [{a: 2}])
+                            .then(entity2 => transaction.commit().then(() => {
                                 expect(entity2.id).to.equal(entity1.id);
                                 expect(entity2.data).to.deep.eq([{a: 2}]);
                             })));
@@ -48,11 +48,11 @@ describe("pg json db", () => {
 
         beforeEach(() => {
             ids = [];
-            return Promise.each(fixtures, fixture => db.action("create", 0)
-                .then(action => action.createEntity(fixture.type, fixture.data)
+            return Promise.each(fixtures, fixture => db.transaction("create", 0)
+                .then(transaction => transaction.createEntity(fixture.type, fixture.data)
                     .then(entity => {
                         ids.push(entity.id);
-                        return action.commit();
+                        return transaction.commit();
                     })));
         });
 

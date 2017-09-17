@@ -42,10 +42,10 @@ function createDataProxy(cache: ClientCache,
                 createMultipleRelatedGetter(cache, id, entityData, proxy, field.name, keyBase);
                 break;
             case "object":
-                createNestedGetter(cache, id, entityData, proxy, field.name, keyBase, field.nestedFields);
+                createNestedGetter(cache, id, entityData, proxy, field.name, keyBase, field.nestedType);
                 break;
             case "object[]":
-                createMultipleNestedGetter(cache, id, entityData, proxy, field.name, keyBase, field.nestedFields);
+                createMultipleNestedGetter(cache, id, entityData, proxy, field.name, keyBase, field.nestedType);
                 break;
         }
     });
@@ -135,7 +135,9 @@ function createNestedGetter(cache: ClientCache,
                             proxy: EntityContent,
                             key: string,
                             keyBase: string,
-                            fields: TypeField[]) {
+                            nestedType: string) {
+
+    const fields = cache.getFields(nestedType);
 
     if (shouldCreateDataGetter(cache, id, entityData, proxy, key, keyBase)) {
         const dataValue = entityData[key] as null | EntityContent;
@@ -159,7 +161,9 @@ function createMultipleNestedGetter(cache: ClientCache,
                                     proxy: EntityContent,
                                     key: string,
                                     keyBase: string,
-                                    fields: TypeField[]) {
+                                    nestedType: string) {
+
+    const fields = cache.getFields(nestedType);
 
     if (shouldCreateDataGetter(cache, id, entityData, proxy, key, keyBase, [])) {
         const dataValue = entityData[key] as EntityContent[];

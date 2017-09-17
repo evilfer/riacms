@@ -5,17 +5,17 @@ export type TypeFieldTypes =
     "number" | "number[]" |
     "boolean" | "boolean[]" |
     "related" | "related[]" |
-    "object" | "object[]";
+    "object" | "object[]" |
+    "json";
 
 export interface BaseTypeField {
     name: string;
     type: TypeFieldTypes;
     computed?: boolean;
-    impl?: (content: EntityContent) => EntityContentValue;
 }
 
 export interface LiteralTypeField extends BaseTypeField {
-    type: "string" | "number" | "boolean" | "string[]" | "number[]" | "boolean[]";
+    type: "string" | "number" | "boolean" | "string[]" | "number[]" | "boolean[]" | "json";
 }
 
 export interface RelatedTypeField extends BaseTypeField {
@@ -32,7 +32,7 @@ export interface MultipleRelatedTypeField extends BaseTypeField {
 }
 
 export interface ObjectTypeField extends BaseTypeField {
-    nestedFields: TypeField[];
+    nestedType: string;
 }
 
 export interface SingleObjectTypeField extends ObjectTypeField {

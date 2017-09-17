@@ -116,7 +116,7 @@ describe("server entity finder bundle", () => {
                     .then(entities => {
                         expect(entities).to.have.length(6);
                         if (entities !== null) {
-                            expect(entities.map(p => p._id)).to.deep.eq([11, 12, 13, 121, 21, 22]);
+                            expect(entities.map(p => p._id)).to.deep.eq([11, 12, 13, 21, 22, 121]);
                         }
                     });
             });

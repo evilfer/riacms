@@ -90,4 +90,36 @@ export const fixtures: Entity[] = [
         id: 20022,
         type: "site_tree_link",
     },
+    {
+        data: [{
+            childLinks: [30031],
+            home: 31,
+            host: "host3",
+            name: "site3",
+            notFound: 31,
+            port: [1000],
+            renderer: "r3",
+        }],
+        id: 3,
+        type: "site",
+    },
+    {
+        data: [{
+            child: 31,
+            parent: 3,
+        }],
+        id: 30031,
+        type: "site_tree_link",
+    },
+    {
+        data: [{
+            childLinks: [],
+            name: "page31",
+            parentLinks: [30031],
+            paths: ["p31"],
+            relatedPage: null,
+        }],
+        id: 31,
+        type: "page",
+    },
 ];

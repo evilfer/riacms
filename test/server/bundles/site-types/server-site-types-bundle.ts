@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {TypeManager} from "../../../src/common/types/type-manager";
-import {TypeManagerBuilder} from "../../../src/common/types/type-manager-builder";
-import {ServerSiteTypesBundle} from "../../../src/server/bundles/site-types/server-site-types-bundle";
+import {TypeManager} from "../../../../src/common/types/type-manager";
+import {TypeManagerBuilder} from "../../../../src/common/types/type-manager-builder";
+import {ServerSiteTypesBundle} from "../../../../src/server/bundles/site-types/server-site-types-bundle";
 
 describe("server site types bundle", () => {
 

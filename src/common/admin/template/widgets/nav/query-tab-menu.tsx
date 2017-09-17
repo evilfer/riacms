@@ -29,6 +29,6 @@ export class QueryTabMenu extends React.Component<QueryTabMenuProps> {
                        onClick={() => this.handleSelect(value)}>{label}</Menu.Item>
         ));
 
-        return <Menu pointing secondary>{items}</Menu>;
+        return <Menu>{items}</Menu>;
     }
 }

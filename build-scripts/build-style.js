@@ -17,7 +17,7 @@ export function initStyleTasks(options, entries) {
                 let isDev = mode !== 'prod';
                 let outputPath = `${options.outputPath}/${mode}/_assets/${name}`;
 
-                gulp.task(`sass-${mode}-${name}`, () => {
+                gulp.task(`${name}-sass-${mode}`, () => {
                     return gulp.src(entries[name])
                         .pipe(sass().on('error', sass.logError))
                         .pipe(autoprefixer({
@@ -29,9 +29,9 @@ export function initStyleTasks(options, entries) {
                 });
             });
 
-            gulp.task(`sass-watch-${name}`, [`sass-dev-${name}`], function () {
+            gulp.task(`${name}-sass-watch`, [`${name}-sass-dev`], function () {
                 return watch(`${src}**/*.scss`, function () {
-                    gulp.start(`sass-dev-${name}`);
+                    gulp.start(`${name}-sass-dev`);
                 });
             });
         }

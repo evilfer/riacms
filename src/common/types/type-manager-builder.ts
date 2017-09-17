@@ -1,9 +1,8 @@
-import {EntityContent, EntityContentValue} from "../cache/entity-content";
 import {TypeManager} from "./type-manager";
 import {TypeDefinitionMap, TypeField} from "./types";
 
 export class TypeManagerBuilder {
-    private types: TypeDefinitionMap;
+    protected types: TypeDefinitionMap;
 
     public constructor() {
         this.types = {};
@@ -35,24 +34,6 @@ export class TypeManagerBuilder {
         }
 
         this.types[child].implementedTypes.push(parent);
-    }
-
-    public implementComputed(type: string, fieldName: string, f: (content: EntityContent) => EntityContentValue) {
-        if (!this.types[type]) {
-            throw new Error(`Type "${type}" does not exist`);
-        }
-
-        const field: undefined | TypeField = this.types[type].fields.find(({name}) => name === fieldName);
-
-        if (!field) {
-            throw new Error(`Type "${parent}" does not have type "${fieldName}"`);
-        }
-
-        if (!field.computed) {
-            throw new Error(`Field "${parent}"."${fieldName}" is not a computed field`);
-        }
-
-        field.impl = f;
     }
 
     public build(): TypeManager {

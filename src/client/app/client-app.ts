@@ -7,15 +7,20 @@ import {ClientCache} from "../cache/client-cache";
 import {ClientContext} from "./client-context";
 import {ClientErrorManager} from "./client-error-manager";
 import {parseExchangeData} from "./initial-data";
+import {TypeManagerBuilder} from "../../common/types/type-manager-builder";
 
 useStrict(true);
 
-export class CmsClientApp extends CmsApp<ClientBundle> {
+export class CmsClientApp extends CmsApp<TypeManagerBuilder, ClientBundle> {
     private context: ClientContext;
 
     public launch(): void {
         this.prepareContext();
         this.bundles.forEach(bundle => bundle.launch());
+    }
+
+    protected prepareTypeBuilder(): TypeManagerBuilder {
+        return new TypeManagerBuilder();
     }
 
     private prepareContext(): void {

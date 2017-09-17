@@ -1,22 +1,31 @@
+import * as Promise from "bluebird";
 import {TypeManager} from "../../../src/common/types/type-manager";
-import {TypeManagerBuilder} from "../../../src/common/types/type-manager-builder";
 import {Entity} from "../../../src/server/entity/entity";
+import {ServerTypeManagerBuilder} from "../../../src/server/entity/server-types";
 
-function createTypes(): TypeManager {
-    const builder = new TypeManagerBuilder();
+export const computedFunctions = {
+    asyncFunc: (proxy: any) => Promise.resolve(`hi ${proxy.name}`),
+    compositeFunc: (proxy: any) => proxy.syncFunc,
+    syncFunc: (proxy: any) => `hi ${proxy.name}`,
+};
+
+export function createTypes(): TypeManager {
+    const builder = new ServerTypeManagerBuilder();
 
     builder.createConcreteType("extendedPage", [
         {name: "name", type: "string"},
         {name: "subtitle", type: "string"},
     ]);
 
+    builder.createConcreteType("nestedNumber", [
+        {name: "value", type: "number"},
+    ]);
+
     builder.createConcreteType("nestedMultiplePage", [
         {name: "name", type: "string"},
         {
             name: "nested",
-            nestedFields: [
-                {name: "value", type: "number"},
-            ],
+            nestedType: "nestedNumber",
             type: "object[]",
         },
     ]);
@@ -25,9 +34,7 @@ function createTypes(): TypeManager {
         {name: "name", type: "string"},
         {
             name: "nested",
-            nestedFields: [
-                {name: "value", type: "number"},
-            ],
+            nestedType: "nestedNumber",
             type: "object",
         },
     ]);
@@ -45,6 +52,15 @@ function createTypes(): TypeManager {
         {name: "name", type: "string"},
         {name: "related", type: "related", relatedType: "page", inverseField: null},
     ]);
+
+    builder.createConcreteType("computed", [
+        {name: "name", type: "string"},
+        {name: "syncField", type: "string", computed: true},
+        {name: "asyncField", type: "string", computed: true},
+    ]);
+
+    builder.implementComputed("computed", "syncField", computedFunctions.syncFunc);
+    builder.implementComputed("computed", "asyncField", computedFunctions.asyncFunc);
 
     return builder.build();
 }
@@ -114,5 +130,10 @@ export const fixtures: Entity[] = [
         }],
         id: 8,
         type: "nestedMultiplePage",
+    },
+    {
+        data: [{name: "name"}],
+        id: 9,
+        type: "computed",
     },
 ];

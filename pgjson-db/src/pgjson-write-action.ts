@@ -3,7 +3,7 @@ import {Client, QueryResult} from "pg";
 import {EntityContent} from "../../src/common/cache/entity-content";
 import {TypeManager} from "../../src/common/types/type-manager";
 import {Entity} from "../../src/server/entity/entity";
-import {EntityDbWriteAction} from "../../src/server/orm/entity-db";
+import {EntityDbWriteTransaction} from "../../src/server/orm/entity-db";
 import {PgjsonQueryManager} from "./pgjson-query-manager";
 import {queryAsPromise} from "./query-as-promise";
 
@@ -13,7 +13,7 @@ const INSERT_ENTITY_ROW = "INSERT INTO entity (vid, type) VALUES (1, $1) RETURNI
 const INSERT_VERSION = "INSERT INTO version (eid, vid, aid, data) VALUES ($1, $2, $3, $4)";
 const INC_VERSION = "UPDATE entity SET vid=(vid + 1) WHERE eid=$1 RETURNING vid";
 
-export class PgJsonWriteAction extends PgjsonQueryManager<Client> implements EntityDbWriteAction {
+export class PgJsonWriteAction extends PgjsonQueryManager<Client> implements EntityDbWriteTransaction {
     private done: null | (() => void);
     private type: string;
     private uid: number;

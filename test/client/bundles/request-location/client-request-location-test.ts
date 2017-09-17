@@ -56,7 +56,7 @@ describe("client request location bundle", () => {
         }
     });
 
-    it("should update url", () => {
+    it("should updatePromise url", () => {
         history.init("https",
             "h1",
             "1234",

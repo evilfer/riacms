@@ -1,7 +1,7 @@
 import * as Promise from "bluebird";
 import * as extend from "extend";
-import {ServerBundle, ServerBundleDataInit, ServerBundleDataInitMap, ServerRequestContext} from "./server-bundle";
 import {ExchangeStoreDataMap} from "../../common/app/exchange-data";
+import {ServerBundle, ServerBundleDataInit, ServerBundleDataInitMap, ServerRequestContext} from "./server-bundle";
 
 export class ServerBundleGroup {
     private bundles: ServerBundle[];
@@ -16,13 +16,15 @@ export class ServerBundleGroup {
         this.prepareStores();
     }
 
-    public instantiateStores(context: ServerRequestContext): Promise<({ [name: string]: any })> {
-        return Promise.reduce(this.declaredStores, (acc, {name, init}) => {
-            return init(context).then(value => {
-                acc[name] = value;
-                return acc;
-            });
-        }, {} as { [name: string]: any });
+    public instantiateStores(context: ServerRequestContext, stores: string[]): Promise<({ [name: string]: any })> {
+        return Promise.reduce(
+            this.declaredStores.filter(({name}) => stores.indexOf(name) >= 0),
+            (acc, {name, init}) => {
+                return init(context).then(value => {
+                    acc[name] = value;
+                    return acc;
+                });
+            }, {} as { [name: string]: any });
     }
 
     public dataService(name: string, context: ServerRequestContext): Promise<any> {
