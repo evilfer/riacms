@@ -96,13 +96,21 @@ export class RenderingCache extends RiaCache {
         return ids.map(id => this.entities[id].proxy);
     }
 
-    public getUsed(ids: number[]): any[] {
+    public getUsedItems(ids: number[]): any[] {
         const missing = ids.filter(id => !this.entities[id]);
         if (missing.length > 0) {
             this.fireMissingError(missing);
         }
 
         return ids.map(id => this.usedMap[id]);
+    }
+
+    public getUsedItem(id: number): any {
+        if (!this.entities[id]) {
+            this.fireMissingError([id]);
+        }
+
+        return this.usedMap[id];
     }
 
     public find(): CacheQueryBuilder {

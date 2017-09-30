@@ -30,6 +30,11 @@ export class ClientResolvedPageStore implements ResolvedPageData {
     }
 
     @computed
+    public get pathSegments(): string[] {
+        return this.path.split("/");
+    }
+
+    @computed
     public get site(): null | RenderEntity {
         return this.bestData && this.entityOrNull(this.bestData.site);
     }

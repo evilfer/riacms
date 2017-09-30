@@ -1,7 +1,6 @@
 /* tslint:disable */
 import {expect} from "chai";
 import {TypeManager} from "../../../src/common/types/type-manager";
-import {TypeManagerBuilder} from "../../../src/common/types/type-manager-builder";
 import {ServerContext} from "../../../src/server/app/server-context";
 import {
     ServerPageResolverBundle,
@@ -14,6 +13,7 @@ import {ServerRequestContext} from "../../../src/server/bundles/server-bundle";
 import {ResolvedPageData} from "../../../src/common/bundles/page-resolver/resolved-page-data";
 import {RequestLocationBundle} from "../../../src/server/bundles/request-location/request-location-bundle";
 import {ServerSiteTypesBundle} from "../../../src/server/bundles/site-types/server-site-types-bundle";
+import {ServerTypeManagerBuilder} from "../../../src/server/entity/server-types";
 
 describe("server page resolver bundle", () => {
     let context: ServerContext;
@@ -25,7 +25,7 @@ describe("server page resolver bundle", () => {
         const locationBundle = new RequestLocationBundle();
         bundle = new ServerPageResolverBundle();
 
-        const builder: TypeManagerBuilder = new TypeManagerBuilder();
+        const builder: ServerTypeManagerBuilder = new ServerTypeManagerBuilder();
         typesBundle.applyTypes(builder);
         const types: TypeManager = builder.build();
         context = createFixtureServerContext([locationBundle, bundle], types, fixtures);
@@ -44,7 +44,7 @@ describe("server page resolver bundle", () => {
             };
 
             return context.bundles.dataService("resolvedPage", requestContext).then((data: ResolvedPageData) => {
-                expect(data).to.have.keys(["admin", "level", "loading", "site", "page", "path", "route", "found", "ssl"]);
+                expect(data).to.have.keys(["admin", "level", "loading", "site", "page", "path", "pathSegments", "route", "found", "ssl"]);
                 expect(data.found).to.equal(true);
                 expect(data.site.entity.id).to.equal(1);
                 expect(data.page.entity.id).to.equal(11);
@@ -62,12 +62,14 @@ describe("server page resolver bundle", () => {
             };
 
             return context.bundles.dataService("resolvedPage", requestContext).then((data: ResolvedPageData) => {
-                expect(data).to.have.keys(["admin", "level", "loading", "site", "page", "path", "route", "found", "ssl"]);
+                expect(data).to.have.keys(["admin", "level", "loading", "site", "page", "path", "pathSegments", "route", "found", "ssl"]);
                 expect(data.found).to.equal(true);
                 expect(data.site.entity.id).to.equal(1);
                 expect(data.page.entity.id).to.equal(11);
                 expect(data.admin).to.be.true;
                 expect(data.level).to.equal(0);
+                expect(data.path).to.equal("");
+                expect(data.pathSegments).to.deep.eq([]);
             });
         });
 
@@ -83,6 +85,8 @@ describe("server page resolver bundle", () => {
                 expect(store.found).to.equal(true);
                 expect(store.site.entity.id).to.equal(1);
                 expect(store.page.entity.id).to.equal(12);
+                expect(store.path).to.equal("about");
+                expect(store.pathSegments).to.deep.eq(["about"]);
             });
         });
 
@@ -98,6 +102,8 @@ describe("server page resolver bundle", () => {
                 expect(store.found).to.equal(true);
                 expect(store.site.entity.id).to.equal(1);
                 expect(store.page.entity.id).to.equal(12);
+                expect(store.path).to.equal("about");
+                expect(store.pathSegments).to.deep.eq(["about"]);
             });
         });
 
@@ -113,6 +119,8 @@ describe("server page resolver bundle", () => {
                 expect(store.found).to.equal(true);
                 expect(store.site.entity.id).to.equal(1);
                 expect(store.page.entity.id).to.equal(121);
+                expect(store.path).to.equal("about/ria");
+                expect(store.pathSegments).to.deep.eq(["about", "ria"]);
             });
         });
 
@@ -129,6 +137,8 @@ describe("server page resolver bundle", () => {
                 expect(store.site.entity.id).to.equal(1);
                 expect(store.page.entity.id).to.equal(13);
                 expect(store.route.map(({entity}) => entity.id)).to.deep.eq([12]);
+                expect(store.path).to.equal("about/ria_");
+                expect(store.pathSegments).to.deep.eq(["about", "ria_"]);
             });
         });
     });
@@ -225,7 +235,7 @@ describe("server page resolver bundle", () => {
 
             return declaredStores.resolvedPage(requestContext).then((store: ResolvedPageData) => {
                 expect(bundle.storeData2client("resolvedPage", store)).to.deep.eq({
-                    path: "/about/ria",
+                    path: "about/ria",
                     found: true,
                     site: 1,
                     page: 121,

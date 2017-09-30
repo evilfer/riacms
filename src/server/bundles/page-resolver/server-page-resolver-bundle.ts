@@ -30,6 +30,7 @@ export class ServerPageResolverBundle extends ServerBundle {
                     loading: false,
                     page: data.page && data.page.proxy,
                     path: data.path,
+                    pathSegments: data.pathSegments,
                     route: data.route.map(({proxy}) => proxy),
                     site: data.site && data.site.proxy,
                     ssl: data.ssl,

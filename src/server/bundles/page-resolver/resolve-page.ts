@@ -17,7 +17,8 @@ export function resolvePage(context: ServerRequestContext): Promise<ResolvedPage
                     level: context.cache.getLevel(),
                     loading: false,
                     page: null,
-                    path: location.path,
+                    path: "",
+                    pathSegments: [],
                     route: [],
                     site: null,
                     ssl: false,
@@ -25,7 +26,7 @@ export function resolvePage(context: ServerRequestContext): Promise<ResolvedPage
             }
 
             const trimmedPath = formatPath(match[1]);
-            const path: null | string[] = trimmedPath.length > 0 ? trimmedPath.split("/") : null;
+            const segments: null | string[] = trimmedPath.length > 0 ? trimmedPath.split("/") : null;
 
             const suffix: string = match[2];
 
@@ -35,7 +36,8 @@ export function resolvePage(context: ServerRequestContext): Promise<ResolvedPage
                 level: context.cache.getLevel(),
                 loading: false,
                 page: null,
-                path: location.path,
+                path: trimmedPath,
+                pathSegments: segments || [],
                 route: [],
                 site: null,
                 ssl: location.protocol === "https",
@@ -46,7 +48,7 @@ export function resolvePage(context: ServerRequestContext): Promise<ResolvedPage
                     if (site) {
                         store.site = site;
 
-                        if (!path) {
+                        if (!segments) {
                             if (site.content.home) {
                                 return context.cache.loadEntity(site.content.home as number)
                                     .then(page => {
@@ -60,7 +62,7 @@ export function resolvePage(context: ServerRequestContext): Promise<ResolvedPage
                                     });
                             }
                         } else {
-                            return findPath(context.cache, store, path, 0, site.entity.id)
+                            return findPath(context.cache, store, segments, 0, site.entity.id)
                                 .then(found => {
                                     store.found = found;
                                     if (found) {

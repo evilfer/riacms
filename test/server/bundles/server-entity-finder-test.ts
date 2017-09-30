@@ -2,7 +2,6 @@
 import * as Promise from "bluebird";
 import {expect} from "chai";
 import {TypeManager} from "../../../src/common/types/type-manager";
-import {TypeManagerBuilder} from "../../../src/common/types/type-manager-builder";
 import {ServerContext} from "../../../src/server/app/server-context";
 import {createFixtureServerContext} from "../utils/fixture-server-context";
 import {fixtures} from "./site-fixtures";
@@ -15,6 +14,7 @@ import {
 import {EntityFinderStore} from "../../../src/common/bundles/entity-finder/entity-finder-data";
 import {EntityFinderError} from "../../../src/server/bundles/entity-finder/entity-finder-error";
 import {ServerSiteTypesBundle} from "../../../src/server/bundles/site-types/server-site-types-bundle";
+import {ServerTypeManagerBuilder} from "../../../src/server/entity/server-types";
 
 describe("server entity finder bundle", () => {
     let context: ServerContext;
@@ -29,7 +29,7 @@ describe("server entity finder bundle", () => {
         const typesBundle: ServerSiteTypesBundle = new ServerSiteTypesBundle();
         bundle = new ServerEntityFinderBundle();
 
-        const builder: TypeManagerBuilder = new TypeManagerBuilder();
+        const builder: ServerTypeManagerBuilder = new ServerTypeManagerBuilder();
         typesBundle.applyTypes(builder);
         const types: TypeManager = builder.build();
 
@@ -99,8 +99,6 @@ describe("server entity finder bundle", () => {
         });
 
         describe("filtering", () => {
-
-
             it('should filter by type (page)', () => {
                 return find({_type: "site", name: "site1"})
                     .then(entities => {
@@ -114,9 +112,9 @@ describe("server entity finder bundle", () => {
             it('should filter by field value', () => {
                 return find({_type: "page"})
                     .then(entities => {
-                        expect(entities).to.have.length(6);
+                        expect(entities).to.have.length(7);
                         if (entities !== null) {
-                            expect(entities.map(p => p._id)).to.deep.eq([11, 12, 13, 21, 22, 121]);
+                            expect(entities.map(p => p._id)).to.deep.eq([11, 12, 13, 21, 22, 121, 122]);
                         }
                     });
             });

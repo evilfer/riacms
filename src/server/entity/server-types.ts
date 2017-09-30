@@ -15,13 +15,19 @@ export type ServerComputedFieldFunc = (content: EntityContent,
                                        ctx: ServerContext,
                                        req: ServerRequestContext) => EntityContentValue | Promise<EntityContentValue>;
 
+export type ServerComputedField2ClientFunc = (value: EntityContentValue) => any;
+
 export interface ServerBaseTypeField extends BaseTypeField {
     impl: ServerComputedFieldFunc;
+    clientData: null | ServerComputedField2ClientFunc;
 }
 
 export class ServerTypeManagerBuilder extends TypeManagerBuilder {
 
-    public implementComputed(type: string, fieldName: string, f: ServerComputedFieldFunc) {
+    public implementComputed(type: string,
+                             fieldName: string,
+                             f: ServerComputedFieldFunc,
+                             cd: null | ServerComputedField2ClientFunc = null) {
         if (!this.types[type]) {
             throw new Error(`Type "${type}" does not exist`);
         }
@@ -37,5 +43,6 @@ export class ServerTypeManagerBuilder extends TypeManagerBuilder {
         }
 
         (field as ServerBaseTypeField).impl = f;
+        (field as ServerBaseTypeField).clientData = cd;
     }
 }

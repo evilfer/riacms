@@ -10,7 +10,7 @@ describe("cache literal data", () => {
     const loadTest = (level: number, ids: number[], test: (proxies: any[], used: any[]) => void) => {
         const cache: RenderingCache = newCache(level);
         return () => cache.loadEntities(ids).then(() => {
-            test(cache.getProxies(ids), cache.getUsed(ids));
+            test(cache.getProxies(ids), cache.getUsedItems(ids));
         });
     };
 

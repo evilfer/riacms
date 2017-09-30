@@ -1,16 +1,29 @@
 import {TypeManager} from "../../../src/common/types/type-manager";
-import {TypeManagerBuilder} from "../../../src/common/types/type-manager-builder";
 import {ServerSiteTypesBundle} from "../../../src/server/bundles/site-types/server-site-types-bundle";
 import {Entity} from "../../../src/server/entity/entity";
+import {ServerTypeManagerBuilder} from "../../../src/server/entity/server-types";
 
 function createTypes(): TypeManager {
     const typesBundle: ServerSiteTypesBundle = new ServerSiteTypesBundle();
-    const builder: TypeManagerBuilder = new TypeManagerBuilder();
+    const builder: ServerTypeManagerBuilder = new ServerTypeManagerBuilder();
     typesBundle.applyTypes(builder);
     return builder.build();
 }
 
 export const types: TypeManager = createTypes();
+
+/**
+ * 1
+ *  - 11 (h)
+ *  - 12
+ *    - 121
+ *  - 13
+ * 2
+ *  - 21 (h)
+ *  - 22
+ *    - 121 (r)
+ *
+ */
 
 export const fixtures: Entity[] = [
     {
@@ -40,6 +53,7 @@ export const fixtures: Entity[] = [
     {
         data: [{
             children: [],
+            homeOf: 1,
             name: "page11",
             parentLinks: [10011],
             paths: ["home"],
@@ -49,7 +63,7 @@ export const fixtures: Entity[] = [
     },
     {
         data: [{
-            childLinks: [120121],
+            childLinks: [120121, 120122],
             name: "page12",
             parentLinks: [10012],
             paths: ["about"],
@@ -80,6 +94,17 @@ export const fixtures: Entity[] = [
     {
         data: [{
             childLinks: [],
+            name: "page121",
+            parentLinks: [120122, 220122],
+            paths: ["ria2"],
+        }],
+        id: 122,
+        type: "page",
+    },
+    {
+        data: [{
+            childLinks: [],
+            homeOf: 2,
             name: "page21",
             parentLinks: [20021],
             paths: ["home"],
@@ -89,9 +114,9 @@ export const fixtures: Entity[] = [
     },
     {
         data: [{
-            childLinks: [],
+            childLinks: [220122],
             name: "page22",
-            parents: [20022],
+            parentLinks: [20022],
             paths: ["about"],
         }],
         id: 22,
@@ -143,6 +168,22 @@ export const fixtures: Entity[] = [
             parent: 12,
         }],
         id: 120121,
+        type: "site_tree_link",
+    },
+    {
+        data: [{
+            child: 122,
+            parent: 12,
+        }],
+        id: 120122,
+        type: "site_tree_link",
+    },
+    {
+        data: [{
+            child: 122,
+            parent: 22,
+        }],
+        id: 220122,
         type: "site_tree_link",
     },
 ];

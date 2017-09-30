@@ -1,4 +1,4 @@
-import * as Promise from "bluebird";
+import * as Promise from  "bluebird";
 import * as extend from "extend";
 import * as path from "path";
 import {PoolConfig} from "pg";

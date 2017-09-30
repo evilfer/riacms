@@ -4,7 +4,6 @@ import {expect} from "chai";
 import * as he from "he";
 import * as React from "react";
 import {TypeManager} from "../../../../src/common/types/type-manager";
-import {TypeManagerBuilder} from "../../../../src/common/types/type-manager-builder";
 import {ServerContext} from "../../../../src/server/app/server-context";
 import {ServerPageResolverBundle} from "../../../../src/server/bundles/page-resolver/server-page-resolver-bundle";
 import {createFixtureServerContext} from "../../utils/fixture-server-context";
@@ -18,6 +17,7 @@ import {RequestLocationBundle} from "../../../../src/server/bundles/request-loca
 import {ServerSiteTypesBundle} from "../../../../src/server/bundles/site-types/server-site-types-bundle";
 import {SiteRendererServerBundle} from "../../../../src/server/bundles/site-renderer/site-renderer-server-bundle";
 import {ServerRenderingContextBundle} from "../../../../src/server/bundles/rendering-context/server-rendering-context-bundle";
+import {ServerTypeManagerBuilder} from "../../../../src/server/entity/server-types";
 
 
 describe("page renderer", () => {
@@ -80,7 +80,7 @@ describe("page renderer", () => {
 
         rendererResolverBundle.setRenderers(renderers);
 
-        const builder: TypeManagerBuilder = new TypeManagerBuilder();
+        const builder: ServerTypeManagerBuilder = new ServerTypeManagerBuilder();
         typesBundle.applyTypes(builder);
         rendererResolverBundle.applyTypes(builder);
         applyTestTypes(builder);
@@ -138,7 +138,7 @@ describe("page renderer", () => {
                 expect(storeData.s.resolvedPage).to.deep.eq({
                     found: true,
                     page: 22,
-                    path: "/about",
+                    path: "about",
                     route: [22],
                     site: 2,
                 });

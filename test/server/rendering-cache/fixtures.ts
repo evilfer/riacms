@@ -111,7 +111,7 @@ export const fixtures: Entity[] = [
     {
         data: [{
             name: "page6",
-            nested: {value: 4},
+            nested: {_type: "nestedNumber", value: 4},
         }],
         id: 6,
         type: "nestedPage",
@@ -126,7 +126,7 @@ export const fixtures: Entity[] = [
     {
         data: [{
             name: "page8",
-            nested: [{value: 1}, {value: 2}],
+            nested: [{_type: "nestedNumber", value: 1}, {_type: "nestedNumber", value: 2}],
         }],
         id: 8,
         type: "nestedMultiplePage",

@@ -1,5 +1,3 @@
-import {EntityContent, EntityContentValue} from "../cache/entity-content";
-
 export type TypeFieldTypes =
     "string" | "string[]" |
     "number" | "number[]" |

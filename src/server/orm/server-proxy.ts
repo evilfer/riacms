@@ -23,7 +23,20 @@ function prepareRootEntityProps(cache: RenderingCache,
     proxy._type = proxy.__type = used._type = rootEntity.type;
     proxy.__content = content;
     proxy.__data = rootEntity.data;
-    createLiteralGetter(cache, proxy, used, {name: "_data"}, rootEntity, {_data: rootEntity.data});
+    wrapStoredOrComputed(cache, proxy, used, {name: "_data"},
+        rootEntity, {_data: rootEntity.data},
+        prepareLiteralValue);
+}
+
+function createNestedDataProxy(cache: RenderingCache,
+                               fields: TypeField[],
+                               metadata: ServerComputedEntityMetadata,
+                               content: EntityContent,
+                               proxy: any,
+                               used: any) {
+
+    proxy._type = used._type = metadata.type;
+    createDataProxy(cache, fields, metadata, content, proxy, used);
 }
 
 function createDataProxy(cache: RenderingCache,
@@ -40,158 +53,144 @@ function createDataProxy(cache: RenderingCache,
             case "number[]":
             case "boolean":
             case "boolean[]":
-                createLiteralGetter(cache, proxy, used, field, metadata, content);
+                wrapStoredOrComputed(cache, proxy, used, field, metadata, content, prepareLiteralValue);
                 break;
             case "related":
             case "related[]":
-                createRelatedGetter(cache, proxy, used, field.name, content[field.name]);
+                wrapStoredOrComputed(cache, proxy, used, field, metadata, content, prepareRelatedValue);
                 break;
             case "object":
-                createNestedGetter(cache, field.nestedType, proxy, used, field, metadata, content);
+                wrapStoredOrComputed(cache, proxy, used, field, metadata, content, preparedNestedValue);
                 break;
             case "object[]":
-                createMultipleNestedGetter(cache, field.nestedType, proxy, used, field, metadata, content);
+                wrapStoredOrComputed(cache, proxy, used, field, metadata, content, preparedMultipleNestedValue);
                 break;
         }
     });
 }
 
-function createLiteralGetter(cache: RenderingCache,
-                             proxy: any,
-                             used: any,
-                             field: { name: string, impl?: ServerComputedFieldFunc },
-                             metadata: ServerComputedEntityMetadata,
-                             content: EntityContent) {
-    if (field.impl) {
-        let calculated = false;
-        let value: any = null;
+function prepareLiteralValue(cache: RenderingCache, value: any) {
+    return {
+        customUsedData: false,
+        value,
+    };
+}
+
+function prepareRelatedValue(cache: RenderingCache, value: null | number | number[]) {
+
+    let output: any;
+    if (value === null) {
+        output = null;
+    } else if (typeof value === "number") {
+        output = cache.getProxy(value);
+    } else {
+        output = cache.getProxies(value as number[]);
+    }
+
+    return {
+        customUsedData: false,
+        value: output,
+    };
+}
+
+function preparedNestedValue(cache: RenderingCache, value: null | EntityContent) {
+    if (value === null) {
+        return {
+            customUsedData: false,
+            value: null,
+        };
+    }
+    const nestedType = value._type as string;
+    const fields = cache.getFields(nestedType);
+    const nestedProxy = {};
+    const nestedUsed = {};
+    createNestedDataProxy(cache, fields, {id: null, type: nestedType}, value, nestedProxy, nestedUsed);
+
+    return {
+        customUsedData: true,
+        used: nestedUsed,
+        value: nestedProxy,
+    };
+}
+
+function preparedMultipleNestedValue(cache: RenderingCache, value: null | EntityContent[]) {
+
+    if (!value || value.length === 0) {
+        return {
+            customUsedData: true,
+            used: [],
+            value: [],
+        };
+    }
+
+    const nestedProxies: any[] = [];
+    const nestedUsedList: any[] = [];
+
+    (value || []).forEach((item: any) => {
+        const nestedType = item._type as string;
+        const fields = cache.getFields(nestedType);
+
+        const nestedProxy = {};
+        const nestedUsed = {};
+        createNestedDataProxy(cache, fields, {id: null, type: nestedType}, item, nestedProxy, nestedUsed);
+        nestedProxies.push(nestedProxy);
+        nestedUsedList.push(nestedUsed);
+    });
+
+
+    return {
+        customUsedData: true,
+        used: nestedUsedList,
+        value: nestedProxies,
+    };
+}
+
+type PrepareValueFunc = (cache: RenderingCache,
+                         value: any) => { value: any, customUsedData: boolean, used?: any };
+
+function wrapStoredOrComputed(cache: RenderingCache,
+                              proxy: any,
+                              used: any,
+                              field: { name: string, impl?: ServerComputedFieldFunc },
+                              metadata: ServerComputedEntityMetadata,
+                              content: EntityContent,
+                              func: PrepareValueFunc): void {
+
+    let initialize = true;
+    let value: any;
+    const setValue = (v: any) => {
+        const prepared = func(cache, v);
+        initialize = false;
+        value = prepared.value;
+        used[field.name] = prepared.customUsedData ? prepared.used : v;
+    };
+
+    if (!field.impl) {
+
         Object.defineProperty(proxy, field.name, {
             get: () => {
-                if (!calculated) {
-                    calculated = true;
+                if (initialize) {
+                    setValue(content[field.name]);
+                }
+                return value;
+            },
+        });
+    } else {
+        Object.defineProperty(proxy, field.name, {
+            get: () => {
+                if (initialize) {
                     const result = cache.invokeComputedValue(content, metadata, field.impl!) as any;
                     if (result && typeof result.then === "function") {
                         throw new CacheMissingComputedField(metadata.type, field.name, result.then((v: any) => {
-                            used[field.name] = value = v;
+                            setValue(v);
                         }));
                     } else {
-                        used[field.name] = value = result;
+                        setValue(result);
                     }
                 }
 
                 return value;
             },
         });
-    } else {
-        const value = content[field.name];
-        Object.defineProperty(proxy, field.name, {
-            get: () => {
-                used[field.name] = value;
-                return value;
-            },
-        });
     }
-}
-
-function createRelatedGetter(cache: RenderingCache, proxy: any, used: any, key: string, value: any) {
-    let related: any;
-
-    Object.defineProperty(proxy, key, {
-        get: () => {
-            if (related !== undefined) {
-                return related;
-            }
-
-            used[key] = value;
-
-            if (value === null) {
-                related = null;
-                return null;
-            }
-
-            if (typeof value === "number") {
-                return cache.getProxy(value);
-            } else {
-                return cache.getProxies(value);
-            }
-        },
-    });
-}
-
-function createNestedGetter(cache: RenderingCache,
-                            nestedType: string,
-                            proxy: any,
-                            used: any,
-                            field: TypeField,
-                            metadata: ServerComputedEntityMetadata,
-                            content: EntityContent) {
-
-    const key = field.name;
-    const value = content[key] as EntityContent;
-
-    if (value) {
-        const fields = cache.getFields(nestedType);
-
-        let initialized: boolean = false;
-        let nestedProxy: any;
-
-        Object.defineProperty(proxy, key, {
-            get: () => {
-                if (!initialized) {
-                    initialized = true;
-                    nestedProxy = {};
-                    const nestedUsed = {};
-                    createDataProxy(cache, fields, {id: null, type: nestedType}, value, nestedProxy, nestedUsed);
-                    used[key] = nestedUsed;
-                }
-                return nestedProxy;
-            },
-        });
-    } else {
-        Object.defineProperty(proxy, key, {
-            get: () => {
-                used[key] = null;
-                return null;
-            },
-        });
-    }
-}
-
-function createMultipleNestedGetter(cache: RenderingCache,
-                                    nestedType: string,
-                                    proxy: any,
-                                    used: any,
-                                    field: TypeField,
-                                    metadata: ServerComputedEntityMetadata,
-                                    content: EntityContent) {
-
-    const key = field.name;
-    const value = content[key] as EntityContent[];
-
-    const fields = cache.getFields(nestedType);
-
-    let initialized: boolean = false;
-    let nestedProxies: any[];
-
-    Object.defineProperty(proxy, key, {
-        get: () => {
-            if (!initialized) {
-                initialized = true;
-                nestedProxies = [];
-                const nestedUsedList: any[] = [];
-
-                (value || []).forEach((item: any) => {
-                    const nestedProxy = {};
-                    const nestedUsed = {};
-                    createDataProxy(cache, fields, {id: null, type: nestedType}, item, nestedProxy, nestedUsed);
-                    nestedProxies.push(nestedProxy);
-                    nestedUsedList.push(nestedUsed);
-                });
-
-                used[key] = nestedUsedList;
-            }
-
-            return nestedProxies;
-        },
-    });
 }

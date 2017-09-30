@@ -10,7 +10,7 @@ describe("cache entity props", () => {
     const loadTest = (ids: number[], test: (proxies: any[], used: any[]) => void) => {
         const cache: RenderingCache = newFixtureCache(0);
         return () => cache.loadEntities(ids).then(() => {
-            test(cache.getProxies(ids), cache.getUsed(ids));
+            test(cache.getProxies(ids), cache.getUsedItems(ids));
         });
     };
 

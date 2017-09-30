@@ -15,7 +15,7 @@ describe("cache literal data", () => {
         return () => {
             const cache: RenderingCache = cacheGenerator(createTypes(), fixtures)(level);
             return cache.loadEntities(ids).then(() => {
-                return test(cache.getProxies(ids), cache.getUsed(ids));
+                return test(cache.getProxies(ids), cache.getUsedItems(ids));
             });
         }
     };
