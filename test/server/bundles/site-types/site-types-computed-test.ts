@@ -10,6 +10,7 @@ import {fixtures} from "../site-fixtures";
 import {createFixtureServerContext} from "../../utils/fixture-server-context";
 import {ServerRequestContext} from "../../../../src/server/bundles/server-bundle";
 import {ServerTypeManagerBuilder} from "../../../../src/server/entity/server-types";
+import {ServerDataError} from "../../../../src/server/app/server-data-error";
 
 describe("server site types computed fields", () => {
     let context: ServerContext;
@@ -75,6 +76,49 @@ describe("server site types computed fields", () => {
             return cache.loadEntity(12)
                 .then(({proxy}) => {
                     expect(() => proxy.url).to.throw("Missing computed: page->url");
+                });
+        });
+
+        it("should provide url data after exception resolving", () => {
+            initRequestContext("http://bad-host");
+            return cache.loadEntities([1, 12])
+                .then(() => cache.loadEntity(12))
+                .then(({proxy}) => {
+                    try {
+                        proxy.url;
+                        expect(false).to.be.true;
+                    } catch (ex) {
+                        return (ex as ServerDataError).loadData(cache)
+                            .then(() => {
+                                expect(cache.getUsedItem(12)).to.deep.eq({
+                                    _type: "page",
+                                    url: {
+                                        _type: "site_tree_parent_url",
+                                    }
+                                });
+
+                                expect(proxy.url.segments).to.be.an("array");
+                                expect(cache.getUsedItem(12).url).to.deep.eq({
+                                    _type: "site_tree_parent_url",
+                                    segments: [{
+                                        _type: "site_tree_parent_url_segment",
+                                    }, {
+                                        _type: "site_tree_parent_url_segment",
+                                    }]
+                                });
+
+                                expect(proxy.url.segments[0].node._id).to.equal(1);
+                                expect(cache.getUsedItem(12).url).to.deep.eq({
+                                    _type: "site_tree_parent_url",
+                                    segments: [{
+                                        _type: "site_tree_parent_url_segment",
+                                        node: 1,
+                                    }, {
+                                        _type: "site_tree_parent_url_segment",
+                                    }]
+                                });
+                            });
+                    }
                 });
         });
     });

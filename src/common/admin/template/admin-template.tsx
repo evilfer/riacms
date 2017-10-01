@@ -9,5 +9,5 @@ export const adminTemplate: Template = {
             "/admin/admin-index.js",
         ],
     },
-    stores: [],
+    stores: ["location", "entityFinder", "resolvedPage"],
 };

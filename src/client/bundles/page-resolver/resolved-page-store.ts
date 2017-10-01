@@ -26,7 +26,12 @@ export class ClientResolvedPageStore implements ResolvedPageData {
 
     @computed
     public get path(): string {
-        return formatPath(this.requestLocation.path);
+        const match = this.requestLocation.path.match(/^([^?]*?)(?:\/_(staging|admin))?$/);
+        if (match !== null) {
+            return formatPath(match[1]);
+        } else {
+            return "";
+        }
     }
 
     @computed
