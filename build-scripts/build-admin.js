@@ -18,8 +18,11 @@ export function initAdminTasks(options) {
         outputPath: `${options.outputPath}`
     }, {
         admin: [{
-            src: path.join(__dirname, "../node_modules/semantic-ui-css/themes/**/*"),
-            out: "themes"
+            src: path.join(__dirname, "../node_modules/font-awesome/fonts/*"),
+            out: "/fonts/font-awesome/"
+        }, {
+            src: path.join(__dirname, "../src/common/admin/assets"),
+            out: "/"
         }]
     })
 }

@@ -2,7 +2,8 @@ import * as React from "react";
 import {LocationStore} from "../../bundles/location/location-data";
 import {ResolvedPageData} from "../../bundles/page-resolver/resolved-page-data";
 import {AdminHead} from "./admin-head";
-import {MainLayout, Splitter} from "./widgets";
+import {SiteTree} from "./site-tree-view/site-tree";
+import {Icon, MainLayout, Splitter} from "./widgets";
 
 export interface AdminMainProps {
     resolvedPage: ResolvedPageData;
@@ -15,7 +16,7 @@ export class AdminMain extends React.Component<AdminMainProps> {
             <MainLayout>
                 <AdminHead/>
                 <Splitter>
-                    <div>1</div>
+                    <div><SiteTree/></div>
                     <div>2</div>
                 </Splitter>
             </MainLayout>

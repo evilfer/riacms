@@ -14,9 +14,7 @@ export interface PopupControllerProps extends BaseWidgetProps {
     popups?: BaseWidgetStore<PopupStoreData>;
 }
 
-@inject<PopupControllerProps>("popups")
-@observer
-export class PopupController extends BaseWidget<PopupStoreData, PopupControllerProps> {
+export abstract class PopupController<E extends PopupControllerProps> extends BaseWidget<PopupStoreData, E> {
     public render() {
         const content = this.renderContent();
         const popup = this.isShown() && this.renderPopup();
@@ -24,20 +22,14 @@ export class PopupController extends BaseWidget<PopupStoreData, PopupControllerP
         return <div className={this.getClassNames()}>{content}{popup}</div>;
     }
 
-    protected getClassNames(): string | undefined {
-        return undefined;
-    }
+    public abstract getClassNames(): string | undefined;
 
-    protected renderContent(): any {
-        return null;
-    }
+    public abstract renderContent(): any;
 
-    protected renderPopup(): any {
-        return null;
-    }
+    protected abstract renderPopup(): any;
 
     protected getStore(): BaseWidgetStore<PopupStoreData> {
-        return this.props.popups!;
+        return this.props.popups! as BaseWidgetStore<PopupStoreData>;
     }
 
     protected showPopup() {

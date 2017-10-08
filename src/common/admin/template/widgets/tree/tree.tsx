@@ -1,11 +1,13 @@
 import * as React from "react";
-import {Dropdown, Icon} from "semantic-ui-react";
+import Icon from "../icon/icon";
+import {MenuItemProps} from "../menu/menu-item";
+import PopupMenu from "../popup-menu/popup-menu";
 
 export interface TreeDataItem {
     key: string | number;
     label: string;
     children: null | TreeDataItem[];
-    menu?: () => JSX.Element;
+    menu?: () => MenuItemProps[];
 }
 
 export interface TreeItemProps {
@@ -29,16 +31,18 @@ function TreeItem({item, onChange}: TreeItemProps): JSX.Element {
         </div>
     );
 
-    const dropdown = item.menu && <Dropdown icon="bars">{item.menu()}</Dropdown>;
+    const menu = item.menu && (
+        <div className="tree__item__menu">
+            <PopupMenu menuItems={item.menu}/>
+        </div>
+    );
 
     return (
         <div className="tree__item">
             <div className="tree__item__row">
                 {icon}
                 <div className="tree__item__label">{item.label}</div>
-                <div className="tree__item__menu">
-                    {dropdown}
-                </div>
+                {menu}
             </div>
             {children}
         </div>
