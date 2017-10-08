@@ -15,7 +15,6 @@ const libraries = [
     'mobx',
     'mobx-react',
     'mobx-react-devtools',
-    'semantic-ui-react'
 ];
 
 function initWebpackLib(name, outputPath) {

@@ -11,4 +11,5 @@ export interface Template {
         simpleHtml?: boolean,
     };
     stores: string[];
+    uiStores?: () => { [name: string]: any };
 }

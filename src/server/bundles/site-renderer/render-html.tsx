@@ -10,6 +10,7 @@ import {Template} from "../../../common/bundles/site-renderer/template";
 import {ServerContext} from "../../app/server-context";
 import {ServerDataError} from "../../app/server-data-error";
 import {RenderingCache} from "../../orm/server-cache";
+import extend = require("extend");
 
 useStrict(true);
 
@@ -20,9 +21,11 @@ export function renderHtmlTemplate(serverContext: ServerContext,
                                    onlyJs: boolean): Promise<{ err: null | Error, html: null | string }> {
     console.log("  trying...");
     try {
+        const stores = template.uiStores ? extend({}, storeMap, template.uiStores()) : storeMap;
+
         const Component: any = template.component;
         const element = (
-            <Provider {...storeMap}>
+            <Provider {...stores}>
                 <Component/>
             </Provider>
         );

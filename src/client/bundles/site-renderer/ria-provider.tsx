@@ -1,6 +1,5 @@
 import {autorunAsync} from "mobx";
 import {Provider} from "mobx-react";
-import DevTools from "mobx-react-devtools";
 import * as React from "react";
 import {LocationStore} from "../../../common/bundles/location/location-data";
 import {ClientContext} from "../../app/client-context";
@@ -20,11 +19,10 @@ export class RiaProvider extends React.Component<RiaProviderProps> {
     }
 
     public render() {
-        return <Provider {...this.props.stores}>
-            <div>
+        return (
+            <Provider {...this.props.stores}>
                 {this.props.children}
-                <DevTools/>
-            </div>
-        </Provider>;
+            </Provider>
+        );
     }
 }

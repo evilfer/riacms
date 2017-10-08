@@ -1,3 +1,4 @@
+import * as extend from "extend";
 import * as React from "react";
 import {render} from "react-dom";
 import {LocationStore} from "../../../common/bundles/location/location-data";
@@ -18,8 +19,9 @@ export class ClientSiteRendererBundle extends ClientBundle {
     }
 
     public launch(): void {
-        const stores: { location: LocationStore, [name: string]: any } =
+        const dataStores: { location: LocationStore, [name: string]: any } =
             this.clientContext.bundles.getStores() as { location: LocationStore, [name: string]: any };
+        const stores = this.template.uiStores ? extend({}, dataStores, this.template.uiStores()) : dataStores;
         const Component: TemplateComponent = this.template.component;
 
         render((

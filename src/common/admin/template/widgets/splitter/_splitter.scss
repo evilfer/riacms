@@ -1,0 +1,49 @@
+
+.splitter {
+    display: grid;
+}
+
+
+%splitter--horizontal {
+    grid-template-rows: 1fr;
+    grid-auto-flow: column;
+
+    .splitter__handle {
+        height: 100%;
+        width: 10px;
+    }
+}
+
+.splitter--right {
+    @extend %splitter--horizontal;
+    grid-template-columns: auto auto 1fr;
+}
+
+.splitter--left {
+    @extend %splitter--horizontal;
+    grid-template-columns: 1fr auto auto;
+}
+
+
+%splitter--vertical {
+    grid-template-columns: 1fr;
+    .splitter__handle {
+        width: 100%;
+        height: 10px;
+    }
+}
+
+.splitter--bottom {
+    @extend %splitter--vertical;
+    grid-template-rows: auto auto 1fr;
+}
+
+.splitter--top {
+    @extend %splitter--vertical;
+    grid-template-columns: 1fr auto auto;
+}
+
+
+.splitter__handle {
+    background-color: blue;
+}

@@ -11,14 +11,22 @@ export interface AdminMainProps {
 
 export class AdminMain extends React.Component<AdminMainProps> {
     public render() {
+        const tabs = [
+            {value: null, label: "Site tree"},
+            {value: "finder", label: "Entity search"},
+        ];
+
+        const mainContent = {
+            "": () => <SiteTreeView/>,
+            "finder": () => <div>finder</div>,
+        };
+
         return (
-            <MainLayout>
+            <div>
                 <AdminHead/>
-                <Splitter>
-                    <div>1</div>
-                    <div>2</div>
-                </Splitter>
-            </MainLayout>
+                <QueryTabMenu param="mv" tabs={tabs}/>
+                <QueryNavWrapper param="mv" content={mainContent}/>
+            </div>
         );
     }
 }
