@@ -1,4 +1,4 @@
-import * as Promise from  "bluebird";
+import * as Promise from "bluebird";
 import * as extend from "extend";
 import * as path from "path";
 import {PoolConfig} from "pg";
@@ -7,6 +7,7 @@ import {TypeManager} from "../../src/common/types/type-manager";
 import {CmsServerApp} from "../../src/server/app/server-app";
 import {BasicRendererResolverBundle} from "../../src/server/bundles/basic-renderer-resolver/basic-renderer-resolver";
 import {ServerEntityFinderBundle} from "../../src/server/bundles/entity-finder/server-entity-finder-bundle";
+import {EntityWriteBundle} from "../../src/server/bundles/entity-write-api/entity-write-bundle";
 import {ServerPageResolverBundle} from "../../src/server/bundles/page-resolver/server-page-resolver-bundle";
 import {RequestLocationBundle} from "../../src/server/bundles/request-location/request-location-bundle";
 import {ServerBundle} from "../../src/server/bundles/server-bundle";
@@ -25,6 +26,7 @@ function launch() {
         new BasicRendererResolverBundle({r1: rendererTemplate}),
         new StaticFilesBundle(path.join(__dirname, "../build/dev/_assets")),
         new SiteRendererServerBundle(),
+        new EntityWriteBundle(),
     ];
 
     const dbSettings: PoolConfig = extend({}, connectionOptions, {

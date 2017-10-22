@@ -11,5 +11,5 @@ export interface Template {
         simpleHtml?: boolean,
     };
     stores: string[];
-    uiStores?: () => { [name: string]: any };
+    uiStores?: (storeMap: { [name: string]: any }) => { [name: string]: any };
 }

@@ -21,7 +21,7 @@ export class ClientSiteRendererBundle extends ClientBundle {
     public launch(): void {
         const dataStores: { location: LocationStore, [name: string]: any } =
             this.clientContext.bundles.getStores() as { location: LocationStore, [name: string]: any };
-        const stores = this.template.uiStores ? extend({}, dataStores, this.template.uiStores()) : dataStores;
+        const stores = this.template.uiStores ? extend({}, dataStores, this.template.uiStores(dataStores)) : dataStores;
         const Component: TemplateComponent = this.template.component;
 
         render((

@@ -3,13 +3,13 @@ import {ServerContext} from "../../../src/server/app/server-context";
 import {ServerBundle} from "../../../src/server/bundles/server-bundle";
 import {ServerBundleGroup} from "../../../src/server/bundles/server-bundle-group";
 import {Entity} from "../../../src/server/entity/entity";
-import {EntityReadDb} from "../../../src/server/orm/entity-db";
+import {EntityDb} from "../../../src/server/orm/entity-db";
 import {createFixtureDb} from "./fixture-db";
 
 export function createFixtureServerContext(bundleList: ServerBundle[],
                                            types: TypeManager,
                                            fixtures: Entity[]): ServerContext {
-    const db: EntityReadDb = createFixtureDb(types, fixtures);
+    const db: EntityDb = createFixtureDb(types, fixtures);
 
     const bundles: ServerBundleGroup = new ServerBundleGroup(bundleList);
 

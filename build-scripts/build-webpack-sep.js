@@ -5,16 +5,16 @@ import webpack from "webpack";
 import gutil from "gulp-util";
 
 const libraries = [
-    'extend',
-    'bluebird',
     'axios',
+    'bluebird',
+    'classnames',
+    'extend',
     'he',
+    'mobx',
+    'mobx-react',
     'react',
     'react-dom',
     'react-helmet',
-    'mobx',
-    'mobx-react',
-    'mobx-react-devtools',
 ];
 
 function initWebpackLib(name, outputPath) {

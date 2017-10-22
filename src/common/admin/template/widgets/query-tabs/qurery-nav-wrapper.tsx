@@ -14,7 +14,7 @@ export class QueryNavWrapper extends React.Component<QueryNavWrapperProps> {
     public render() {
         const {param, content, location} = this.props;
         const currentValue = location!.query.get(param) || "";
-        const contentGen = content[currentValue] || (() => null);
+        const contentGen = content[currentValue] || content[""] || (() => null);
         return contentGen();
     }
 }

@@ -38,6 +38,24 @@ describe("client entity finder store", () => {
         expect(store.getError()).to.be.an("error");
     });
 
+    describe("load by id", () => {
+        it("should log data error if data not present", () => {
+            expect(cache.getDataError()).to.be.null;
+            expect(store.byId(1000)).to.deep.eq({
+                loading: true,
+                entity: null,
+            });
+            expect(cache.getDataError()!.message).to.equal("Cache missing data error");
+        });
+
+        it("should provide data for loaded entities", () => {
+            expect(cache.getDataError()).to.be.null;
+            expect(store.byId(1).loading).to.equal(false);
+            expect(store.byId(1).entity).to.be.an("object");
+            expect(cache.getDataError()).to.be.null;
+        });
+    });
+
     describe("with loaded data", () => {
         const name = "n1";
         const query = {_type: "t"};

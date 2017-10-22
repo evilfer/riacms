@@ -94,10 +94,24 @@ export const fixtures: Entity[] = [
     },
     {
         data: [{
+            name: "page31",
+        }],
+        id: 31,
+        type: "relatedPage",
+    },
+    {
+        data: [{
             name: "page4",
             relatedMultiple: [1, 3],
         }],
         id: 4,
+        type: "relatedMultiplePage",
+    },
+    {
+        data: [{
+            name: "page42",
+        }],
+        id: 41,
         type: "relatedMultiplePage",
     },
     {

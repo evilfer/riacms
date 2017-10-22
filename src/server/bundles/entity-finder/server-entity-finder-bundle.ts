@@ -15,7 +15,7 @@ export class ServerEntityFinderBundle extends ServerBundle {
 
     public declareRenderingStores(): ServerEntityFinderBundleStores {
         return {
-            entityFinder: () => Promise.resolve(new EntityFinder()),
+            entityFinder: (context: ServerRequestContext) => Promise.resolve(new EntityFinder(context.cache)),
         };
     }
 

@@ -1,4 +1,5 @@
 import * as extend from "extend";
+import {observable} from "mobx";
 import {ExchangeEntityData, ExchangeEntityDataMap} from "../../common/app/exchange-data";
 import {RiaCache} from "../../common/cache/cache";
 import {RenderEntity} from "../../common/cache/entity-content";
@@ -13,40 +14,37 @@ export interface ClientCacheMissing {
 }
 
 export class ClientCache extends RiaCache {
-    private entities: {
-        [id: string]: {
-            data: ExchangeEntityData,
-            proxy: RenderEntity,
-        },
-    };
+    @observable.shallow private entities = new Map<number, {
+        data: ExchangeEntityData,
+        proxy: RenderEntity,
+    }>();
 
     private missing: ClientCacheMissing;
 
     public constructor(types: TypeManager) {
         super(types);
 
-        this.entities = {};
         this.resetMissing();
     }
 
     public loadEntities(data: ExchangeEntityDataMap): void {
         Object.keys(data).forEach((idStr: string) => {
             const id: number = parseInt(idStr, 10);
-            const entityData: ExchangeEntityData = data[id];
-            const cacheEntity = this.entities[id];
+            const cacheEntity = this.entities.get(id);
+            const entityData: ExchangeEntityData = cacheEntity ?
+                extend(cacheEntity.data, data[id]) : data[id];
 
-            if (cacheEntity) {
-                extend(cacheEntity.data, entityData);
-                cacheEntity.proxy = createEntityProxy(this, id, cacheEntity.data);
-            } else {
-                this.entities[id] = {data: entityData, proxy: createEntityProxy(this, id, entityData)};
-            }
+            this.entities.set(id, {data: entityData, proxy: createEntityProxy(this, id, entityData)});
         });
     }
 
+    public hasEntity(id: number): boolean {
+        return this.entities.has(id);
+    }
+
     public getEntity(id: number): null | RenderEntity {
-        if (this.entities[id]) {
-            return this.entities[id].proxy;
+        if (this.entities.has(id)) {
+            return this.entities.get(id)!.proxy;
         }
 
         this.declareMissingEntity(id);

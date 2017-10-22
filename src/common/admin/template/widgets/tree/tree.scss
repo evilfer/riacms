@@ -3,6 +3,10 @@
 
 }
 
+.tree__item__children {
+    padding-left: $text-padding-medium;
+}
+
 .tree__item__label {
     display: inline-block;
     margin-right: 10px;

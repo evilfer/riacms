@@ -20,4 +20,8 @@ export class TypeManager {
     public getImplementedBy(name: string): string[] {
         return this.types[name].implementedBy;
     }
+
+    public isA(entity: { _type: string }, type: string): boolean {
+        return this.types[type] && this.types[type].implementedBy.indexOf(entity._type) >= 0;
+    }
 }

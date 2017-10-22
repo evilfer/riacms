@@ -1,7 +1,8 @@
 import axios from "axios";
 import {LocationStore} from "../../../common/bundles/location/location-data";
-import {ClientContext} from "../../app/client-context";
 import {map2query} from "../../../common/utils/object-to-query";
+import {ClientContext} from "../../app/client-context";
+import {runInAction} from "mobx";
 
 export function dataLoader(location: LocationStore, context: ClientContext): () => void {
     return () => {
@@ -12,8 +13,10 @@ export function dataLoader(location: LocationStore, context: ClientContext): () 
         if (errors.length > 0) {
             axios.get(`/_api/render${url}`)
                 .then(response => {
-                    context.cache.loadEntities(response.data.e);
-                    context.bundles.loadStoreData(response.data.s);
+                    runInAction(() => {
+                        context.cache.loadEntities(response.data.e);
+                        context.bundles.loadStoreData(response.data.s);
+                    });
                 })
                 .catch(err => {
                     console.log(err);

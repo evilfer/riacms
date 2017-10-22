@@ -10,4 +10,10 @@ export class ClientSiteTypesBundle extends ClientBundle {
     public applyTypes(typeBuilder: TypeManagerBuilder): void {
         applySiteTypes(typeBuilder);
     }
+
+    public createStores(): { [name: string]: any } {
+        return {
+            types: this.clientContext.types,
+        };
+    }
 }

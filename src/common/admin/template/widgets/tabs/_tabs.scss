@@ -1,0 +1,8 @@
+
+.tabs {
+    display: flex;
+    grid-auto-flow: row;
+    grid-auto-columns: 1fr;
+    grid-template-rows: auto;
+}
+

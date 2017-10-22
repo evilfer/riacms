@@ -1,7 +1,7 @@
 import * as React from "react";
-import Icon from "../icon/icon";
+import {IconButton} from "../links/icon-button";
 import {MenuItemProps} from "../menu/menu-item";
-import PopupMenu from "../popup-menu/popup-menu";
+import {PopupMenu} from "../popup-menu/popup-menu";
 
 export interface TreeDataItem {
     key: string | number;
@@ -23,7 +23,6 @@ export interface TreeProps {
 function TreeItem({item, onChange}: TreeItemProps): JSX.Element {
     const isOpen = !!item.children;
     const iconName = isOpen ? "minus" : "plus";
-    const icon = <Icon name={iconName} onClick={onChange.bind(null, item.key, !isOpen)}/>;
 
     const children = isOpen && (
         <div className="tree__item__children">
@@ -33,14 +32,17 @@ function TreeItem({item, onChange}: TreeItemProps): JSX.Element {
 
     const menu = item.menu && (
         <div className="tree__item__menu">
-            <PopupMenu menuItems={item.menu}/>
+            <PopupMenu small menuItems={item.menu}/>
         </div>
     );
 
     return (
         <div className="tree__item">
             <div className="tree__item__row">
-                {icon}
+                <IconButton className="tree__item__toggle"
+                            name={iconName}
+                            onClick={onChange.bind(null, item.key, !isOpen)}
+                            small/>
                 <div className="tree__item__label">{item.label}</div>
                 {menu}
             </div>

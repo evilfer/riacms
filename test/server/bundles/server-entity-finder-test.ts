@@ -98,6 +98,19 @@ describe("server entity finder bundle", () => {
             }
         });
 
+        it('should throw error on missing id', () => {
+            return expect(() => store.byId(1)).to.throw("Missing: [1]");
+        });
+
+        it('should retrieve entity by id', () => {
+            return cache.loadEntity(1)
+                .then(() => {
+                    expect(store.byId(1)).to.be.an("object");
+                    expect(store.byId(1).loading).to.equal(false);
+                    expect(store.byId(1).entity._id).to.equal(1);
+                });
+        });
+
         describe("filtering", () => {
             it('should filter by type (page)', () => {
                 return find({_type: "site", name: "site1"})

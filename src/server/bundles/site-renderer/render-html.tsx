@@ -1,4 +1,5 @@
 import * as Promise from "bluebird";
+import * as extend from "extend";
 import * as he from "he";
 import {useStrict} from "mobx";
 import {Provider} from "mobx-react";
@@ -10,7 +11,6 @@ import {Template} from "../../../common/bundles/site-renderer/template";
 import {ServerContext} from "../../app/server-context";
 import {ServerDataError} from "../../app/server-data-error";
 import {RenderingCache} from "../../orm/server-cache";
-import extend = require("extend");
 
 useStrict(true);
 
@@ -21,7 +21,7 @@ export function renderHtmlTemplate(serverContext: ServerContext,
                                    onlyJs: boolean): Promise<{ err: null | Error, html: null | string }> {
     console.log("  trying...");
     try {
-        const stores = template.uiStores ? extend({}, storeMap, template.uiStores()) : storeMap;
+        const stores = template.uiStores ? extend({}, storeMap, template.uiStores(storeMap)) : storeMap;
 
         const Component: any = template.component;
         const element = (

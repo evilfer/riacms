@@ -1,4 +1,3 @@
-import {inject, observer} from "mobx-react";
 import * as React from "react";
 import {BaseWidget, BaseWidgetProps} from "../base-widget/base-widget";
 import {BaseWidgetStore} from "../base-widget/base-widget-store";

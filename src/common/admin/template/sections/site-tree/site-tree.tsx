@@ -1,10 +1,10 @@
 import {inject, observer} from "mobx-react";
 import * as React from "react";
-import {EntityFinderStore} from "../../../bundles/entity-finder/entity-finder-data";
-import {LocationStore} from "../../../bundles/location/location-data";
-import {gotoQuery} from "../../../bundles/location/location-utils";
-import {ResolvedPageData} from "../../../bundles/page-resolver/resolved-page-data";
-import {Tree, TreeDataItem} from "../widgets/tree/tree";
+import {EntityFinderStore} from "../../../../bundles/entity-finder/entity-finder-data";
+import {LocationStore} from "../../../../bundles/location/location-data";
+import {gotoQuery} from "../../../../bundles/location/location-utils";
+import {ResolvedPageData} from "../../../../bundles/page-resolver/resolved-page-data";
+import {Tree, TreeDataItem} from "../../widgets/tree/tree";
 
 export interface SiteTreeProps {
     location?: LocationStore;
@@ -12,18 +12,40 @@ export interface SiteTreeProps {
     resolvedPage?: ResolvedPageData;
 }
 
-function buildSiteTreeData(nodes: any[], openIds: number[]): TreeDataItem[] {
+function buildSiteTreeData(location: LocationStore, nodes: any[], openIds: number[]): TreeDataItem[] {
     return nodes.map(node => {
         const children = openIds.indexOf(node._id) >= 0 ?
-            buildSiteTreeData(node.childLinks.map((link: any) => link.child), openIds) : null;
+            buildSiteTreeData(location, node.childLinks.map((link: any) => link.child), openIds) : null;
 
         return {
             children,
             key: node._id,
             label: node.name,
             menu: () => [
-                {icon: "plus", label: "New page"},
-                {icon: "remove", label: "Delete page"},
+                {
+                    icon: "pencil",
+                    label: "Edit",
+                    onClick: () => gotoQuery(location, {
+                        eid: node._id,
+                        ev: null,
+                    }, false),
+                },
+                {
+                    icon: "plus",
+                    label: "New page",
+                    onClick: () => gotoQuery(location, {
+                        eid: node._id,
+                        ev: "new-page",
+                    }, false),
+                },
+                {
+                    icon: "remove",
+                    label: "Delete page",
+                    onClick: () => gotoQuery(location, {
+                        eid: node._id,
+                        ev: "delete",
+                    }, false),
+                },
             ],
         };
     });
@@ -53,7 +75,7 @@ export class SiteTree extends React.Component<SiteTreeProps> {
             ...queryOpenIds.filter(v => v > 0),
         ].filter(v => queryClosedIds.indexOf(v) < 0);
 
-        const treeItems: TreeDataItem[] = buildSiteTreeData(sites, openIds);
+        const treeItems: TreeDataItem[] = buildSiteTreeData(location!, sites, openIds);
         const onChange = (id: number, open: boolean) => {
             if (open) {
                 const ci = queryClosedIds.indexOf(id);

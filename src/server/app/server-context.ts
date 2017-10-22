@@ -1,9 +1,9 @@
 import {TypeManager} from "../../common/types/type-manager";
 import {ServerBundleGroup} from "../bundles/server-bundle-group";
-import {EntityReadDb} from "../orm/entity-db";
+import {EntityDb, EntityReadDb} from "../orm/entity-db";
 
 export interface ServerContext {
-    db: EntityReadDb;
+    db: EntityDb;
     types: TypeManager;
     bundles: ServerBundleGroup;
 }

@@ -1,0 +1,22 @@
+
+
+.icon-link, .icon-button {
+    display: inline-block;
+    background: transparent;
+
+    &:hover {
+        background-color: rgba(0, 0, 0, .1);
+    }
+
+    &.icon-link--small, &.icon-button--small {
+        padding: $text-padding-small;
+    }
+
+    &.icon-link--medium, &.icon-button--medium {
+        padding: $text-padding-medium;
+    }
+
+    &.icon-link--large, &.icon-button--large {
+        padding: $text-padding-large;
+    }
+}

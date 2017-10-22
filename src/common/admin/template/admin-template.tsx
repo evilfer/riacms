@@ -1,6 +1,6 @@
 import {Template} from "../../bundles/site-renderer/template";
 import {AdminMain} from "./admin-main";
-import {initStores} from "./widgets/widget-stores";
+import {initStores} from "./admin-stores";
 
 export const adminTemplate: Template = {
     component: AdminMain,
@@ -10,6 +10,6 @@ export const adminTemplate: Template = {
             "/admin/admin-index.js",
         ],
     },
-    stores: ["location", "entityFinder", "resolvedPage"],
+    stores: ["location", "entityFinder", "resolvedPage", "types"],
     uiStores: initStores,
 };

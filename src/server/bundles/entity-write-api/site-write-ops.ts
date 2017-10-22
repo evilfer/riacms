@@ -21,7 +21,7 @@ export function createPage(types: TypeManager,
                            uid: number,
                            parentId: number,
                            data: EntityContent[],
-                           type: string = "page"): Promise<Entity> {
+                           type: string): Promise<Entity> {
     return CachedTransaction.open(types, db, "create", uid)
         .then(transaction => transaction.createEntity(type, data)
             .then(page => transaction.createEntity("site_tree_link", [{

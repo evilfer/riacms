@@ -10,8 +10,6 @@ export default abstract class DocumentEventsComponent<E> extends React.Component
     private mounted: boolean = false;
 
     public componentWillMount() {
-        console.log(this.listeners);
-
         if (IS_BROWSER) {
             this.mounted = true;
             Object.keys(this.listeners).forEach(event =>

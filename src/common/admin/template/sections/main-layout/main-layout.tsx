@@ -1,13 +1,14 @@
 import * as React from "react";
+import {MainHeader} from "./main-header";
 
 export interface MainLayoutProps {
     children: any;
 }
 
-export default function MainLayout({children}: MainLayoutProps) {
+export function MainLayout({children}: MainLayoutProps) {
     return (
         <div className="main-layout">
-            <div>header</div>
+            <MainHeader/>
             {children}
             <div>status</div>
         </div>

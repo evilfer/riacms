@@ -3,8 +3,7 @@ import {expect, use} from "chai";
 import * as sinon from "sinon";
 import {SinonSpy} from "sinon";
 import * as sinonChai from "sinon-chai";
-import {ClientRequestLocationBundle,} from "../../../../src/client/bundles/request-location/client-request-location-bundle";
-import {ClientHistory, ClientLocation} from "../../../../src/client/bundles/request-location/client-history";
+import {ClientRequestLocationBundle} from "../../../../src/client/bundles/request-location/client-request-location-bundle";
 import {DummyHistory} from "./dummy-history";
 
 use(sinonChai);

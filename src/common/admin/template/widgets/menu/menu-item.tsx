@@ -1,6 +1,6 @@
 import * as classNames from "classnames";
 import * as React from "react";
-import Icon from "../icon/icon";
+import {Icon} from "../icon/icon";
 
 export interface MenuItemProps {
     label: string;
@@ -9,16 +9,15 @@ export interface MenuItemProps {
     onClick?: () => void;
 }
 
-export default class MenuItem extends React.Component<MenuItemProps> {
+export class MenuItem extends React.Component<MenuItemProps> {
     public render() {
         const {label, icon, disabled = false, onClick} = this.props;
 
         return (
-            <div className={classNames("menu__item", {disabled})}
+            <button className={classNames("menu__item", {disabled})}
                  onClick={onClick}>
-                {icon && <Icon name={icon}/>}
-                {label}
-            </div>
+                {icon && <Icon name={icon}/>} {label}
+            </button>
         );
     }
 }

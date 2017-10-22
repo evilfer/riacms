@@ -1,6 +1,11 @@
 import {action, observable} from "mobx";
 import {ExchangeStoreData} from "../../../common/app/exchange-data";
-import {EntityFinderData, EntityFinderStore, queryHash} from "../../../common/bundles/entity-finder/entity-finder-data";
+import {
+    EntityByIdData,
+    EntityFinderData,
+    EntityFinderStore,
+    queryHash
+} from "../../../common/bundles/entity-finder/entity-finder-data";
 import {RenderEntity} from "../../../common/cache/entity-content";
 import {ClientCache} from "../../cache/client-cache";
 import {ClientEntityFinderError} from "./client-entity-finder-error";
@@ -18,6 +23,13 @@ export class ClientEntityFinderStore implements EntityFinderStore {
 
     public constructor(cache: ClientCache) {
         this.cache = cache;
+    }
+
+    public byId(id: number): EntityByIdData {
+        return {
+            entity: this.cache.getEntity(id),
+            loading: !this.cache.hasEntity(id),
+        };
     }
 
     public find(name: string, query: { [field: string]: number | boolean | string }): EntityFinderData {

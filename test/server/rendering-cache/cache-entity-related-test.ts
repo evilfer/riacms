@@ -24,6 +24,11 @@ describe("cache related data", () => {
             expect(proxy3.related).to.equal(proxy1);
             expect(used3).to.deep.eq({_type: "relatedPage", related: 1});
         }));
+
+        it("should provided null as used data if nor defined", loadTest(0, [31], ([proxy31], [used31]) => {
+            expect(proxy31.related).to.equal(null);
+            expect(used31).to.deep.eq({_type: "relatedPage", related: null});
+        }));
     });
 
     describe("multiple related", () => {
@@ -39,6 +44,11 @@ describe("cache related data", () => {
             expect(proxy4.relatedMultiple[0]).to.equal(proxy1);
             expect(proxy4.relatedMultiple[1]).to.equal(proxy3);
             expect(used4).to.deep.eq({_type: "relatedMultiplePage", relatedMultiple: [1, 3]});
+        }));
+
+        it("should provide [] if not defined", loadTest(0, [41], ([proxy41], [used41]) => {
+            expect(proxy41.relatedMultiple).to.deep.eq([]);
+            expect(used41).to.deep.eq({_type: "relatedMultiplePage", relatedMultiple: []});
         }));
     });
 });

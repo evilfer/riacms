@@ -24,7 +24,7 @@ export interface SplitterProps extends BaseWidgetProps {
 
 @inject("splitters")
 @observer
-export default class Splitter extends BaseWidget<SplitterStoreData, SplitterProps> {
+export class Splitter extends BaseWidget<SplitterStoreData, SplitterProps> {
     private container: any;
 
     public render() {

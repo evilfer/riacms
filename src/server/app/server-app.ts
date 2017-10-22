@@ -3,18 +3,18 @@ import {CmsApp} from "../../common/app/app";
 import {ServerBundle} from "../bundles/server-bundle";
 import {ServerBundleGroup} from "../bundles/server-bundle-group";
 import {ServerTypeManagerBuilder} from "../entity/server-types";
-import {EntityReadDb} from "../orm/entity-db";
+import {EntityDb, EntityReadDb} from "../orm/entity-db";
 import {createExpressApp} from "./express-app";
 import {listen} from "./listen";
 import {ServerContext} from "./server-context";
 
 export class CmsServerApp extends CmsApp<ServerTypeManagerBuilder, ServerBundle> {
     private app: Express;
-    private db: EntityReadDb;
+    private db: EntityDb;
     private bundleGroup: ServerBundleGroup;
     private context: ServerContext;
 
-    public initServerApp(db: EntityReadDb) {
+    public initServerApp(db: EntityDb) {
         this.db = db;
 
         this.prepareContext();

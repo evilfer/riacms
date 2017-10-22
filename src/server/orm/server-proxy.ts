@@ -48,16 +48,20 @@ function createDataProxy(cache: RenderingCache,
     fields.forEach(field => {
         switch (field.type) {
             case "string":
-            case "string[]":
             case "number":
-            case "number[]":
             case "boolean":
-            case "boolean[]":
                 wrapStoredOrComputed(cache, proxy, used, field, metadata, content, prepareLiteralValue);
                 break;
+            case "string[]":
+            case "number[]":
+            case "boolean[]":
+                wrapStoredOrComputed(cache, proxy, used, field, metadata, content, prepareLiteralMultipleValue);
+                break;
             case "related":
-            case "related[]":
                 wrapStoredOrComputed(cache, proxy, used, field, metadata, content, prepareRelatedValue);
+                break;
+            case "related[]":
+                wrapStoredOrComputed(cache, proxy, used, field, metadata, content, prepareRelatedMultipleValue);
                 break;
             case "object":
                 wrapStoredOrComputed(cache, proxy, used, field, metadata, content, preparedNestedValue);
@@ -69,34 +73,56 @@ function createDataProxy(cache: RenderingCache,
     });
 }
 
-function prepareLiteralValue(cache: RenderingCache, value: any) {
+function prepareLiteralValue(cache: RenderingCache, value: undefined | null | any[]) {
     return {
-        customUsedData: false,
+        used: typeof value === "undefined" ? null : value,
         value,
     };
 }
 
-function prepareRelatedValue(cache: RenderingCache, value: null | number | number[]) {
+function prepareLiteralMultipleValue(cache: RenderingCache, value: null | undefined | any[]) {
+    return {
+        used: value || [],
+        value,
+    };
+}
+
+function prepareRelatedValue(cache: RenderingCache, value: undefined | null | number) {
 
     let output: any;
-    if (value === null) {
+    if (!value) {
         output = null;
     } else if (typeof value === "number") {
         output = cache.getProxy(value);
     } else {
-        output = cache.getProxies(value as number[]);
+        output = null;
     }
 
     return {
-        customUsedData: false,
+        used: typeof value === "undefined" ? null : value,
         value: output,
     };
 }
 
-function preparedNestedValue(cache: RenderingCache, value: null | EntityContent) {
-    if (value === null) {
+function prepareRelatedMultipleValue(cache: RenderingCache, value: null | number[]) {
+    let output: any;
+
+    if (value && value.length > 0) {
+        output = cache.getProxies(value);
+    } else {
+        output = [];
+    }
+
+    return {
+        used: value || [],
+        value: output,
+    };
+}
+
+function preparedNestedValue(cache: RenderingCache, value: undefined | null | EntityContent) {
+    if (!value) {
         return {
-            customUsedData: false,
+            used: null,
             value: null,
         };
     }
@@ -107,7 +133,6 @@ function preparedNestedValue(cache: RenderingCache, value: null | EntityContent)
     createNestedDataProxy(cache, fields, {id: null, type: nestedType}, value, nestedProxy, nestedUsed);
 
     return {
-        customUsedData: true,
         used: nestedUsed,
         value: nestedProxy,
     };
@@ -137,16 +162,14 @@ function preparedMultipleNestedValue(cache: RenderingCache, value: null | Entity
         nestedUsedList.push(nestedUsed);
     });
 
-
     return {
-        customUsedData: true,
         used: nestedUsedList,
         value: nestedProxies,
     };
 }
 
 type PrepareValueFunc = (cache: RenderingCache,
-                         value: any) => { value: any, customUsedData: boolean, used?: any };
+                         value: any) => { value: any, used: any };
 
 function wrapStoredOrComputed(cache: RenderingCache,
                               proxy: any,
@@ -162,7 +185,7 @@ function wrapStoredOrComputed(cache: RenderingCache,
         const prepared = func(cache, v);
         initialize = false;
         value = prepared.value;
-        used[field.name] = prepared.customUsedData ? prepared.used : v;
+        used[field.name] = prepared.used;
     };
 
     if (!field.impl) {
