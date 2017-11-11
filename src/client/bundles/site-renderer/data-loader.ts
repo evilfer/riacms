@@ -8,7 +8,7 @@ export function dataLoader(location: LocationStore, context: ClientContext): () 
     return () => {
         const url = `/_api/render${location.path}${map2query(location.query)}`;
         const errors = context.errors.getErrorsAndReset();
-        console.log("autorun", url, errors.length);
+        console.log("autorun", url, errors);
 
         if (errors.length > 0) {
             axios.get(`/_api/render${url}`)

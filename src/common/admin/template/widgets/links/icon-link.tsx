@@ -4,7 +4,7 @@ import {Icon} from "../icon/icon";
 import {iconActionClassName, IconActionProps, iconActionProps} from "./icon-action";
 import {Link} from "./link";
 
-@inject<IconActionProps>("location")
+@inject("location")
 @observer
 export class IconLink extends React.Component<IconActionProps> {
     public render() {

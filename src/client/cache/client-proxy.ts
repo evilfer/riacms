@@ -100,7 +100,9 @@ function createRelatedGetter(cache: ClientCache,
         Object.defineProperty(proxy, key, {
             get: () => {
                 if (related === undefined) {
-                    related = cache.getEntity(entityData[key] as number);
+                    related = entityData[key] ?
+                        cache.getEntity(entityData[key] as number) :
+                        null;
                 }
                 return related;
             },

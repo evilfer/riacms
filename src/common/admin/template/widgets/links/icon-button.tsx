@@ -3,7 +3,7 @@ import * as React from "react";
 import {Icon} from "../icon/icon";
 import {iconActionClassName, IconActionProps, iconActionProps} from "./icon-action";
 
-@inject<IconActionProps>("location")
+@inject("location")
 @observer
 export class IconButton extends React.Component<IconActionProps> {
     public render() {

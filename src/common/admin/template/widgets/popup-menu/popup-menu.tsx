@@ -10,7 +10,7 @@ export interface PopupMenuProps extends SizeProps, PopupControllerProps {
     menuItems: () => MenuItemProps[];
 }
 
-@inject<PopupControllerProps>("popups")
+@inject("popups")
 @observer
 export class PopupMenu extends PopupController<PopupMenuProps> {
     public getClassNames(): string {

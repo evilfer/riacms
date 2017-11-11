@@ -1,28 +1,58 @@
 import {observer} from "mobx-react";
 import * as React from "react";
+import {currentEntityI, CurrentEntityProps} from "../base-components/current-entity";
+import {EntityEditForm} from "../../logic/custom-forms/entity-edit/entity-edit-form";
 import {TypeManager} from "../../../../types/type-manager";
-import {NewPageFormStore} from "../../logic/new-page-form-store";
-import {currentEntity, CurrentEntityProps} from "../base-components/current-entity";
+import {FormStore} from "../../logic/forms/form-store";
+import {Form} from "../../widgets/forms/form";
 
-export interface EntityNewPageProps extends CurrentEntityProps {
+export interface EntityHomeProps extends CurrentEntityProps {
     types?: TypeManager;
-    newPageForm?: NewPageFormStore;
+    forms?: FormStore;
 }
 
-@currentEntity
+@currentEntityI("forms", "types")
 @observer
-export class EntityHome extends React.Component<EntityNewPageProps> {
-    public render(): JSX.Element {
-        const {loading, entity} = this.props.currentEntity!;
+export class EntityHome extends React.Component<EntityHomeProps> {
+    public componentWillMount() {
+        this.prepareForm();
+    }
 
-        if (!entity) {
+    public componentWillReceiveProps(nextProps: CurrentEntityProps) {
+        if (this.props.currentEntity !== nextProps.currentEntity) {
+            this.prepareForm(nextProps);
+        }
+    }
+
+    public componentWillUnmount() {
+        const formId = this.formId();
+        if (formId) {
+            this.props.forms!.clearForm(formId);
+        }
+    }
+
+    public render(): JSX.Element {
+        const formId = this.formId();
+        const form = formId ? this.props.forms!.getForm(formId) : null;
+
+        if (form === null) {
             return <div>no entity</div>;
         }
 
         return (
-            <div>
-                <p>Viewing {entity._id}, {entity._type}.</p>
-            </div>
+            <Form formManager={form}/>
         );
+    }
+
+    private formId(props: EntityHomeProps = this.props): string | null {
+        const {loading, entity} = this.props.currentEntity!;
+        return entity && !loading ? `entityedit:${entity._id}` : null;
+    }
+
+    private prepareForm(props: EntityHomeProps = this.props) {
+        const {currentEntity, forms, types} = props;
+        if (currentEntity && currentEntity.entity) {
+            forms!.initForm(new EntityEditForm(types!, currentEntity.entity));
+        }
     }
 }

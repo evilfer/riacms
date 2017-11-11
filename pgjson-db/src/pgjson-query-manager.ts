@@ -34,7 +34,7 @@ export class PgjsonQueryManager<E extends Client | Pool> implements EntityReadDb
                 if (entities.length === 0) {
                     return Promise.reject(new Error(`${id} not found`));
                 } else {
-                    return entities[0];
+                    return Promise.resolve(entities[0]);
                 }
             });
     }

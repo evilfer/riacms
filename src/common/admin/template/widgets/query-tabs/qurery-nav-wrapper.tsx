@@ -8,7 +8,7 @@ export interface QueryNavWrapperProps {
     location?: LocationStore;
 }
 
-@inject<QueryNavWrapperProps>("location")
+@inject("location")
 @observer
 export class QueryNavWrapper extends React.Component<QueryNavWrapperProps> {
     public render() {

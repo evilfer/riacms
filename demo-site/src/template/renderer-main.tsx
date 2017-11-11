@@ -40,6 +40,6 @@ export function RendererMain({resolvedPage}: RendererMainProps) {
     );
 }
 
-const WrappedRendererMain = inject<{ resolvedPage: ResolvedPageData }>("resolvedPage")(RendererMain);
+const WrappedRendererMain = inject("resolvedPage")(RendererMain);
 
 export {WrappedRendererMain};

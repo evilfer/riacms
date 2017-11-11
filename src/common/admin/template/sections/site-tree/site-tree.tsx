@@ -25,26 +25,32 @@ function buildSiteTreeData(location: LocationStore, nodes: any[], openIds: numbe
                 {
                     icon: "pencil",
                     label: "Edit",
-                    onClick: () => gotoQuery(location, {
-                        eid: node._id,
-                        ev: null,
-                    }, false),
+                    onClick: () => {
+                        gotoQuery(location, {
+                            eid: node._id,
+                            ev: null,
+                        }, false);
+                    },
                 },
                 {
                     icon: "plus",
                     label: "New page",
-                    onClick: () => gotoQuery(location, {
-                        eid: node._id,
-                        ev: "new-page",
-                    }, false),
+                    onClick: () => {
+                        gotoQuery(location, {
+                            eid: node._id,
+                            ev: "new-page",
+                        }, false);
+                    },
                 },
                 {
                     icon: "remove",
                     label: "Delete page",
-                    onClick: () => gotoQuery(location, {
-                        eid: node._id,
-                        ev: "delete",
-                    }, false),
+                    onClick: () => {
+                        gotoQuery(location, {
+                            eid: node._id,
+                            ev: "delete",
+                        }, false);
+                    },
                 },
             ],
         };

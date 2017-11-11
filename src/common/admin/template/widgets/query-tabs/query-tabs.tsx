@@ -16,7 +16,7 @@ export interface QueryTabsProps {
     location?: LocationStore;
 }
 
-@inject<QueryTabsProps>("location")
+@inject("location")
 @observer
 export class QueryTabs extends React.Component<QueryTabsProps> {
 

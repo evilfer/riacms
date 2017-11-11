@@ -37,7 +37,7 @@ export class PgJsonWriteAction extends PgjsonQueryManager<Client> implements Ent
                 }
 
                 this.aid = aiResult.rows[0].aid;
-                return this;
+                return Promise.resolve(this);
             });
     }
 

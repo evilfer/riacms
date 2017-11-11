@@ -38,4 +38,4 @@ export function currentEntityI<P extends CurrentEntityProps>(...stores: string[]
     };
 }
 
-export const currentEntity = currentEntityI();
+export const currentEntityD = currentEntityI();

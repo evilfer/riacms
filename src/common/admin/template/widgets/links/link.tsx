@@ -6,7 +6,7 @@ export interface LinkProps extends React.AllHTMLAttributes<any> {
     location?: LocationStore;
 }
 
-@inject<LinkProps>("location")
+@inject("location")
 @observer
 export class Link extends React.Component<LinkProps> {
     public render() {

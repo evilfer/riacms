@@ -25,7 +25,7 @@ export interface SingleRelatedTypeField extends RelatedTypeField {
     type: "related";
 }
 
-export interface MultipleRelatedTypeField extends BaseTypeField {
+export interface MultipleRelatedTypeField extends RelatedTypeField {
     type: "related[]";
 }
 

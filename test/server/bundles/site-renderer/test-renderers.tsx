@@ -56,7 +56,7 @@ export default {
         stores: ["resolvedPage"],
     },
     r2: {
-        component: inject<{ resolvedPage: ResolvedPageData }>("resolvedPage")(R2),
+        component: inject("resolvedPage")(R2),
         options: {},
         stores: ["resolvedPage"],
     },
