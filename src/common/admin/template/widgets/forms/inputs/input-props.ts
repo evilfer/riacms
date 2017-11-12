@@ -1,9 +1,6 @@
-import {LiteralValueSingleFieldManager} from "../../../logic/forms/field-managers/literal-single-field-manager";
+import {FieldManager} from "../../../logic/forms/field-managers/abstract-field-manager";
 
-export interface InputProps {
-    id: string;
-}
-
-export interface LiteralInputProps extends InputProps {
-    fm: LiteralValueSingleFieldManager;
+export interface InputProps<T extends FieldManager<any>> {
+    fieldId: string;
+    fm: T;
 }

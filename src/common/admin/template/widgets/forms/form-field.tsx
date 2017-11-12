@@ -4,22 +4,14 @@ import {LiteralValueSingleFieldManager} from "../../logic/forms/field-managers/l
 import {InputText} from "./inputs/input-text";
 import {InputSelect} from "./inputs/input-select";
 import {observer} from "mobx-react";
+import {Input} from "./inputs/input";
 
 export interface FormFieldProps {
     baseId: string;
     fm: FieldManager<any>;
 }
 
-function input(fieldId: string, fm: FieldManager<any>): JSX.Element {
-    switch (fm.def.presentation.input) {
-        case "text":
-            return <InputText id={fieldId} fm={fm as LiteralValueSingleFieldManager}/>;
-        case "select":
-            return <InputSelect id={fieldId} fm={fm as LiteralValueSingleFieldManager}/>;
-        default:
-            return <div>bad field</div>;
-    }
-}
+
 
 @observer
 export class FormField extends React.Component<FormFieldProps> {
@@ -31,7 +23,7 @@ export class FormField extends React.Component<FormFieldProps> {
         return (
             <div className="form-field">
                 <label htmlFor={fieldId}>{fm.def.presentation.label}</label>
-                {input(fieldId, fm)}
+                <Input fieldId={fieldId} fm={fm}/>
                 {error}
             </div>
         );

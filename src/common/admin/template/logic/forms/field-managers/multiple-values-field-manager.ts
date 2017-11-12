@@ -1,8 +1,8 @@
 import * as extend from "extend";
 import {action, computed, observable} from "mobx";
+import {FieldDefinition} from "../fields/field-definition";
 import {FieldListener, FieldManager} from "./abstract-field-manager";
 import {createFieldManager} from "./create-field-manager";
-import {FieldDefinition} from "../fields/field-definition";
 
 export class MultipleValuesFieldManager extends FieldManager<FieldDefinition> implements FieldListener {
 
@@ -61,7 +61,7 @@ export class MultipleValuesFieldManager extends FieldManager<FieldDefinition> im
 
     @action
     public removeItem(index: number) {
-        if (index <= 0 && index < this.children.length) {
+        if (index >= 0 && index < this.children.length) {
             this.children.splice(index, 1);
             this.children.forEach((fm, i) => fm.updateSavedValue(this.savedValue[i]));
             this.notifyParent();
@@ -70,7 +70,10 @@ export class MultipleValuesFieldManager extends FieldManager<FieldDefinition> im
 
     @action
     public addItem() {
-        this.children.push(createFieldManager(this, this.singleFieldDef, this.savedValue[this.children.length]));
+        const savedValue = this.savedValue.length > this.children.length ?
+            this.savedValue[this.children.length] : undefined;
+
+        this.children.push(createFieldManager(this, this.singleFieldDef, savedValue));
         this.notifyParent();
     }
 
