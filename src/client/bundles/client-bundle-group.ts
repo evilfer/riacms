@@ -37,7 +37,7 @@ export class ClientBundleGroup {
         this.stores = {};
 
         this.bundles.forEach(bundle => {
-            const stores = bundle.createStores();
+            const stores = bundle.createStores(this.stores);
             if (stores !== null) {
                 Object.keys(stores).forEach(name => {
                     this.stores[name] = stores[name];

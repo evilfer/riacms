@@ -25,8 +25,8 @@ export function currentEntityI<P extends CurrentEntityProps>(...stores: string[]
                 const currentEntityData: EntityByIdData = location!.query.has("eid") ?
                     entityFinder!.byId(parseInt(location.query.get("eid") || "", 10)) :
                     {
-                        entity: resolvedPage!.page,
-                        loading: resolvedPage.loading,
+                        entity: resolvedPage!.page || resolvedPage!.site,
+                        loading: resolvedPage!.loading,
                     };
 
                 const Component = target;

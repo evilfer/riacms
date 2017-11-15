@@ -46,6 +46,8 @@ export class SiteRendererServerBundle extends ServerBundle {
                 const url = `${req.protocol}://${req.get("host")}${req.params.path}${obj2query(req.query)}`;
                 const requestContext = new BasicServerRequestContext(this.serverContext, cache, level, {url});
 
+                cache.setContext(this.serverContext, requestContext);
+
                 renderPageOrAdmin(this.serverContext, requestContext, onlyJson)
                     .then(({err, stream}) => {
                         if (err) {

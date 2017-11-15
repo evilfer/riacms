@@ -4,7 +4,7 @@ import {
     EntityByIdData,
     EntityFinderData,
     EntityFinderStore,
-    queryHash
+    queryHash,
 } from "../../../common/bundles/entity-finder/entity-finder-data";
 import {RenderEntity} from "../../../common/cache/entity-content";
 import {ClientCache} from "../../cache/client-cache";

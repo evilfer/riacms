@@ -12,6 +12,7 @@ import {ServerPageResolverBundle} from "../../src/server/bundles/page-resolver/s
 import {RequestLocationBundle} from "../../src/server/bundles/request-location/request-location-bundle";
 import {ServerBundle} from "../../src/server/bundles/server-bundle";
 import {SiteRendererServerBundle} from "../../src/server/bundles/site-renderer/site-renderer-server-bundle";
+import {ServerSiteTreeBundle} from "../../src/server/bundles/site-tree/server-site-tree-bundle";
 import {ServerSiteTypesBundle} from "../../src/server/bundles/site-types/server-site-types-bundle";
 import {StaticFilesBundle} from "../../src/server/bundles/static-files/static-files-bundle";
 import connectionOptions from "../settings/connection-options";
@@ -25,6 +26,7 @@ function launch() {
         new ServerEntityFinderBundle(),
         new BasicRendererResolverBundle({r1: rendererTemplate}),
         new StaticFilesBundle(path.join(__dirname, "../build/dev/_assets")),
+        new ServerSiteTreeBundle(),
         new SiteRendererServerBundle(),
         new EntityWriteBundle(),
     ];

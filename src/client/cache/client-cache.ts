@@ -14,10 +14,7 @@ export interface ClientCacheMissing {
 }
 
 export class ClientCache extends RiaCache {
-    @observable.shallow private entities = new Map<number, {
-        data: ExchangeEntityData,
-        proxy: RenderEntity,
-    }>();
+    @observable.shallow private entities = new Map<number, { data: ExchangeEntityData, proxy: RenderEntity }>();
 
     private missing: ClientCacheMissing;
 

@@ -10,6 +10,6 @@ export const adminTemplate: Template = {
             "/admin/admin-index.js",
         ],
     },
-    stores: ["location", "entityFinder", "resolvedPage", "types"],
+    stores: ["location", "entityFinder", "resolvedPage", "types", "siteTree"],
     uiStores: initStores,
 };

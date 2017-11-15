@@ -123,7 +123,7 @@ function createMultipleRelatedGetter(cache: ClientCache,
         Object.defineProperty(proxy, key, {
             get: () => {
                 if (related === undefined) {
-                    related = cache.getEntities(entityData[key] as number[]);
+                    related = cache.getEntities((entityData[key] || []) as number[]);
                 }
                 return related;
             },

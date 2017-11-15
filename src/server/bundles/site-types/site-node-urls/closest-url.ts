@@ -65,7 +65,8 @@ export function closestFlatUrl(resolvedPage: ResolvedPageData, urls: SiteNodeFla
         }
     }
 
-    const minLength = Math.max(2, Math.min.apply(null, filteredUrls.map(url => url.length)));
+    const minLength = Math.max(1, Math.min.apply(null, filteredUrls.map(url => url.length)));
+
     return filteredUrls
             .filter(url => url.length === minLength)
             .sort((a, b) => (a[minLength - 1][1] as string).length - (b[minLength - 1][1] as string).length)

@@ -76,4 +76,3 @@ export function siteNodeUrls(cache: RenderingCache, id: number): Promise<SiteNod
     return cache.loadEntity(id)
         .then(entity => compile(cache, entity));
 }
-

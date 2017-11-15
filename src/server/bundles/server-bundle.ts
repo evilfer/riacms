@@ -23,6 +23,13 @@ export interface ServerBundleDataInitMap {
     [name: string]: ServerBundleDataInit;
 }
 
+export type ServerBundleStoreInit = (context: ServerRequestContext,
+                                     storeMap: { [name: string]: ServiceData }) => Promise<ServiceData>;
+
+export interface ServerBundleStoreInitMap {
+    [name: string]: ServerBundleStoreInit;
+}
+
 export abstract class ServerBundle extends Bundle<ServerTypeManagerBuilder> {
     protected serverContext: ServerContext;
 
@@ -38,7 +45,7 @@ export abstract class ServerBundle extends Bundle<ServerTypeManagerBuilder> {
         return {};
     }
 
-    public declareRenderingStores(): ServerBundleDataInitMap {
+    public declareRenderingStores(): ServerBundleStoreInitMap {
         return {};
     }
 

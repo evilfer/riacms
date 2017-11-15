@@ -7,6 +7,7 @@ import {ClientRenderingContextBundle} from "../bundles/rendering-context/client-
 import {BrowserHistory} from "../bundles/request-location/browser-history";
 import {ClientRequestLocationBundle} from "../bundles/request-location/client-request-location-bundle";
 import {ClientSiteRendererBundle} from "../bundles/site-renderer/client-site-renderer-bundle";
+import {ClientSiteTreeBundle} from "../bundles/site-tree/client-site-tree-bundle";
 import {ClientSiteTypesBundle} from "../bundles/site-types/client-site-types-bundle";
 
 const bundles: ClientBundle[] = [
@@ -15,6 +16,7 @@ const bundles: ClientBundle[] = [
     new ClientRequestLocationBundle(new BrowserHistory()),
     new ClientPageResolverBundle(),
     new ClientEntityFinderBundle(),
+    new ClientSiteTreeBundle(),
     new ClientSiteRendererBundle(adminTemplate),
 ];
 

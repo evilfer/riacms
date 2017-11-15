@@ -1,33 +1,35 @@
-import {inject, observer} from "mobx-react";
+import {observer} from "mobx-react";
 import * as React from "react";
-import {EntityFinderStore} from "../../../../bundles/entity-finder/entity-finder-data";
 import {LocationStore} from "../../../../bundles/location/location-data";
 import {gotoQuery} from "../../../../bundles/location/location-utils";
 import {ResolvedPageData} from "../../../../bundles/page-resolver/resolved-page-data";
+import {SiteTreeNode, SiteTreeStore} from "../../../../bundles/site-tree/site-tree-data";
+import {TypeManager} from "../../../../types/type-manager";
 import {Tree, TreeDataItem} from "../../widgets/tree/tree";
+import {currentEntityI, CurrentEntityProps} from "../base-components/current-entity";
 
-export interface SiteTreeProps {
+export interface SiteTreeProps extends CurrentEntityProps {
     location?: LocationStore;
-    entityFinder?: EntityFinderStore;
     resolvedPage?: ResolvedPageData;
+    siteTree?: SiteTreeStore;
+    types?: TypeManager;
 }
 
-function buildSiteTreeData(location: LocationStore, nodes: any[], openIds: number[]): TreeDataItem[] {
+function buildSiteTreeData(location: LocationStore, nodes: SiteTreeNode[]): TreeDataItem[] {
     return nodes.map(node => {
-        const children = openIds.indexOf(node._id) >= 0 ?
-            buildSiteTreeData(location, node.childLinks.map((link: any) => link.child), openIds) : null;
+        const children = node.children ? buildSiteTreeData(location, node.children) : null;
 
         return {
             children,
-            key: node._id,
-            label: node.name,
+            key: node.entity._id,
+            label: `${node.entity.name} (${node.entity._id})`,
             menu: () => [
                 {
                     icon: "pencil",
                     label: "Edit",
                     onClick: () => {
                         gotoQuery(location, {
-                            eid: node._id,
+                            eid: node.entity._id,
                             ev: null,
                         }, false);
                     },
@@ -37,7 +39,7 @@ function buildSiteTreeData(location: LocationStore, nodes: any[], openIds: numbe
                     label: "New page",
                     onClick: () => {
                         gotoQuery(location, {
-                            eid: node._id,
+                            eid: node.entity._id,
                             ev: "new-page",
                         }, false);
                     },
@@ -47,7 +49,7 @@ function buildSiteTreeData(location: LocationStore, nodes: any[], openIds: numbe
                     label: "Delete page",
                     onClick: () => {
                         gotoQuery(location, {
-                            eid: node._id,
+                            eid: node.entity._id,
                             ev: "delete",
                         }, false);
                     },
@@ -57,13 +59,21 @@ function buildSiteTreeData(location: LocationStore, nodes: any[], openIds: numbe
     });
 }
 
-@inject("entityFinder", "resolvedPage", "location")
+@currentEntityI("types", "resolvedPage", "location", "siteTree")
 @observer
 export class SiteTree extends React.Component<SiteTreeProps> {
     public render() {
-        const {entityFinder, resolvedPage, location} = this.props;
+        const {types, resolvedPage, location, siteTree, currentEntity} = this.props;
+        const entityIsPage = currentEntity!.entity && types!.isA(currentEntity!.entity, "site_tree_parent");
 
-        const sites = entityFinder!.find("sites", {_type: "site"}).data;
+        const openIds = [
+            ...resolvedPage!.site ? [resolvedPage!.site._id] : [],
+            ...resolvedPage!.route.slice(0, -1).map(({_id}) => _id),
+        ];
+
+        if (entityIsPage) {
+            // add to defaultOpen
+        }
 
         const sto = location!.query.get("sto");
         const siteTreeQueryIds = (sto ? sto.split(",") : []).map(id => parseInt(id, 10));
@@ -71,17 +81,22 @@ export class SiteTree extends React.Component<SiteTreeProps> {
         const queryOpenIds = siteTreeQueryIds.filter(v => v > 0);
         const queryClosedIds = siteTreeQueryIds.filter(v => v < 0).map(v => -v);
 
-        const defaultOpenIds = [
-            resolvedPage!.site ? resolvedPage!.site._id : -1,
-            ...resolvedPage!.route.slice(0, -1).map(({_id}) => _id),
-        ];
+        queryOpenIds.forEach(id => {
+            if (openIds.indexOf(id) < 0) {
+                openIds.push(id);
+            }
+        });
 
-        const openIds = [
-            ...defaultOpenIds,
-            ...queryOpenIds.filter(v => v > 0),
-        ].filter(v => queryClosedIds.indexOf(v) < 0);
+        queryClosedIds.forEach(id => {
+            const index = openIds.indexOf(id);
+            if (index >= 0) {
+                openIds.splice(index, 1);
+            }
+        });
 
-        const treeItems: TreeDataItem[] = buildSiteTreeData(location!, sites, openIds);
+        const siteTreeData = siteTree!.getTree(openIds);
+
+        const treeItems: TreeDataItem[] = buildSiteTreeData(location!, siteTreeData.data);
         const onChange = (id: number, open: boolean) => {
             if (open) {
                 const ci = queryClosedIds.indexOf(id);
@@ -107,6 +122,7 @@ export class SiteTree extends React.Component<SiteTreeProps> {
                 sto: [...queryOpenIds, ...queryClosedIds.map(v => -v)].join(","),
             }, false);
         };
+
         return (
             <div>
                 <Tree items={treeItems}

@@ -51,7 +51,7 @@ export class EntityHome extends React.Component<EntityHomeProps> {
 
     private prepareForm(props: EntityHomeProps = this.props) {
         const {currentEntity, forms, types} = props;
-        if (currentEntity && currentEntity.entity) {
+        if (currentEntity && currentEntity.entity && currentEntity.entity._data) {
             forms!.initForm(new EntityEditForm(types!, currentEntity.entity));
         }
     }

@@ -6,7 +6,11 @@ export class EntityEditForm extends FormManager {
     private entity: any;
 
     constructor(types: TypeManager, entity: any) {
-        super(`entityedit:${entity._id}`, "put", `/_api/entity/${entity._id}`, entityEditFields(types, entity), entity);
+        const formId = `entityedit:${entity._id}`;
+        const apiEndpoint = `/_api/entity/${entity._id}`;
+        const fields = entityEditFields(types, entity);
+        const values = entity._data[0];
+        super(formId, "put", apiEndpoint, fields, values);
         this.entity = true;
     }
 

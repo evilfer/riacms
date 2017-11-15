@@ -189,7 +189,6 @@ function wrapStoredOrComputed(cache: RenderingCache,
     };
 
     if (!field.impl) {
-
         Object.defineProperty(proxy, field.name, {
             get: () => {
                 if (initialize) {

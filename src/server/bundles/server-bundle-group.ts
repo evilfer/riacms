@@ -1,12 +1,12 @@
 import * as Promise from "bluebird";
 import * as extend from "extend";
 import {ExchangeStoreDataMap} from "../../common/app/exchange-data";
-import {ServerBundle, ServerBundleDataInit, ServerBundleDataInitMap, ServerRequestContext} from "./server-bundle";
+import {ServerBundle, ServerBundleDataInitMap, ServerBundleStoreInit, ServerRequestContext} from "./server-bundle";
 
 export class ServerBundleGroup {
     private bundles: ServerBundle[];
     private declaredDataServices: ServerBundleDataInitMap;
-    private declaredStores: Array<{ name: string, init: ServerBundleDataInit }>;
+    private declaredStores: Array<{ name: string, init: ServerBundleStoreInit }>;
     private storeOwner: { [name: string]: ServerBundle };
 
     constructor(bundles: ServerBundle[]) {
@@ -20,7 +20,7 @@ export class ServerBundleGroup {
         return Promise.reduce(
             this.declaredStores.filter(({name}) => stores.indexOf(name) >= 0),
             (acc, {name, init}) => {
-                return init(context).then(value => {
+                return init(context, acc).then(value => {
                     acc[name] = value;
                     return acc;
                 });

@@ -11,7 +11,7 @@ export function dataLoader(location: LocationStore, context: ClientContext): () 
         console.log("autorun", url, errors);
 
         if (errors.length > 0) {
-            axios.get(`/_api/render${url}`)
+            axios.get(url)
                 .then(response => {
                     runInAction(() => {
                         context.cache.loadEntities(response.data.e);

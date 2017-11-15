@@ -9,7 +9,7 @@ export abstract class ClientBundle extends Bundle<TypeManagerBuilder> {
         this.clientContext = context;
     }
 
-    public createStores(): null | { [name: string]: any } {
+    public createStores(storeMap: { [name: string]: any }): null | { [name: string]: any } {
         return null;
     }
 
