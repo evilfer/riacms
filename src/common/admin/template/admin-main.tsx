@@ -4,7 +4,7 @@ import {ResolvedPageData} from "../../bundles/page-resolver/resolved-page-data";
 import {AdminHead} from "./admin-head";
 import {MainLayout} from "./sections/main-layout/main-layout";
 import {SiteTreeView} from "./sections/site-tree/site-tree-view";
-import {QueryNavWrapper} from "./widgets/query-tabs/qurery-nav-wrapper";
+import {QueryNavWrapper} from "./widgets";
 
 export interface AdminMainProps {
     resolvedPage: ResolvedPageData;

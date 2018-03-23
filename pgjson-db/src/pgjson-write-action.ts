@@ -1,5 +1,5 @@
 import * as Promise from "bluebird";
-import {Client, QueryResult} from "pg";
+import {PoolClient, QueryResult} from "pg";
 import {EntityContent} from "../../src/common/cache/entity-content";
 import {TypeManager} from "../../src/common/types/type-manager";
 import {Entity} from "../../src/server/entity/entity";
@@ -13,14 +13,14 @@ const INSERT_ENTITY_ROW = "INSERT INTO entity (vid, type) VALUES (1, $1) RETURNI
 const INSERT_VERSION = "INSERT INTO version (eid, vid, aid, data) VALUES ($1, $2, $3, $4)";
 const INC_VERSION = "UPDATE entity SET vid=(vid + 1) WHERE eid=$1 RETURNING vid";
 
-export class PgJsonWriteAction extends PgjsonQueryManager<Client> implements EntityDbWriteTransaction {
+export class PgJsonWriteAction extends PgjsonQueryManager<PoolClient> implements EntityDbWriteTransaction {
     private done: null | (() => void);
     private type: string;
     private uid: number;
     private aid: number;
     private actionSet: boolean;
 
-    constructor(types: TypeManager, client: Client, type: string, uid: number, done: () => void) {
+    constructor(types: TypeManager, client: PoolClient, type: string, uid: number, done: () => void) {
         super(types, client);
         this.done = done;
         this.type = type;

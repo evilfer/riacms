@@ -29,11 +29,11 @@ initServerTask({
 });
 
 
-initWebpackTasks({
-    outputPath
-}, {
-    admin: "../src/client/admin/index"
-});
+// initWebpackTasks({
+//     outputPath
+// }, {
+//     admin: "../src/client/admin/index"
+// });
 
 
 initAdminTasks({outputPath});

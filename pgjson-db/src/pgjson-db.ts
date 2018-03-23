@@ -1,5 +1,5 @@
 import * as Promise from "bluebird";
-import {Client, Pool, PoolConfig} from "pg";
+import {Pool, PoolClient, PoolConfig} from "pg";
 import {TypeManager} from "../../src/common/types/type-manager";
 import {EntityDb, EntityDbWriteTransaction} from "../../src/server/orm/entity-db";
 import {PgjsonQueryManager} from "./pgjson-query-manager";
@@ -16,7 +16,7 @@ export class PgJsonDb extends PgjsonQueryManager<Pool> implements EntityDb {
 
     public transaction(type: string, uid: number): Promise<EntityDbWriteTransaction> {
         return new Promise((resolve, reject) => {
-            this.client.connect((err: Error, client: Client, done: () => void) => {
+            this.client.connect((err: Error, client: PoolClient, done: () => void) => {
                 if (err) {
                     return reject(err);
                 }

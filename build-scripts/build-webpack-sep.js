@@ -75,10 +75,7 @@ export function initWebpackTasks(options, entries) {
                     new webpack.DefinePlugin({'process.env.NODE_ENV': isProd ? '"production"' : '"development"'}),
                     new webpack.ProvidePlugin({Promise: 'bluebird'})
                 ];
-                const plugins = isProd ? [...commonPlugins, new webpack.optimize.UglifyJsPlugin({
-                    output: {comments: false},
-                    sourceMap: false
-                })] : [
+                const plugins = isProd ? commonPlugins : [
                     ...commonPlugins,
                     new webpack.DllReferencePlugin({
                         context: '.',
@@ -89,6 +86,7 @@ export function initWebpackTasks(options, entries) {
                 const cfg = {
                     entry: entries[name],
                     watch: doWatch,
+                    mode: isProd ? "production" : "development",
                     output: {
                         path: output,
                         filename: `${filename}.js`
@@ -99,7 +97,7 @@ export function initWebpackTasks(options, entries) {
                         extensions: [".ts", ".tsx", ".js", ".json"]
                     },
                     module: {
-                        loaders: [
+                        rules: [
                             {
                                 test: /\.tsx?$/,
                                 loaders: [
@@ -115,6 +113,9 @@ export function initWebpackTasks(options, entries) {
                                 ]
                             },
                         ]
+                    },
+                    optimization: {
+                        minimize: isProd
                     }
                 };
 

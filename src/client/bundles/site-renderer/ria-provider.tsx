@@ -1,4 +1,4 @@
-import {autorunAsync} from "mobx";
+import {autorun} from "mobx";
 import {Provider} from "mobx-react";
 import * as React from "react";
 import {LocationStore} from "../../../common/bundles/location/location-data";
@@ -15,7 +15,7 @@ export interface RiaProviderProps {
 
 export class RiaProvider extends React.Component<RiaProviderProps> {
     public componentDidMount() {
-        autorunAsync(dataLoader(this.props.stores.location, this.props.context));
+        autorun(dataLoader(this.props.stores.location, this.props.context), {delay: 10});
     }
 
     public render() {

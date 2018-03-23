@@ -1,15 +1,15 @@
-import {useStrict} from "mobx";
+import {configure} from "mobx";
 import {CmsApp} from "../../common/app/app";
 import {ExchangeData} from "../../common/app/exchange-data";
+import {TypeManagerBuilder} from "../../common/types/type-manager-builder";
 import {ClientBundle} from "../bundles/client-bundle";
 import {ClientBundleGroup} from "../bundles/client-bundle-group";
 import {ClientCache} from "../cache/client-cache";
 import {ClientContext} from "./client-context";
 import {ClientErrorManager} from "./client-error-manager";
 import {parseExchangeData} from "./initial-data";
-import {TypeManagerBuilder} from "../../common/types/type-manager-builder";
 
-useStrict(true);
+configure({enforceActions: true});
 
 export class CmsClientApp extends CmsApp<TypeManagerBuilder, ClientBundle> {
     private context: ClientContext;

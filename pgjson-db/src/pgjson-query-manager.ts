@@ -1,5 +1,5 @@
 import * as Promise from "bluebird";
-import {Client, Pool} from "pg";
+import {Pool, PoolClient} from "pg";
 import {Entity} from "../../src/server/entity/entity";
 import {EntityQueryBuilder, EntityReadDb} from "../../src/server/orm/entity-db";
 import {PgJsonQueryBuilder} from "./pgjson-query-builder";
@@ -18,7 +18,7 @@ WHERE entity.eid = ANY( $1 )`;
 
 const GET_TYPE = "SELECT entity.type FROM entity WHERE entity.eid = $1 LIMIT 1";
 
-export class PgjsonQueryManager<E extends Client | Pool> implements EntityReadDb {
+export class PgjsonQueryManager<E extends PoolClient | Pool> implements EntityReadDb {
 
     protected types: TypeManager;
     protected client: E;

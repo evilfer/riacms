@@ -13,14 +13,10 @@ export function initWebpackTasks(options, entries) {
                 const isProd = mode === 'prod';
                 const doWatch = mode === 'watch';
                 const output = `${options.outputPath}/${isProd ? 'prod' : 'dev'}/_assets/${name}`;
-                const commonPlugins = [
+                const plugins = [
                     new webpack.DefinePlugin({'process.env.NODE_ENV': isProd ? '"production"' : '"development"'}),
                     new webpack.ProvidePlugin({Promise: 'bluebird'})
                 ];
-                const plugins = isProd ? [...commonPlugins, new webpack.optimize.UglifyJsPlugin({
-                    output: {comments: false},
-                    sourceMap: false
-                })] : commonPlugins;
 
                 const cfg = {
                     entry: entries[name],
@@ -35,7 +31,7 @@ export function initWebpackTasks(options, entries) {
                         extensions: [".ts", ".tsx", ".js", ".json"]
                     },
                     module: {
-                        loaders: [
+                        rules: [
                             {
                                 test: /\.tsx?$/,
                                 loaders: [

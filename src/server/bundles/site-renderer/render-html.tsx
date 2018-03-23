@@ -1,7 +1,7 @@
 import * as Promise from "bluebird";
 import * as extend from "extend";
 import * as he from "he";
-import {useStrict} from "mobx";
+import {configure} from "mobx";
 import {Provider} from "mobx-react";
 import * as React from "react";
 import {renderToStaticMarkup} from "react-dom/server";
@@ -12,7 +12,7 @@ import {ServerContext} from "../../app/server-context";
 import {ServerDataError} from "../../app/server-data-error";
 import {RenderingCache} from "../../orm/server-cache";
 
-useStrict(true);
+configure({enforceActions: true});
 
 export function renderHtmlTemplate(serverContext: ServerContext,
                                    cache: RenderingCache,

@@ -77,7 +77,7 @@ describe("server entity finder bundle", () => {
         });
 
         it('should throw error on missing data', () => {
-            return expect(() => store.find("sites", {_type: "site"})).to.throw("Missing finder error: [sites] [{\"_type\":\"site\"}]");
+            expect(() => store.find("sites", {_type: "site"})).to.throw("Missing finder error: [sites] [{\"_type\":\"site\"}]");
         });
 
         it('should recover from errors', () => {
@@ -99,7 +99,7 @@ describe("server entity finder bundle", () => {
         });
 
         it('should throw error on missing id', () => {
-            return expect(() => store.byId(1)).to.throw("Missing: [1]");
+            expect(() => store.byId(1)).to.throw("Missing: [1]");
         });
 
         it('should retrieve entity by id', () => {

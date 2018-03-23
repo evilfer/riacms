@@ -5,6 +5,7 @@ import {SinonSpy} from "sinon";
 import * as sinonChai from "sinon-chai";
 import {ClientRequestLocationBundle} from "../../../../src/client/bundles/request-location/client-request-location-bundle";
 import {DummyHistory} from "./dummy-history";
+import * as mobx from "mobx";
 
 use(sinonChai);
 
@@ -51,7 +52,7 @@ describe("client request location bundle", () => {
             expect(location.path).to.equal("/a/b/c");
             expect(location.port).to.equal(1234);
             expect(location.protocol).to.equal("https");
-            expect(location.query.toJS()).to.deep.eq({a: "1234", b: "ABCD"});
+            expect(mobx.toJS(location.query)).to.deep.eq({a: "1234", b: "ABCD"});
         }
     });
 
@@ -74,7 +75,7 @@ describe("client request location bundle", () => {
             expect(location.path).to.equal("/b");
             expect(location.port).to.equal(1234);
             expect(location.protocol).to.equal("https");
-            expect(location.query.toJS()).to.deep.eq({a: "5678", c: "new"});
+            expect(mobx.toJS(location.query)).to.deep.eq({a: "5678", c: "new"});
         }
     });
 

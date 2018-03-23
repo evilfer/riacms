@@ -1,5 +1,5 @@
 import * as Promise from "bluebird";
-import {Client, Pool} from "pg";
+import {Pool, PoolClient} from "pg";
 import {TypeManager} from "../../src/common/types/type-manager";
 import {TypeFieldTypes} from "../../src/common/types/types";
 import {Entity} from "../../src/server/entity/entity";
@@ -55,12 +55,12 @@ function getValueType(rel: string, fieldType: TypeFieldTypes, value: string): st
 
 export class PgJsonQueryBuilder implements EntityQueryBuilder {
     private types: TypeManager;
-    private client: Client | Pool;
+    private client: PoolClient | Pool;
     private level: number;
     private conditions: string[];
     private values: any[];
 
-    constructor(types: TypeManager, client: Client | Pool, level: number) {
+    constructor(types: TypeManager, client: PoolClient | Pool, level: number) {
         this.types = types;
         this.client = client;
         this.level = level;
