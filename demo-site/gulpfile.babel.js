@@ -28,12 +28,4 @@ initServerTask({
     base: path.join(__dirname, '../')
 });
 
-
-// initWebpackTasks({
-//     outputPath
-// }, {
-//     admin: "../src/client/admin/index"
-// });
-
-
 initAdminTasks({outputPath});
