@@ -118,6 +118,7 @@ export function initWebpackTasks(options, entries) {
                         minimize: isProd
                     }
                 };
+                console.log(`${name}-webpack-${mode}`);
 
                 gulp.task(`${name}-webpack-${mode}`, () => {
                     return webpack(cfg, (err, stats) => {
