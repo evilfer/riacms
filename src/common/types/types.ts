@@ -12,8 +12,13 @@ export interface BaseTypeField {
     computed?: boolean;
 }
 
+export interface LiteralArrayTypeField extends BaseTypeField {
+    type: "string[]" | "number[]" | "boolean[]";
+}
+
 export interface LiteralTypeField extends BaseTypeField {
-    type: "string" | "number" | "boolean" | "string[]" | "number[]" | "boolean[]" | "json";
+    type: "string" | "number" | "boolean" | "json";
+    defaultValue: null | string;
 }
 
 export interface RelatedTypeField extends BaseTypeField {
@@ -43,6 +48,7 @@ export interface MultipleObjectTypeField extends ObjectTypeField {
 
 export type TypeField =
     LiteralTypeField |
+    LiteralArrayTypeField |
     SingleRelatedTypeField |
     MultipleRelatedTypeField |
     SingleObjectTypeField |

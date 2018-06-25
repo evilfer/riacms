@@ -15,7 +15,7 @@ function prepareRootEntityProps(cache: ClientCache, id: number, entityData: Enti
         _type: entityData._type as string,
     };
 
-    createLiteralGetter(cache, id, entityData, proxy, "_data", "");
+    createLiteralGetter(cache, id, entityData, proxy, "_data", "", null);
     return proxy;
 }
 
@@ -28,12 +28,14 @@ function createDataProxy(cache: ClientCache,
     fields.forEach(field => {
         switch (field.type) {
             case "string":
-            case "string[]":
             case "number":
-            case "number[]":
             case "boolean":
+                createLiteralGetter(cache, id, entityData, proxy, field.name, keyBase, field.defaultValue);
+                break;
+            case "string[]":
+            case "number[]":
             case "boolean[]":
-                createLiteralGetter(cache, id, entityData, proxy, field.name, keyBase);
+                createLiteralArrayGetter(cache, id, entityData, proxy, field.name, keyBase);
                 break;
             case "related":
                 createRelatedGetter(cache, id, entityData, proxy, field.name, keyBase);
@@ -56,15 +58,20 @@ function shouldCreateDataGetter(cache: ClientCache,
                                 entityData: EntityContent,
                                 proxy: EntityContent,
                                 key: string,
-                                keyBase: string): boolean {
+                                keyBase: string,
+                                defaultValue: EntityContentValue = null): boolean {
     if (entityData.hasOwnProperty(key)) {
         return true;
     }
 
+    Object.defineProperty(proxy, `__loading_${key}`, {
+        get: () => !entityData.hasOwnProperty(key),
+    });
+
     Object.defineProperty(proxy, key, {
         get: () => {
             cache.declareMissingData(id, keyBase + key);
-            return undefined;
+            return defaultValue;
         },
     });
 
@@ -76,9 +83,25 @@ function createLiteralGetter(cache: ClientCache,
                              entityData: EntityContent,
                              proxy: EntityContent,
                              key: string,
-                             keyBase: string) {
+                             keyBase: string,
+                             defaultValue: null | any) {
 
-    if (shouldCreateDataGetter(cache, id, entityData, proxy, key, keyBase)) {
+    if (shouldCreateDataGetter(cache, id, entityData, proxy, key, keyBase, defaultValue)) {
+        const value = entityData[key];
+        Object.defineProperty(proxy, key, {
+            get: () => value,
+        });
+    }
+}
+
+function createLiteralArrayGetter(cache: ClientCache,
+                                  id: number,
+                                  entityData: EntityContent,
+                                  proxy: EntityContent,
+                                  key: string,
+                                  keyBase: string) {
+
+    if (shouldCreateDataGetter(cache, id, entityData, proxy, key, keyBase, [])) {
         const value = entityData[key];
         Object.defineProperty(proxy, key, {
             get: () => value,
@@ -116,7 +139,7 @@ function createMultipleRelatedGetter(cache: ClientCache,
                                      key: string,
                                      keyBase: string) {
 
-    if (shouldCreateDataGetter(cache, id, entityData, proxy, key, keyBase)) {
+    if (shouldCreateDataGetter(cache, id, entityData, proxy, key, keyBase, [])) {
         let related: RenderEntity[];
 
         Object.defineProperty(proxy, key, {
@@ -166,7 +189,7 @@ function createMultipleNestedGetter(cache: ClientCache,
 
     const fields = cache.getFields(nestedType);
 
-    if (shouldCreateDataGetter(cache, id, entityData, proxy, key, keyBase)) {
+    if (shouldCreateDataGetter(cache, id, entityData, proxy, key, keyBase, [])) {
         const dataValue = entityData[key] as EntityContent[];
         const proxyValue: EntityContent[] = dataValue.map((v, i) => {
             const nestedProxy = {};
