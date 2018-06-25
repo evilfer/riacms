@@ -66,7 +66,7 @@ describe("client entity cache", () => {
         it("missing literal fields should return null", () => {
             const entity: any = cache.getEntity(21);
             if (entity !== null) {
-                expect(entity.name).to.equal(null);
+                expect(entity.name).to.equal(undefined);
             }
             expect(cache.getMissing()).to.deep.eq({
                 missing: true,
@@ -108,10 +108,10 @@ describe("client entity cache", () => {
             expect(cache.getMissing().entities).to.deep.eq([101, 102]);
         });
 
-        it("should provide [] for missing related[] data", () => {
+        it("should provide undefined for missing related[] data", () => {
             const entity42: any = cache.getEntity(42);
             const related = entity42.relatedMultiple;
-            expect(related).to.deep.eq([]);
+            expect(related).to.deep.eq(undefined);
             expect(cache.getMissing()).to.deep.eq({
                 missing: true,
                 entities: [],
@@ -130,7 +130,7 @@ describe("client entity cache", () => {
         it("should provide null with missing nested object data", () => {
             const entity51: any = cache.getEntity(51);
             const nested = entity51.nested;
-            expect(nested).to.be.null;
+            expect(nested).to.be.undefined;
             expect(cache.getMissing()).to.deep.eq({
                 missing: true,
                 entities: [],
@@ -153,7 +153,7 @@ describe("client entity cache", () => {
             const nested = entity61.nested;
             expect(nested).not.to.be.null;
             expect(cache.getMissing().missing).to.be.false;
-            expect(nested.value).to.equal(null);
+            expect(nested.value).to.equal(undefined);
             expect(cache.getMissing()).to.deep.eq({
                 missing: true,
                 entities: [],
@@ -175,7 +175,7 @@ describe("client entity cache", () => {
             const entity7: any = cache.getEntity(7);
             const nested = entity7.nested;
             expect(nested).to.be.an("array");
-            expect(nested[2].value).to.equal(null);
+            expect(nested[2].value).to.equal(undefined);
             expect(cache.getMissing()).to.deep.eq({
                 missing: true,
                 entities: [],
@@ -188,7 +188,7 @@ describe("client entity cache", () => {
         it("should provide empty array with missing nested[] data", () => {
             const entity71: any = cache.getEntity(71);
             const nested = entity71.nested;
-            expect(nested).to.deep.eq([]);
+            expect(nested).to.deep.eq(undefined);
             expect(cache.getMissing()).to.deep.eq({
                 missing: true,
                 entities: [],

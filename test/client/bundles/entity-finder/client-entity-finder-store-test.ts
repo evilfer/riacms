@@ -74,9 +74,6 @@ describe("client entity finder store", () => {
             expect(store.getError()).to.be.null;
             expect(result.loading).to.be.false;
             expect(result.data).to.have.length(1);
-            console.log(result.data);
-            console.log(result.data[0]);
-            console.log(result.data.length);
             expect(result.data[0]._id).to.equal(1);
         });
 
@@ -85,9 +82,6 @@ describe("client entity finder store", () => {
             expect(store.getError()).to.be.an("error");
             expect(result.loading).to.be.true;
             expect(result.data).to.have.length(1);
-            console.log(result.data);
-            console.log(result.data[0]);
-            console.log(result.data.length);
             expect(result.data[0]._id).to.equal(1);
         });
     });

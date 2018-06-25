@@ -56,8 +56,7 @@ function shouldCreateDataGetter(cache: ClientCache,
                                 entityData: EntityContent,
                                 proxy: EntityContent,
                                 key: string,
-                                keyBase: string,
-                                defaultValue: EntityContentValue = null): boolean {
+                                keyBase: string): boolean {
     if (entityData.hasOwnProperty(key)) {
         return true;
     }
@@ -65,7 +64,7 @@ function shouldCreateDataGetter(cache: ClientCache,
     Object.defineProperty(proxy, key, {
         get: () => {
             cache.declareMissingData(id, keyBase + key);
-            return defaultValue;
+            return undefined;
         },
     });
 
@@ -117,7 +116,7 @@ function createMultipleRelatedGetter(cache: ClientCache,
                                      key: string,
                                      keyBase: string) {
 
-    if (shouldCreateDataGetter(cache, id, entityData, proxy, key, keyBase, [])) {
+    if (shouldCreateDataGetter(cache, id, entityData, proxy, key, keyBase)) {
         let related: RenderEntity[];
 
         Object.defineProperty(proxy, key, {
@@ -167,7 +166,7 @@ function createMultipleNestedGetter(cache: ClientCache,
 
     const fields = cache.getFields(nestedType);
 
-    if (shouldCreateDataGetter(cache, id, entityData, proxy, key, keyBase, [])) {
+    if (shouldCreateDataGetter(cache, id, entityData, proxy, key, keyBase)) {
         const dataValue = entityData[key] as EntityContent[];
         const proxyValue: EntityContent[] = dataValue.map((v, i) => {
             const nestedProxy = {};

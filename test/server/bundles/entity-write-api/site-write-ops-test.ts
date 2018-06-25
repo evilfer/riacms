@@ -43,7 +43,6 @@ describe("site write operations", () => {
                     expect(site.data[0].childLinks).to.have.length(1);
                     expect(page.data[0].parentLinks).to.have.length(1);
                     expect(site.data[0].childLinks).to.deep.eq(page.data[0].parentLinks);
-                    console.log(JSON.stringify(db.fixtureMap));
                 });
         });
     });
